@@ -57,17 +57,17 @@ export function HighlightSection() {
               </div>
               
               <div className="p-8 flex flex-col flex-grow relative bg-white">
-                <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-brand-accent/50 to-transparent -translate-y-px"></div>
-                <h3 className="font-heading font-bold text-2xl text-brand-primary mb-3 group-hover:text-brand-accent transition-colors">
+                <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-brand-secondary/50 to-transparent -translate-y-px"></div>
+                <h3 className="font-heading font-bold text-2xl text-brand-primary mb-3 group-hover:text-brand-secondary transition-colors">
                   {item.title}
                 </h3>
                 <p className="text-brand-primary/60 leading-relaxed text-sm flex-grow mb-8 font-medium">
                   {item.description}
                 </p>
                 <Link href={item.link} className="mt-auto inline-flex items-center gap-2 text-brand-primary font-bold text-sm tracking-wide group/link w-fit relative overflow-hidden pb-1">
-                  <span className="relative z-10 group-hover/link:text-brand-accent transition-colors">Pelajari Lebih Lanjut</span>
-                  <ChevronRight size={16} className="relative z-10 group-hover/link:text-brand-accent group-hover/link:translate-x-1 transition-all" />
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-accent group-hover/link:w-full transition-all duration-300"></span>
+                  <span className="relative z-10 group-hover/link:text-brand-secondary transition-colors">Pelajari Lebih Lanjut</span>
+                  <ChevronRight size={16} className="relative z-10 group-hover/link:text-brand-secondary group-hover/link:translate-x-1 transition-all" />
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-secondary group-hover/link:w-full transition-all duration-300"></span>
                 </Link>
               </div>
             </div>

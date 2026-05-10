@@ -19,31 +19,31 @@ export default function KontakPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold text-brand-primary mb-2">Nama Lengkap</label>
-                  <input type="text" className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-accent transition-all text-brand-primary font-medium" placeholder="Bpk/Ibu/Sdr" />
+                  <input type="text" className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-secondary transition-all text-brand-primary font-medium" placeholder="Bpk/Ibu/Sdr" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-brand-primary mb-2">No. WhatsApp</label>
-                  <input type="tel" className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-accent transition-all text-brand-primary font-medium" placeholder="0812..." />
+                  <input type="tel" className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-secondary transition-all text-brand-primary font-medium" placeholder="0812..." />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-bold text-brand-primary mb-2">Pesan Anda</label>
-                <textarea rows={5} className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-accent transition-all text-brand-primary font-medium resize-none" placeholder="Tuliskan pertanyaan atau pesan Anda di sini..."></textarea>
+                <textarea rows={5} className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50 focus:outline-none focus:bg-white focus:ring-2 focus:ring-brand-secondary transition-all text-brand-primary font-medium resize-none" placeholder="Tuliskan pertanyaan atau pesan Anda di sini..."></textarea>
               </div>
-              <button type="button" className="px-8 py-4 rounded-xl bg-brand-accent text-brand-primary font-bold tracking-wide hover:shadow-lg hover:-translate-y-1 transition-all w-full md:w-fit mt-2 border-none">
+              <button type="button" className="px-8 py-4 rounded-xl bg-brand-primary text-white hover:bg-brand-secondary font-bold tracking-wide hover:shadow-lg hover:-translate-y-1 transition-all w-full md:w-fit mt-2 border-none">
                 Kirim Via WhatsApp
               </button>
             </form>
           </div>
           
           <div className="lg:w-1/2 rounded-[2.5rem] bg-brand-primary p-10 md:p-12 text-white relative overflow-hidden flex flex-col justify-between shadow-inner border border-white/10">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-brand-accent/10 rounded-full blur-[80px] pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-80 h-80 bg-brand-secondary/10 rounded-full blur-[80px] pointer-events-none"></div>
             
             <div className="relative z-10 mb-12">
               <h3 className="font-heading text-2xl font-bold mb-8">Informasi Center</h3>
               <ul className="space-y-8">
                 <li className="flex items-start gap-5 group">
-                  <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex shrink-0 items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-brand-primary transition-colors duration-300 shadow-lg">
+                  <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex shrink-0 items-center justify-center text-brand-secondary group-hover:bg-brand-secondary group-hover:text-white transition-colors duration-300 shadow-lg">
                     <MapPin size={20} />
                   </div>
                   <div>
@@ -52,7 +52,7 @@ export default function KontakPage() {
                   </div>
                 </li>
                 <li className="flex items-start gap-5 group">
-                  <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex shrink-0 items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-brand-primary transition-colors duration-300 shadow-lg">
+                  <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex shrink-0 items-center justify-center text-brand-secondary group-hover:bg-brand-secondary group-hover:text-white transition-colors duration-300 shadow-lg">
                     <Phone size={20} />
                   </div>
                   <div>

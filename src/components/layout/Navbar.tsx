@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
@@ -34,9 +35,14 @@ export function Navbar() {
     )}>
       <div className="container mx-auto px-4 md:px-6 lg:px-8 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          {/* Logo Placeholder */}
-          <div className="w-11 h-11 rounded-full bg-brand-accent flex items-center justify-center text-brand-primary font-bold text-xl group-hover:scale-105 transition-transform shadow-lg shadow-brand-accent/20">
-            A
+          {/* Logo */}
+          <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white group-hover:scale-105 transition-transform shadow-lg shadow-brand-primary/20 border-2 border-white/20">
+            <Image
+              src="/images/logoAl-rahmah.jpeg"
+              alt="Logo Pondok Pesantren Al-Rahmah"
+              fill
+              className="object-contain"
+            />
           </div>
           <div className="flex flex-col">
             <span className={clsx(
@@ -60,15 +66,15 @@ export function Navbar() {
                 href={link.href}
                 className={clsx(
                   "font-medium text-sm tracking-wide transition-colors relative group",
-                  isScrolled ? "text-brand-primary/80 hover:text-brand-accent" : "text-white/90 hover:text-white",
-                  isActive && (isScrolled ? "text-brand-accent font-semibold" : "text-white font-semibold")
+                  isScrolled ? "text-brand-primary/80 hover:text-brand-secondary" : "text-white/90 hover:text-white",
+                  isActive && (isScrolled ? "text-brand-secondary font-semibold" : "text-white font-semibold")
                 )}
               >
                 {link.name}
                 <span className={clsx(
                   "absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full",
                   isActive ? "w-full" : "",
-                  isScrolled ? "bg-brand-accent" : "bg-white"
+                  isScrolled ? "bg-brand-secondary" : "bg-white"
                 )}></span>
               </Link>
             );
@@ -77,7 +83,7 @@ export function Navbar() {
 
         {/* CTA Button */}
         <div className="hidden lg:block">
-          <Link href="/psb" className="bg-brand-accent hover:bg-brand-gold-glow text-brand-primary font-bold text-sm tracking-wide px-7 py-3 rounded-full shadow-lg shadow-brand-accent/25 transition-all duration-300 hover:-translate-y-0.5 inline-block">
+          <Link href="/psb" className="bg-brand-primary hover:bg-brand-secondary text-white font-bold text-sm tracking-wide px-7 py-3 rounded-full shadow-lg shadow-brand-primary/25 transition-all duration-300 hover:-translate-y-0.5 inline-block">
             Daftar Sekarang
           </Link>
         </div>
@@ -108,7 +114,7 @@ export function Navbar() {
                 href={link.href}
                 className={clsx(
                   "px-4 py-3 font-medium rounded-xl transition-colors",
-                  isActive ? "bg-brand-primary/5 text-brand-accent" : "text-brand-primary hover:bg-brand-primary/5"
+                  isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -118,7 +124,7 @@ export function Navbar() {
           })}
           <Link 
             href="/psb" 
-            className="mt-4 text-center bg-brand-accent text-brand-primary font-semibold px-6 py-3.5 rounded-xl text-lg shadow-md"
+            className="mt-4 text-center bg-brand-primary text-white hover:bg-brand-secondary transition-colors font-semibold px-6 py-3.5 rounded-xl text-lg shadow-md"
             onClick={() => setMobileMenuOpen(false)}
           >
             Daftar Sekarang

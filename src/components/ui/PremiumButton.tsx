@@ -24,10 +24,10 @@ export function PremiumButton({
   const baseClasses = "inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-full transition-all duration-300 shadow-lg text-sm tracking-wide";
   
   const variants = {
-    primary: "bg-brand-accent hover:bg-brand-gold-glow text-brand-primary shadow-brand-accent/30 hover:-translate-y-1 hover:shadow-xl",
+    primary: "bg-brand-primary hover:bg-brand-secondary text-white shadow-brand-primary/30 hover:-translate-y-1 hover:shadow-xl",
     outline: "bg-transparent border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white hover:-translate-y-1 shadow-none",
     ghost: "bg-brand-primary/5 hover:bg-brand-primary/10 text-brand-primary shadow-none",
-    white: "bg-white text-brand-primary hover:bg-gray-50 border border-white hover:border-gray-100 shadow-xl hover:-translate-y-1"
+    white: "bg-white text-brand-primary hover:bg-brand-paper border border-white hover:border-brand-paper shadow-xl hover:-translate-y-1"
   };
 
   const cssClass = clsx(baseClasses, variants[variant], className);
