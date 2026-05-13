@@ -7,7 +7,7 @@ export function HeroSection() {
       {/* Background Image / Overlay */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-brand-primary/60 lg:bg-brand-primary/50 z-10 mix-blend-multiply"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/80 via-brand-secondary/40 to-transparent z-20 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-primary/80 via-brand-secondary/40 to-transparent z-20 pointer-events-none"></div>
         {/* Background Image */}
         <div className="w-full h-full bg-[url('/images/bgHero.jpeg')] bg-cover bg-center"></div>
       </div>
@@ -39,16 +39,17 @@ export function HeroSection() {
         </div>
 
         {/* Right Column - Image */}
-        <div className="hidden lg:flex justify-end items-center relative">
-          <div className="relative w-full max-w-md xl:max-w-lg aspect-[4/5] overflow-hidden">
-            {/* Soft glow effect behind the image */}
-            <div className="absolute from-brand-secondary/20 to-brand-lime/20 z-10 pointer-events-none"></div>
-            
-            <Image 
-              src="/images/hero-student-nobg.png" 
-              alt="Siswi berprestasi Pondok Pesantren Al-Rahmah" 
+        <div className="hidden lg:flex justify-end items-center relative h-full mt-16">
+          {/* Glow backdrop */}
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 via-transparent to-brand-lime/10 rounded-3xl blur-2xl pointer-events-none z-0" />
+
+          <div className="relative w-full max-w-sm xl:max-w-md" style={{ height: '85vh' }}>
+            <Image
+              src="/images/model.png"
+              alt="Siswi berprestasi Pondok Pesantren Al-Rahmah"
               fill
-              className="object-cover transform group-hover:scale-105 transition-transform duration-700 drop-shadow-2xl"
+              sizes="(max-width: 1280px) 384px, 448px"
+              className="object-contain object-center drop-shadow-2xl"
               priority
             />
           </div>

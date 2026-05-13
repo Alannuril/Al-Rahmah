@@ -26,7 +26,7 @@ export default function DesignSystemPage() {
 
       {/* 1. Buttons */}
       <section className="space-y-8">
-        <SectionHeading title="Buttons" subtitle="Interactive elements for user actions" alignment="left" />
+        <SectionHeading title="Buttons" subtitle="Interactive elements for user actions" />
         
         <Card variant="default" className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -63,7 +63,7 @@ export default function DesignSystemPage() {
 
       {/* 2. Cards */}
       <section className="space-y-8">
-        <SectionHeading title="Cards" subtitle="Containers for distinct blocks of related information" alignment="left" />
+        <SectionHeading title="Cards" subtitle="Containers for distinct blocks of related information" />
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <Card variant="default">
@@ -95,7 +95,7 @@ export default function DesignSystemPage() {
 
       {/* 3. Form Elements */}
       <section className="space-y-8">
-        <SectionHeading title="Form Elements" subtitle="Inputs and controls for data collection" alignment="left" />
+        <SectionHeading title="Form Elements" subtitle="Inputs and controls for data collection" />
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card variant="default" className="space-y-6">
@@ -165,7 +165,7 @@ export default function DesignSystemPage() {
 
       {/* 4. Feedback & Indicators */}
       <section className="space-y-8">
-        <SectionHeading title="Feedback & Indicators" subtitle="Communication elements and system status" alignment="left" />
+        <SectionHeading title="Feedback & Indicators" subtitle="Communication elements and system status" />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <Card variant="default" className="space-y-8">

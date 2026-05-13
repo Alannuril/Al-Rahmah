@@ -8,6 +8,10 @@
   --color-brand-paper: #E6E6E6;
   --color-brand-soft-glow: #AED69F;
   
+  /* Admin specific */
+  --color-admin-bg: #F5F5F0;
+  --color-admin-sidebar: #1E3F35;
+  
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-heading: var(--font-outfit), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
