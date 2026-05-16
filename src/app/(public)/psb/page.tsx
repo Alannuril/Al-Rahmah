@@ -36,7 +36,7 @@ export default function PsbPage() {
               ))}
             </ol>
 
-            <PremiumButton href="#" variant="primary" className="px-12 py-5 text-lg w-full md:w-auto shadow-xl shadow-brand-secondary/20">
+            <PremiumButton href="#" variant="cta" className="px-12 py-5 text-lg w-full md:w-auto shadow-xl shadow-brand-secondary/20">
               Menuju Portal Pendaftaran PSB
             </PremiumButton>
           </div>

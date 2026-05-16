@@ -29,7 +29,11 @@ export default function DesignSystemPage() {
         <SectionHeading title="Buttons" subtitle="Interactive elements for user actions" />
         
         <Card variant="default" className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            <div className="space-y-4 flex flex-col items-center">
+              <h3 className="text-sm font-semibold opacity-70">CTA</h3>
+              <PremiumButton variant="cta">Call to Action</PremiumButton>
+            </div>
             <div className="space-y-4 flex flex-col items-center">
               <h3 className="text-sm font-semibold opacity-70">Primary</h3>
               <PremiumButton variant="primary">Primary Button</PremiumButton>
