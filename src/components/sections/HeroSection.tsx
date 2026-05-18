@@ -13,6 +13,15 @@ const BACKGROUND_IMAGES = [
 
 export function HeroSection() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const nextSlide = () => {
     setCurrentImageIndex((prev) => (prev + 1) % BACKGROUND_IMAGES.length);
@@ -29,7 +38,7 @@ export function HeroSection() {
   useEffect(() => {
     const timer = setInterval(() => {
       nextSlide();
-    }, 7000);
+    }, 4000);
 
     return () => clearInterval(timer);
   }, [currentImageIndex]);
@@ -72,7 +81,7 @@ export function HeroSection() {
       </button>
 
       {/* Slide Indicators */}
-      <div className="absolute bottom-24 lg:bottom-12 left-1/2 -translate-x-1/2 z-40 flex gap-2 sm:gap-3">
+      <div className="absolute bottom-14 lg:bottom-8 left-1/2 -translate-x-1/2 z-40 flex gap-2 sm:gap-3">
         {BACKGROUND_IMAGES.map((_, index) => (
           <button
             key={index}
@@ -128,7 +137,7 @@ export function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce z-30 pointer-events-none hidden lg:flex">
+      <div className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce z-30 pointer-events-none hidden lg:flex transition-opacity duration-500 ${isScrolled ? 'opacity-0' : 'opacity-100'}`}>
         <span className="text-white/60 text-[10px] font-bold tracking-widest uppercase">Scroll</span>
         <div className="w-6 h-10 rounded-full border-2 border-white/30 flex justify-center p-1">
           <div className="w-1.5 h-3 bg-brand-secondary rounded-full"></div>
