@@ -12,14 +12,14 @@ export default function PsbPage() {
           centered
         />
 
-        <div className="mt-16 bg-brand-primary text-white p-12 md:p-20 rounded-[3rem] shadow-2xl relative overflow-hidden text-left border border-brand-primary lg:mx-12">
+        <div className="mt-12 bg-brand-primary text-white p-8 md:p-12 rounded-[2.5rem] shadow-[0_4px_24px_rgba(57,110,95,0.2)] relative overflow-hidden text-left border border-brand-primary lg:mx-12">
           {/* Abstract blobs */}
           <div className="absolute -top-32 -right-32 w-96 h-96 bg-brand-secondary/30 rounded-full blur-[100px] pointer-events-none"></div>
           <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-brand-secondary/20 rounded-full blur-[100px] pointer-events-none"></div>
           
           <div className="relative z-10 flex flex-col items-center">
-            <h3 className="font-heading text-4xl font-bold mb-12 text-center text-white drop-shadow-md">Alur Pendaftaran E-PSB</h3>
-            <ol className="w-full space-y-6 max-w-2xl mx-auto mb-16">
+            <h3 className="font-heading text-3xl font-bold mb-8 text-center text-white drop-shadow-sm tracking-tight">Alur Pendaftaran E-PSB</h3>
+            <ol className="w-full space-y-4 max-w-2xl mx-auto mb-10">
               {[
                 "Membuat akun melalui portal E-PSB Al-Rahmah.",
                 "Mengisi data diri dan mengupload dokumen pendukung (Kartu Keluarga, Akta Kelahiran, NISN, Rapor Terakhir).",
@@ -27,16 +27,16 @@ export default function PsbPage() {
                 "Melaksanakan Ujian Seleksi Berbasis Komputer (CBT) dan wawancara lisan.",
                 "Menunggu Pengumuman Kelulusan Resmi."
               ].map((step, i) => (
-                <li key={i} className="flex gap-6 items-start bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
-                  <div className="w-10 h-10 rounded-full bg-brand-secondary text-white flex shrink-0 items-center justify-center font-bold text-lg shadow-lg">
+                <li key={i} className="flex gap-4 items-start bg-white/5 p-4 rounded-xl border border-white/10 backdrop-blur-sm shadow-sm hover:bg-white/10 transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-brand-secondary text-white flex shrink-0 items-center justify-center font-bold text-sm shadow-md">
                     {i + 1}
                   </div>
-                  <p className="text-white/90 font-medium text-lg pt-1.5">{step}</p>
+                  <p className="text-white/90 font-medium text-sm pt-1.5 leading-relaxed">{step}</p>
                 </li>
               ))}
             </ol>
 
-            <PremiumButton href="#" variant="cta" className="px-12 py-5 text-lg w-full md:w-auto shadow-xl shadow-brand-secondary/20">
+            <PremiumButton href="#" variant="cta" className="px-8 py-4 text-base font-semibold w-full md:w-auto shadow-lg shadow-brand-secondary/20">
               Menuju Portal Pendaftaran PSB
             </PremiumButton>
           </div>

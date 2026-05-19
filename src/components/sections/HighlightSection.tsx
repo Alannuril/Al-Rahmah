@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
 import { BookOpen, Home, Users, Trophy, ChevronRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import Link from "next/link";
@@ -34,6 +37,41 @@ const highlights = [
 ];
 
 export function HighlightSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isInteracting, setIsInteracting] = useState(false);
+
+  useEffect(() => {
+    if (isInteracting) return;
+
+    const interval = setInterval(() => {
+      if (!scrollRef.current) return;
+      
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      const firstChild = scrollRef.current.firstElementChild as HTMLElement;
+      const cardWidth = firstChild ? firstChild.offsetWidth + 16 : 300; // 16 from gap-4
+
+      if (scrollLeft + clientWidth >= scrollWidth - 10) {
+        // Kembali ke slide awal jika sudah di ujung
+        scrollRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        // Pindah ke slide berikutnya
+        scrollRef.current.scrollBy({ left: cardWidth, behavior: "smooth" });
+      }
+    }, 3000); // Ganti tiap 3 detik
+
+    return () => clearInterval(interval);
+  }, [isInteracting]);
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const scrollPosition = scrollRef.current.scrollLeft;
+    const cardWidth = scrollRef.current.offsetWidth;
+    // adding a small offset to ensure dot updates before full snap
+    const newIndex = Math.round(scrollPosition / cardWidth);
+    setActiveIndex(newIndex);
+  };
+
   return (
     <section className="py-28 bg-brand-paper">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
@@ -45,34 +83,106 @@ export function HighlightSection() {
           className="mb-16"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        {/* --- DESKTOP VIEW --- */}
+        <div className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8">
           {highlights.map((item, index) => (
-            <div key={index} className="group flex flex-col h-full bg-white rounded-3xl overflow-hidden shadow-xl shadow-brand-primary/5 border border-gray-100 transition-all duration-500 hover:shadow-2xl hover:shadow-brand-primary/10 hover:-translate-y-2">
-              <div className="relative h-56 w-full overflow-hidden">
-                <div className="absolute inset-0 bg-brand-primary/40 group-hover:bg-brand-primary/20 transition-colors duration-500 z-10 mix-blend-multiply"></div>
-                <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
-                <div className="absolute top-5 left-5 z-20 w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white border border-white/30 shadow-lg">
-                  <item.icon size={24} strokeWidth={1.5} />
-                </div>
+            <div
+              key={index}
+              className="group flex flex-col md:flex-row items-start gap-4 h-full bg-white rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/60 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-brand-accent/30 cursor-pointer"
+            >
+              <div className="w-full md:w-44 h-44 md:h-full shrink-0 bg-gray-100">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
-              
-              <div className="p-8 flex flex-col flex-grow relative bg-white">
-                <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-brand-secondary/50 to-transparent -translate-y-px"></div>
-                <h3 className="font-heading font-bold text-2xl text-brand-primary mb-3 group-hover:text-brand-secondary transition-colors">
+
+              <div className="p-6 flex flex-col grow">
+                <div className="shrink-0 w-12 h-12 rounded-xl bg-brand-lime/15 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300 mb-3">
+                  <item.icon size={20} strokeWidth={2} />
+                </div>
+
+                <h3 className="font-semibold text-lg text-gray-900 tracking-tight mb-2 group-hover:text-brand-primary transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-brand-primary/60 leading-relaxed text-sm flex-grow mb-8 font-medium">
+
+                <p className="text-gray-600 leading-relaxed text-sm grow mb-4">
                   {item.description}
                 </p>
-                <Link href={item.link} className="mt-auto inline-flex items-center gap-2 text-brand-primary font-bold text-sm tracking-wide group/link w-fit relative overflow-hidden pb-1">
-                  <span className="relative z-10 group-hover/link:text-brand-secondary transition-colors">Pelajari Lebih Lanjut</span>
-                  <ChevronRight size={16} className="relative z-10 group-hover/link:text-brand-secondary group-hover/link:translate-x-1 transition-all" />
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-secondary group-hover/link:w-full transition-all duration-300"></span>
+
+                <Link href={item.link} className="mt-auto inline-flex items-center gap-1 text-brand-primary font-semibold text-xs tracking-wide group/link w-fit">
+                  <span className="group-hover/link:underline underline-offset-4">Pelajari Lebih Lanjut</span>
+                  <ChevronRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
           ))}
         </div>
+
+        {/* --- MOBILE VIEW (CAROUSEL) --- */}
+        <div className="md:hidden relative">
+          <div 
+            ref={scrollRef}
+            onScroll={handleScroll}
+            onTouchStart={() => setIsInteracting(true)}
+            onTouchEnd={() => setIsInteracting(false)}
+            onMouseEnter={() => setIsInteracting(true)}
+            onMouseLeave={() => setIsInteracting(false)}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 -mx-4 px-4 hide-scrollbar"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {highlights.map((item, index) => (
+              <div 
+                key={index}
+                className="w-[85vw] max-w-[320px] shrink-0 snap-center flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/60"
+              >
+                <div className="w-full h-40 shrink-0 bg-gray-100 relative">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-gray-900/30 to-transparent pointer-events-none"></div>
+                </div>
+                
+                <div className="p-5 flex flex-col grow relative">
+                  <div className="absolute -top-7 right-5 w-12 h-12 rounded-xl bg-white shadow-md flex items-center justify-center text-brand-primary border border-brand-paper/50">
+                    <item.icon size={20} strokeWidth={2} />
+                  </div>
+                  
+                  <h3 className="font-semibold text-lg text-gray-900 tracking-tight mb-2 pr-12">
+                    {item.title}
+                  </h3>
+                  
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-2">
+                    {item.description}
+                  </p>
+                  
+                  <Link href={item.link} className="mt-auto inline-flex items-center gap-1 text-brand-primary font-semibold text-xs tracking-wide">
+                    <span>Pelajari Lebih Lanjut</span>
+                    <ChevronRight size={14} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Dots Indicator */}
+          <div className="flex justify-center items-center gap-2 mt-2">
+            {highlights.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeIndex === index 
+                    ? "w-6 bg-brand-primary" 
+                    : "w-1.5 bg-brand-primary/20"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { Mail, Search, Lock } from 'lucide-react';
+import { Mail, Search, Lock, BookOpen, Quote, ArrowRight, User } from 'lucide-react';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { PremiumButton } from '@/components/ui/PremiumButton';
 import { Card } from '@/components/ui/Card';
@@ -94,6 +94,72 @@ export default function DesignSystemPage() {
               </p>
             </Card>
           </div>
+
+          <Card variant="outline">
+            <h3 className="text-xl font-bold mb-2 text-brand-primary">Outline Card</h3>
+            <p className="opacity-80">
+              Transparent background with a colored border. Useful for secondary information or selectable options.
+            </p>
+          </Card>
+
+          <Card variant="primary">
+            <h3 className="text-xl font-bold mb-2">Primary Card</h3>
+            <p className="opacity-90">
+              Uses the brand's primary color. Excellent for highlighting important stats, banners, or call-to-actions.
+            </p>
+          </Card>
+
+          <Card variant="default" interactive>
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="text-xl font-bold text-brand-primary">Interactive Card</h3>
+              <div className="w-8 h-8 rounded-full bg-brand-accent/20 flex items-center justify-center">
+                <ArrowRight size={16} className="text-brand-primary" />
+              </div>
+            </div>
+            <p className="opacity-80 mb-4">
+              Hover over this card. It elevates and shows a deeper shadow, indicating it is clickable.
+            </p>
+          </Card>
+        </div>
+
+        <h3 className="text-2xl font-heading font-bold mt-16 mb-6 border-b border-brand-paper pb-2">Card Compositions</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          {/* Feature Card Example */}
+          <Card variant="default" interactive className="group flex items-start gap-4">
+            <div className="shrink-0 w-10 h-10 rounded-lg bg-brand-lime/15 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
+              <BookOpen size={18} />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold mb-1 tracking-tight text-gray-900 group-hover:text-brand-primary transition-colors">Feature Card</h3>
+              <p className="text-sm opacity-70 mb-3 line-clamp-2 leading-relaxed">
+                A modern layout combining an icon, title, and description. This pattern is widely used in feature grids and service offerings to present concise, readable information.
+              </p>
+              <div className="flex items-center text-xs font-semibold text-brand-primary">
+                Pelajari Lebih Lanjut <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </Card>
+
+          {/* Testimonial / Profile Card Example */}
+          <Card variant="default" className="flex items-start gap-4">
+            <div className="shrink-0 w-10 h-10 rounded-full bg-brand-paper/80 flex items-center justify-center overflow-hidden">
+              <User size={18} className="text-brand-primary/60" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm opacity-80 italic leading-relaxed mb-3 text-gray-700">
+                "Desain yang bersih dan modern ini mencerminkan nilai-nilai pesantren yang progresif namun tetap mempertahankan identitas keislaman."
+              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-semibold tracking-tight text-gray-900">Profile Card</h4>
+                  <p className="text-xs opacity-60">Alumni Al-Rahmah</p>
+                </div>
+                <Quote size={16} className="text-brand-accent/30" />
+              </div>
+            </div>
+          </Card>
+
         </div>
       </section>
 

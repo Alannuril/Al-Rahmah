@@ -36,7 +36,16 @@ export function Navbar() {
       ]
     },
     { name: "Pendidikan", href: "/pendidikan" },
-    { name: "Kehidupan Santri", href: "/santri" },
+    { 
+      name: "Media & Prestasi", 
+      href: "/media",
+      subLinks: [
+        { name: "Berita", href: "/media/berita" },
+        { name: "Kejuaraan", href: "/media/kejuaraan" },
+        { name: "Kegiatan", href: "/media/kegiatan" },
+        { name: "Dokumentasi", href: "/media/dokumentasi" }
+      ]
+    },
     { name: "PSB", href: "/psb" },
   ];
 
