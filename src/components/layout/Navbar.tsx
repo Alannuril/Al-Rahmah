@@ -10,6 +10,7 @@ import clsx from "clsx";
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
   const pathname = usePathname();
 
   const isHomePage = pathname === "/";
@@ -148,33 +149,60 @@ export function Navbar() {
         <div className="p-5 flex flex-col gap-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href || (link.subLinks && link.href !== "/" && pathname.startsWith(link.href));
+            const isSubMenuOpen = openSubMenus[link.name];
+            
             return (
               <div key={link.name} className="flex flex-col">
-                <Link 
-                  href={link.href}
-                  className={clsx(
-                    "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center",
-                    isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
+                {link.subLinks ? (
+                  <button
+                    className={clsx(
+                      "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center w-full text-left",
+                      isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
+                    )}
+                    onClick={() => {
+                      setOpenSubMenus(prev => ({ ...prev, [link.name]: !prev[link.name] }))
+                    }}
+                  >
+                    {link.name}
+                    <ChevronDown 
+                      size={18} 
+                      className={clsx("transition-transform duration-300", isSubMenuOpen ? "rotate-180" : "")} 
+                    />
+                  </button>
+                ) : (
+                  <Link 
+                    href={link.href}
+                    className={clsx(
+                      "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center",
+                      isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                )}
                 {link.subLinks && (
-                  <div className="flex flex-col px-4 pb-2 pt-1 gap-1 ml-4 border-l-2 border-brand-primary/10">
-                    {link.subLinks.map(subLink => (
-                      <Link 
-                        key={subLink.name}
-                        href={subLink.href}
-                        className={clsx(
-                          "py-2 px-3 text-sm rounded-lg transition-colors",
-                          pathname === subLink.href ? "text-brand-secondary bg-brand-primary/5 font-semibold" : "text-brand-primary/70 hover:text-brand-primary hover:bg-brand-primary/5 font-medium"
-                        )}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {subLink.name}
-                      </Link>
-                    ))}
+                  <div className={clsx(
+                    "grid transition-all duration-300 ease-in-out",
+                    isSubMenuOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  )}>
+                    <div className="overflow-hidden">
+                      <div className="flex flex-col px-4 pb-2 pt-1 gap-1 ml-4 border-l-2 border-brand-primary/10">
+                        {link.subLinks.map(subLink => (
+                          <Link 
+                            key={subLink.name}
+                            href={subLink.href}
+                            className={clsx(
+                              "py-2 px-3 text-sm rounded-lg transition-colors",
+                              pathname === subLink.href ? "text-brand-secondary bg-brand-primary/5 font-semibold" : "text-brand-primary/70 hover:text-brand-primary hover:bg-brand-primary/5 font-medium"
+                            )}
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {subLink.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
