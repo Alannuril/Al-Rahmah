@@ -96,7 +96,7 @@ export function HeroSection() {
         ))}
       </div>
 
-      <div className="container relative z-30 mx-auto px-4 md:px-6 lg:px-8 pt-16 pb-20 lg:pt-0 lg:pb-0 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+      <div className="container relative z-30 mx-auto px-4 md:px-6 lg:px-8 pt-24 pb-20 lg:pt-36 lg:pb-0 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center lg:items-start min-h-screen">
         {/* Left Column - Content */}
         <div className="flex flex-col items-start text-left order-2 lg:order-1">
           <h1 className="font-heading text-4xl md:text-6xl lg:text-6xl font-bold text-white leading-[1.1] mb-6 md:mb-10 max-w-5xl text-shadow-lg">
@@ -104,22 +104,23 @@ export function HeroSection() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-lime to-brand-soft-glow">Qurani, Berakhlak,</span> dan Berprestasi
           </h1>
 
-          <p className="text-base md:text-lg text-white/80 max-w-2xl mb-8 md:mb-12 leading-relaxed font-light drop-shadow-md">
+          <p className="text-sm md:text-base text-white/80 max-w-2xl mb-10 leading-relaxed font-light drop-shadow-md">
             Pondok Pesantren Al-Rahmah Walantaka mengintegrasikan pendidikan agama, pendidikan formal berkualitas tinggi, dan pembinaan karakter di lingkungan asrama yang modern.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center justify-start w-full sm:w-auto">
-            <PremiumButton href="/psb" variant="primary" icon className="w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-base sm:text-lg">
+          {/* Buttons: visible on mobile only (inline flow) */}
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 items-start sm:items-center justify-start w-full sm:w-auto lg:hidden">
+            <PremiumButton href="/psb" variant="primary" icon className="w-full sm:w-auto px-8 sm:px-9 py-3.5 sm:py-4 text-base font-semibold">
               Daftar Sekarang
             </PremiumButton>
-            <PremiumButton href="/profil" variant="white" className="w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-base sm:text-lg bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md">
+            <PremiumButton href="/profil" variant="white" className="w-full sm:w-auto px-8 sm:px-9 py-3.5 sm:py-4 text-base font-semibold bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md">
               Lihat Profil
             </PremiumButton>
           </div>
         </div>
 
         {/* Right Column - Image */}
-        <div className="flex justify-center lg:justify-end items-center relative h-full mt-0 lg:mt-16 order-1 lg:order-2">
+        <div className="flex justify-center lg:justify-end items-center relative h-full mt-0 order-1 lg:order-2 lg:self-center lg:-mt-24">
           {/* Glow backdrop */}
           <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 via-transparent to-brand-lime/10 rounded-3xl blur-2xl pointer-events-none z-0" />
 
@@ -132,6 +133,20 @@ export function HeroSection() {
               className="object-contain object-center drop-shadow-2xl"
               priority
             />
+          </div>
+        </div>
+      </div>
+
+      {/* Buttons: desktop only, anchored to bottom-left — always visible */}
+      <div className="absolute bottom-14 left-0 right-0 z-30 hidden lg:block">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8">
+          <div className="flex flex-row gap-5 items-center">
+            <PremiumButton href="/psb" variant="primary" icon className="px-8 sm:px-9 py-3.5 sm:py-4 text-base font-semibold">
+              Daftar Sekarang
+            </PremiumButton>
+            <PremiumButton href="/profil" variant="white" className="px-8 sm:px-9 py-3.5 sm:py-4 text-base font-semibold bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md">
+              Lihat Profil
+            </PremiumButton>
           </div>
         </div>
       </div>

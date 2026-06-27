@@ -10,11 +10,11 @@ const highlights = [
     title: "MA Al-Rahmah",
     description: "Madrasah Aliyah dengan kurikulum terpadu nasional dan kepesantrenan.",
     icon: BookOpen,
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2070&auto=format&fit=crop",
     link: "/pendidikan"
   },
   {
-    title: "Asrama Premium",
+    title: "Asrama",
     description: "Fasilitas asrama modern yang nyaman dengan pembinaan 24 jam.",
     icon: Home,
     image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069&auto=format&fit=crop",
@@ -90,12 +90,13 @@ export function HighlightSection() {
               key={index}
               className="group flex flex-col md:flex-row items-start gap-4 h-full bg-white rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/60 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-brand-accent/30 cursor-pointer"
             >
-              <div className="w-full md:w-44 h-44 md:h-full shrink-0 bg-gray-100">
+              <div className="w-full md:w-44 h-44 md:h-full shrink-0 bg-gray-100 relative overflow-hidden">
                 <img
                   src={item.image}
                   alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-linear-to-t from-brand-lime/40 to-transparent pointer-events-none"></div>
               </div>
 
               <div className="p-6 flex flex-col grow">
@@ -137,13 +138,13 @@ export function HighlightSection() {
                 key={index}
                 className="w-[85vw] max-w-[320px] shrink-0 snap-center flex flex-col bg-white rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/60"
               >
-                <div className="w-full h-40 shrink-0 bg-gray-100 relative">
+                <div className="w-full h-40 shrink-0 bg-gray-100 relative overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-gray-900/30 to-transparent pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-linear-to-t from-brand-lime/40 to-transparent pointer-events-none"></div>
                 </div>
                 
                 <div className="p-5 flex flex-col grow relative">
