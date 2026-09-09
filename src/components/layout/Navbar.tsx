@@ -15,10 +15,11 @@ export function Navbar() {
 
   const isHomePage = pathname === "/";
   const isNavSolid = isScrolled || !isHomePage;
+  const showCta = isScrolled || !isHomePage;
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -56,8 +57,8 @@ export function Navbar() {
       isNavSolid ? "glass-card py-4" : "bg-transparent py-6"
     )}>
       <div className="container mx-auto px-4 md:px-6 lg:px-8 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          {/* Logo */}
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white group-hover:scale-105 transition-transform shadow-lg shadow-brand-primary/20 border-2 border-white/20">
             <Image
               src="/images/logoAl-rahmah.jpeg"
@@ -78,8 +79,8 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8">
+        {/* Desktop Nav - Centered in remaining space */}
+        <nav className="hidden lg:flex items-center justify-center gap-10 xl:gap-11 flex-1 transition-all duration-300">
           {navLinks.map((link) => {
             const isActive = pathname === link.href || (link.subLinks && link.href !== "/" && pathname.startsWith(link.href));
             return (
@@ -122,9 +123,17 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* CTA Button */}
-        <div className="hidden lg:block">
-          <Link href="/psb" className="bg-brand-primary hover:bg-brand-secondary text-white font-bold text-sm tracking-wide px-7 py-3 rounded-full shadow-lg shadow-brand-primary/25 transition-all duration-300 hover:-translate-y-0.5 inline-block">
+        {/* CTA Button Wrapper - Expands when scrolled, collapses when at hero */}
+        <div className={clsx(
+          "hidden lg:flex items-center justify-end shrink-0 transition-all duration-300 py-1",
+          showCta
+            ? "w-48 opacity-100 translate-x-0 overflow-visible"
+            : "w-0 opacity-0 translate-x-4 overflow-hidden pointer-events-none"
+        )}>
+          <Link 
+            href="/psb" 
+            className="bg-brand-primary hover:bg-brand-secondary text-white font-bold text-sm tracking-wide px-7 py-3 rounded-full shadow-lg shadow-brand-primary/25 transition-all duration-300 hover:-translate-y-0.5 whitespace-nowrap inline-block"
+          >
             Daftar Sekarang
           </Link>
         </div>
