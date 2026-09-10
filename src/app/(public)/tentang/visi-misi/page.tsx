@@ -36,7 +36,7 @@ export default function VisiMisiPage() {
                 Visi Kami
               </div>
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-6 leading-tight">
-                "Menjadi Lembaga Pendidikan Islam Terdepan dalam Membentuk Generasi Qurani, Berakhlak Mulia, dan Berprestasi"
+                &quot;Terwujudnya Lembaga Pendidikan Islam dan Berkarakter, yang Kompetitif dan Berhidmat Kepada Lapisan Masyarakat&quot;
               </h2>
             </div>
           </div>
@@ -48,22 +48,22 @@ export default function VisiMisiPage() {
               Misi Kami
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
                   icon: <BookOpen size={32} />,
-                  title: "Pendidikan Al-Quran",
-                  desc: "Menyelenggarakan pendidikan Al-Quran secara komprehensif, mulai dari tahsin, tahfidz, hingga tafsir."
-                },
-                {
-                  icon: <Heart size={32} />,
-                  title: "Pembentukan Karakter",
-                  desc: "Membentuk karakter santri yang berakhlakul karimah berlandaskan nilai-nilai ajaran Islam Ahlussunnah wal Jama'ah."
+                  title: "Generasi Beriman & Berilmu",
+                  desc: "Membentuk generasi Islam yang beriman, berilmu, bermoral, bermental, berjiwa tinggi, dan bermanfaat bagi umat."
                 },
                 {
                   icon: <Award size={32} />,
-                  title: "Keunggulan Akademik",
-                  desc: "Menyelenggarakan pendidikan formal yang berkualitas unggul untuk membekali santri menghadapi tantangan global."
+                  title: "Kader Peradaban Islam",
+                  desc: "Membentuk kader umat yang berkarakter dan berperadaban Islam."
+                },
+                {
+                  icon: <Heart size={32} />,
+                  title: "Pendidikan Dhuafa & Yatama",
+                  desc: "Memenuhi kebutuhan pendidikan bagi kaum dhuafa dan yatama (anak yatim)."
                 }
               ].map((misi, i) => (
                 <div key={i} className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:-translate-y-1 transition-transform duration-300 h-full">

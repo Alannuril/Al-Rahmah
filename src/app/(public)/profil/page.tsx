@@ -14,16 +14,15 @@ export default function ProfilPage() {
           <div className="glass-card p-6 md:p-8 rounded-3xl shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/50">
             <h3 className="font-heading text-2xl font-bold text-brand-primary mb-4 tracking-tight">Visi</h3>
             <p className="text-brand-primary/80 leading-relaxed text-base font-medium">
-              "Menjadi lembaga pendidikan unggul yang mencetak generasi Qurani, berakhlak mulia, berwawasan global, dan memiliki jiwa kepemimpinan untuk kemaslahatan umat."
+              &quot;Terwujudnya Lembaga Pendidikan Islam dan Berkarakter, yang Kompetitif dan Berhidmat Kepada Lapisan Masyarakat&quot;
             </p>
           </div>
           <div className="glass-card p-6 md:p-8 rounded-3xl shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/50">
             <h3 className="font-heading text-2xl font-bold text-brand-primary mb-4 tracking-tight">Misi</h3>
             <ul className="text-brand-primary/80 leading-relaxed space-y-3 list-disc list-inside text-base font-medium">
-              <li>Menyelenggarakan pendidikan tahfidz berkualitas.</li>
-              <li>Memadukan kurikulum pesantren dan pendidikan nasional.</li>
-              <li>Membangun karakter melalui disiplin asrama penuh waktu.</li>
-              <li>Mengembangkan kecakapan hidup dan teknologi santri.</li>
+              <li>Membentuk generasi Islam yang beriman, berilmu, bermoral, bermental, berjiwa tinggi, dan bermanfaat bagi umat.</li>
+              <li>Membentuk kader umat yang berkarakter dan berperadaban Islam.</li>
+              <li>Memenuhi kebutuhan pendidikan bagi kaum dhuafa dan yatama (anak yatim).</li>
             </ul>
           </div>
         </div>

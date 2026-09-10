@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Lock, Mail, ArrowRight, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -13,21 +14,25 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    // Simulate authentication with specific credentials
-    setTimeout(() => {
-      if (email === "alrahmah@gmail.com" && password === "alrahmah123") {
-        localStorage.setItem("alrahmah_admin_logged_in", "true");
-        router.push("/admin");
-      } else {
-        setLoading(false);
-        setError("Email atau kata sandi salah.");
-      }
-    }, 1200);
+    const supabase = createClient();
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setLoading(false);
+      setError("Email atau kata sandi salah.");
+      return;
+    }
+
+    router.push("/admin");
+    router.refresh();
   };
 
   return (

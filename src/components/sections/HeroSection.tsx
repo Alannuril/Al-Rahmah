@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 const BACKGROUND_IMAGES = [
   { 
-    src: "/images/bgHero-enhanced.jpg", 
+    src: "/images/gedung1.jpeg", 
     position: "center 40%" 
   },
   { 
@@ -15,7 +15,7 @@ const BACKGROUND_IMAGES = [
     position: "center 30%" 
   },
   { 
-    src: "/images/gedung1.jpeg", 
+    src: "/images/bgHero-enhanced.jpg", 
     position: "center 40%" 
   },
 ];
@@ -40,7 +40,7 @@ export function HeroSection() {
     if (isPaused) return;
     const timer = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 4000);
 
     return () => clearInterval(timer);
   }, [currentImageIndex, isPaused]);
