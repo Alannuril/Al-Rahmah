@@ -70,11 +70,13 @@ export function HeroSection() {
       </div>
 
       {/* Main Content Container */}
-      <div className="container relative z-20 mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 lg:pt-36 lg:pb-16 min-h-screen flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center w-full">
+      <div className="w-full max-w-[1300px] relative z-20 mx-auto px-4 sm:px-6 lg:px-7 pt-24 pb-16 min-h-screen flex items-center justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
           
-          {/* Left Column: Heading, Description, & Single CTA */}
-          <div className="flex flex-col items-start text-left order-2 lg:order-1">
+          {/* Left Column (Desktop) / Bottom (Mobile): Text & CTA Button centered together */}
+          <div className="flex flex-col items-start text-left order-2 lg:order-1 max-w-xl">
+            
+            {/* Heading & Description */}
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight mb-4 drop-shadow-md">
               Membentuk Generasi{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400">
@@ -86,28 +88,30 @@ export function HeroSection() {
               Pendidikan Islam terpadu dan pembinaan karakter santri berasrama modern.
             </p>
 
+            {/* CTA Button */}
             <Link
               href="/psb"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm sm:text-base font-semibold rounded-full bg-brand-lime hover:bg-brand-accent text-brand-primary shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 group"
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 text-sm sm:text-[15px] font-semibold rounded-full bg-brand-lime hover:bg-brand-accent text-brand-primary shadow-md shadow-black/15 hover:-translate-y-0.5 transition-all duration-300 group"
             >
               <span>Daftar Sekarang</span>
-              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
             </Link>
+
           </div>
 
-          {/* Right Column: Two Students Reading (Oval Design) */}
+          {/* Right Column (Desktop) / Top (Mobile): Two Students Reading - Oval Design */}
           <div className="flex justify-center lg:justify-end items-center relative order-1 lg:order-2">
             {/* Ambient Soft Glow */}
             <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 via-brand-lime/10 to-transparent rounded-full blur-3xl pointer-events-none scale-90" />
 
-            {/* Oval Image Container */}
-            <div className="relative w-full max-w-[320px] sm:max-w-[400px] lg:max-w-[460px] aspect-[1602/1362] transition-transform duration-500 hover:scale-[1.02]">
+            {/* Oval Image Container - Proportional & Clean */}
+            <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[380px] xl:max-w-[420px] aspect-[1602/1362] transition-transform duration-500 hover:scale-[1.02]">
               <Image
                 src="/images/model-gradien.png"
                 alt="Santriwati Pondok Pesantren Al-Rahmah sedang membaca buku"
                 fill
-                sizes="(max-width: 640px) 320px, (max-width: 1024px) 400px, 460px"
-                className="object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.35)]"
+                sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, 420px"
+                className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.3)]"
                 priority
               />
             </div>
@@ -134,4 +138,3 @@ export function HeroSection() {
     </section>
   );
 }
-

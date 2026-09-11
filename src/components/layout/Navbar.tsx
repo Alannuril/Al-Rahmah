@@ -56,7 +56,7 @@ export function Navbar() {
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
       isNavSolid ? "glass-card py-4" : "bg-transparent py-6"
     )}>
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 flex items-center justify-between">
+      <div className="w-full max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-7 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="relative w-12 h-12 rounded-full overflow-hidden bg-white group-hover:scale-105 transition-transform shadow-lg shadow-brand-primary/20 border-2 border-white/20">
