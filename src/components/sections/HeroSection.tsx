@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const BACKGROUND_IMAGES = [
   { 
@@ -26,10 +26,6 @@ export function HeroSection() {
 
   const nextSlide = () => {
     setCurrentImageIndex((prev) => (prev + 1) % BACKGROUND_IMAGES.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + BACKGROUND_IMAGES.length) % BACKGROUND_IMAGES.length);
   };
 
   const setSlide = (index: number) => {
@@ -68,61 +64,35 @@ export function HeroSection() {
           />
         ))}
 
-        {/* Clean Vignette Gradient - Brighter & Natural while preserving text clarity */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/55 z-10 pointer-events-none" />
+        {/* Clean Vignette Gradient - Natural & Airy while preserving text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/50 z-10 pointer-events-none" />
       </div>
-
-      {/* Side Slide Navigation (Visible on hover, unobtrusive) */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/20 hover:bg-black/50 text-white/70 hover:text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer hidden sm:block"
-        aria-label="Slide sebelumnya"
-      >
-        <ChevronLeft size={24} />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/20 hover:bg-black/50 text-white/70 hover:text-white backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer hidden sm:block"
-        aria-label="Slide selanjutnya"
-      >
-        <ChevronRight size={24} />
-      </button>
 
       {/* Main Content Container */}
       <div className="container relative z-20 mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 lg:pt-36 lg:pb-16 min-h-screen flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center w-full">
           
-          {/* Left Column: Heading, Description, & CTAs */}
+          {/* Left Column: Heading, Description, & Single CTA */}
           <div className="flex flex-col items-start text-left order-2 lg:order-1">
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.12] tracking-tight mb-6 drop-shadow-md">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight mb-4 drop-shadow-md">
               Membentuk Generasi{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400">
-                Qurani, Berakhlak,
-              </span>{" "}
-              dan Berprestasi
+                Qurani &amp; Berprestasi
+              </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-white/90 max-w-xl leading-relaxed font-normal mb-8 sm:mb-10 drop-shadow-sm">
-              Pondok Pesantren Al-Rahmah Walantaka mengintegrasikan pendidikan agama, pendidikan formal berkualitas tinggi, dan pembinaan karakter di lingkungan asrama yang modern.
+            <p className="text-base sm:text-lg text-white/85 max-w-lg leading-relaxed font-normal mb-8 drop-shadow-sm">
+              Pendidikan Islam terpadu dan pembinaan karakter santri berasrama modern.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center w-full sm:w-auto">
-              <Link
-                href="/psb"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold rounded-full bg-brand-lime hover:bg-brand-accent text-brand-primary shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 group"
-              >
-                <span>Daftar Sekarang</span>
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </Link>
-
-              <Link
-                href="/profil"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-semibold rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md shadow-md hover:-translate-y-0.5 transition-all duration-300"
-              >
-                <span>Lihat Profil</span>
-              </Link>
-            </div>
+            <Link
+              href="/psb"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-sm sm:text-base font-semibold rounded-full bg-brand-lime hover:bg-brand-accent text-brand-primary shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 group"
+            >
+              <span>Daftar Sekarang</span>
+              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
 
           {/* Right Column: Two Students Reading (Oval Design) */}
