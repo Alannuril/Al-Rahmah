@@ -1,8 +1,9 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { AnnouncementBanner } from "@/components/sections/AnnouncementBanner";
 import { AlRahmahStats } from "@/components/sections/AlRahmahStats";
-import { HighlightSection } from "@/components/sections/HighlightSection";
+import { AboutSection } from "@/components/sections/AboutSection";
 import { NewsSection } from "@/components/sections/NewsSection";
+import { HighlightSection } from "@/components/sections/HighlightSection";
 import { GalleryFeed } from "@/components/sections/GalleryFeed";
 import { LocationMapSection } from "@/components/sections/LocationMapSection";
 
@@ -12,8 +13,9 @@ export default function Home() {
       <HeroSection />
       <AnnouncementBanner />
       <AlRahmahStats />
-      <HighlightSection />
+      <AboutSection />
       <NewsSection />
+      <HighlightSection />
       <GalleryFeed />
       <LocationMapSection />
     </div>

@@ -8,8 +8,10 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { PsbSettings, PsbOpenStatus } from "@/lib/supabase/types";
+import { useLoading } from "@/components/providers/LoadingProvider";
 
 export default function PsbPage() {
+  const { showLoading, hideLoading } = useLoading();
   const [settings, setSettings] = useState<Partial<PsbSettings>>({
     tahun_ajaran: "2026/2027",
     status: "Dibuka",
@@ -66,41 +68,53 @@ export default function PsbPage() {
 
     setSubmitting(true);
     setErrorMessage("");
+    showLoading(
+      "Mengirim Formulir Pendaftaran",
+      "Data sedang dicatat oleh sekretariat PSB Al-Rahmah..."
+    );
 
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("pendaftar_psb")
-      .insert({
-        nama_lengkap: form.nama_lengkap,
-        tempat_lahir: form.tempat_lahir || null,
-        tanggal_lahir: form.tanggal_lahir || null,
-        jenis_kelamin: form.jenis_kelamin,
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("pendaftar_psb")
+        .insert({
+          nama_lengkap: form.nama_lengkap,
+          tempat_lahir: form.tempat_lahir || null,
+          tanggal_lahir: form.tanggal_lahir || null,
+          jenis_kelamin: form.jenis_kelamin,
+          program: form.program,
+          nama_ayah: form.nama_ayah || null,
+          nama_ibu: form.nama_ibu || null,
+          no_hp: form.no_hp,
+          alamat: form.alamat || null,
+          asal_sekolah: form.asal_sekolah || null,
+          nisn: form.nisn || null,
+          status: "Menunggu",
+          tahun_ajaran: settings.tahun_ajaran || "2026/2027",
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        setSubmitting(false);
+        hideLoading();
+        setErrorMessage(error.message || "Terjadi kesalahan saat mengirim pendaftaran.");
+        return;
+      }
+
+      setSubmittedData({
+        id: data?.id || "-",
+        nama: form.nama_lengkap,
         program: form.program,
-        nama_ayah: form.nama_ayah || null,
-        nama_ibu: form.nama_ibu || null,
-        no_hp: form.no_hp,
-        alamat: form.alamat || null,
-        asal_sekolah: form.asal_sekolah || null,
-        nisn: form.nisn || null,
-        status: "Menunggu",
-        tahun_ajaran: settings.tahun_ajaran || "2026/2027",
-      })
-      .select("id")
-      .single();
-
-    if (error) {
+        tahun: settings.tahun_ajaran || "2026/2027",
+      });
       setSubmitting(false);
-      setErrorMessage(error.message || "Terjadi kesalahan saat mengirim pendaftaran.");
-      return;
+      hideLoading();
+    } catch {
+      setSubmitting(false);
+      hideLoading();
+      setErrorMessage("Terjadi kesalahan sistem saat mengirim pendaftaran.");
     }
-
-    setSubmittedData({
-      id: data?.id || "-",
-      nama: form.nama_lengkap,
-      program: form.program,
-      tahun: settings.tahun_ajaran || "2026/2027",
-    });
-    setSubmitting(false);
   };
 
   const isBuka = settings.status === "Dibuka";
@@ -113,7 +127,6 @@ export default function PsbPage() {
           subtitle={`Tahun Ajaran ${settings.tahun_ajaran || "2026/2027"} ${
             isBuka ? "resmi dibuka. Kuota kelas unggulan terbatas!" : "saat ini belum dibuka."
           }`}
-          badge="Admissions"
           centered
         />
 

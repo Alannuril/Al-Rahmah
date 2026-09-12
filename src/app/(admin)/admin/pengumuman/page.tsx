@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, Pin, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Pengumuman } from "@/lib/supabase/types";
+import { AlRahmahLoader } from "@/components/ui/AlRahmahLoader";
 
 const anim = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
 
@@ -104,7 +105,13 @@ export default function PengumumanPage() {
 
       <div className="space-y-3">
         {loading ? (
-          [1,2,3].map((i) => <div key={i} className="h-16 bg-white rounded-2xl border border-gray-100 animate-pulse" />)
+          <div className="bg-white rounded-2xl border border-gray-100 p-10">
+            <AlRahmahLoader
+              size="md"
+              label="Memuat Data Pengumuman..."
+              sublabel="Menghubungkan ke sistem..."
+            />
+          </div>
         ) : list.length === 0 ? (
           <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center text-sm text-gray-400">
             Belum ada pengumuman. Klik &quot;Tambah Pengumuman&quot; untuk membuat.

@@ -1,4 +1,5 @@
 import { History, Clock } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export const metadata = {
   title: "Sejarah - Al-Rahmah",
@@ -7,68 +8,73 @@ export const metadata = {
 
 export default function SejarahPage() {
   return (
-    <div className="flex flex-col w-full min-h-screen pt-24 bg-gray-50">
-      {/* Banner */}
-      <section className="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden bg-brand-primary">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-primary to-brand-primary/80 z-10"></div>
-        <div className="relative z-20 text-center px-4">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">
-            Sejarah Al-Rahmah
-          </h1>
-          <p className="text-white/90 text-lg max-w-2xl mx-auto">
-            Jejak langkah perjuangan dalam menegakkan pendidikan Islam
-          </p>
-        </div>
-      </section>
+    <div className="pt-28 sm:pt-32 pb-20 sm:pb-24 min-h-screen bg-surface/40">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <SectionHeading
+          title="Sejarah Al-Rahmah"
+          subtitle="Jejak langkah perjuangan dan dedikasi dalam menegakkan pendidikan Islam terpadu sejak 2005."
+          centered
+        />
 
-      {/* Content */}
-      <section className="py-16 md:py-24 container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 mb-12">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-brand-secondary/10 flex items-center justify-center text-brand-secondary">
-                <History size={32} />
+        {/* Content */}
+        <div className="mt-10 sm:mt-14 max-w-4xl mx-auto space-y-10">
+          {/* Awal Mula Berdiri */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-xs">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-2xl bg-brand-secondary/10 text-brand-secondary flex items-center justify-center">
+                <History size={20} strokeWidth={1.8} />
               </div>
-              <h2 className="text-3xl font-heading font-bold text-gray-900">Awal Mula Berdiri</h2>
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-zinc-900 tracking-tight">
+                Awal Mula Berdiri
+              </h2>
             </div>
-            
-            <div className="prose prose-lg text-gray-600 max-w-none space-y-6 leading-relaxed">
+
+            <div className="space-y-4 text-xs sm:text-sm text-zinc-600 leading-relaxed">
               <p>
-                Pondok Pesantren Al-Rahmah Walantaka bermula dari sebuah cita-cita mulia untuk 
-                membangun peradaban Islam melalui jalur pendidikan. Didirikan dengan landasan 
-                keikhlasan dan tekad yang kuat, pesantren ini berawal dari sebuah majelis taklim kecil.
+                Pondok Pesantren Al-Rahmah Walantaka bermula dari cita-cita mulia untuk 
+                membangun generasi Islam yang cerdas dan berkarakter. Didirikan dengan landasan 
+                keikhlasan dan tekad yang kuat, berdiri di atas dan untuk semua golongan, 
+                berpedoman pada Al-Qur&apos;an dan Hadits sebagai perekat persatuan umat.
               </p>
               <p>
-                Seiring berjalannya waktu dan tingginya antusiasme masyarakat sekitar terhadap 
-                pendidikan agama yang terstruktur, majelis ini berkembang menjadi sebuah lembaga 
-                pendidikan pondok pesantren yang mengintegrasikan sistem pendidikan salaf dan modern.
+                Seiring waktu dan tingginya kepercayaan kaum muslimin, Al-Rahmah terus bertumbuh 
+                menjadi institusi pendidikan Islam yang berdedikasi mencetak generasi rahmatan lil &apos;alamin, 
+                serta senantiasa membuka pintu dan merangkul para anak yatim dan kaum dhuafa.
               </p>
             </div>
           </div>
 
-          {/* Timeline */}
-          <div className="relative border-l-4 border-brand-primary/20 ml-6 md:ml-12 space-y-12 pb-8">
-            {[
-              { year: "20XX", title: "Peletakan Batu Pertama", desc: "Pembangunan infrastruktur awal pesantren dimulai dengan dukungan penuh dari masyarakat sekitar dan para muhsinin." },
-              { year: "20XX", title: "Peresmian Pondok Pesantren", desc: "Pondok Pesantren Al-Rahmah secara resmi dibuka dan mulai menerima santri angkatan pertama." },
-              { year: "20XX", title: "Pendirian Lembaga Formal", desc: "Merespon kebutuhan pendidikan formal, didirikanlah unit sekolah dari tingkat menengah hingga atas di dalam lingkungan pesantren." },
-              { year: "Sekarang", title: "Perkembangan Pesat", desc: "Kini Al-Rahmah telah menjadi salah satu pondok pesantren rujukan di wilayah Banten dengan fasilitas yang lengkap dan modern." },
-            ].map((item, i) => (
-              <div key={i} className="relative pl-8 md:pl-12">
-                <div className="absolute -left-[18px] top-1 w-8 h-8 rounded-full bg-brand-primary border-4 border-white shadow-md"></div>
-                <div className="inline-flex items-center gap-2 text-brand-secondary font-bold text-sm mb-2 bg-brand-secondary/10 px-3 py-1 rounded-full">
-                  <Clock size={14} />
-                  {item.year}
+          {/* Timeline Ringkas & Minimalis */}
+          <div className="space-y-4">
+            <h3 className="text-base font-heading font-bold text-zinc-900 px-1 tracking-tight">
+              Milestone Perjalanan
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { year: "2005", title: "Awal Berdirinya Pesantren", desc: "Pembangunan infrastruktur awal pesantren dimulai atas dukungan para muhsinin dan masyarakat sekitar." },
+                { year: "2008", title: "Peresmian & Angkatan Pertama", desc: "Al-Rahmah resmi beroperasi dan mulai menyambut santri-santri angkatan pertama untuk menuntut ilmu." },
+                { year: "2012", title: "Penguatan Jenjang Formal", desc: "Pendirian unit Madrasah Tsanawiyah dan Madrasah Aliyah berakreditasi resmi di lingkungan pondok pesantren." },
+                { year: "Sekarang", title: "Pengembangan Berkelanjutan", desc: "Menjadi pesantren rujukan di Banten dengan ribuan alumni yang berkontribusi bagi nusa dan bangsa." },
+              ].map((item, i) => (
+                <div key={i} className="bg-white p-5 sm:p-6 rounded-3xl shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 text-brand-secondary font-bold text-xs mb-2 bg-brand-secondary/10 px-2.5 py-1 rounded-full w-fit">
+                      <Clock size={12} />
+                      <span>{item.year}</span>
+                    </div>
+                    <h4 className="text-sm sm:text-base font-bold text-zinc-900 mb-1.5 tracking-tight">
+                      {item.title}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Plus, Search, Edit2, Trash2, Eye, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Berita } from "@/lib/supabase/types";
+import { AlRahmahLoader } from "@/components/ui/AlRahmahLoader";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
@@ -102,15 +103,15 @@ export default function KelolaBeritaPage() {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {loading ? (
-              [1,2,3].map((i) => (
-                <tr key={i}>
-                  <td className="px-6 py-4"><div className="h-4 bg-gray-100 animate-pulse rounded w-3/4" /></td>
-                  <td className="px-4 py-4"><div className="h-4 bg-gray-100 animate-pulse rounded w-16" /></td>
-                  <td className="px-4 py-4"><div className="h-4 bg-gray-100 animate-pulse rounded w-20" /></td>
-                  <td className="px-4 py-4"><div className="h-4 bg-gray-100 animate-pulse rounded w-14" /></td>
-                  <td className="px-6 py-4" />
-                </tr>
-              ))
+              <tr>
+                <td colSpan={5} className="py-12">
+                  <AlRahmahLoader
+                    size="md"
+                    label="Memuat Data Berita..."
+                    sublabel="Menghubungkan ke database Al-Rahmah..."
+                  />
+                </td>
+              </tr>
             ) : filtered.length === 0 ? (
               <tr><td colSpan={5} className="text-center py-12 text-sm text-gray-400">Belum ada berita. Klik &quot;Tambah Berita&quot; untuk mulai.</td></tr>
             ) : (

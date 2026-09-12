@@ -60,7 +60,6 @@ Terima kasih.`;
         <SectionHeading
           title="Hubungi Kami"
           subtitle="Kami siap membantu Anda. Silakan hubungi kami untuk informasi lebih lanjut mengenai pendaftaran atau merencanakan kunjungan langsung."
-          badge="Kontak Official"
           centered
         />
 
@@ -142,7 +141,7 @@ Terima kasih.`;
                   </div>
                   <div>
                     <h4 className="font-bold text-brand-lime text-xs mb-1.5 uppercase tracking-widest">
-                      Alamat Kampus
+                      Alamat Pondok Pesantren
                     </h4>
                     <p className="text-white/80 leading-relaxed font-medium text-sm">
                       {setting.alamat}

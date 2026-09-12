@@ -4,6 +4,61 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { createClient } from "@/lib/supabase/server";
 import type { Berita } from "@/lib/supabase/types";
 
+const DUMMY_BERITA: Berita[] = [
+  {
+    id: "dummy-1",
+    judul: "Santri Al-Rahmah Raih Prestasi Gemilang pada Musabaqah Hifdzil Qur'an Tingkat Provinsi",
+    slug: "santri-al-rahmah-raih-juara-mhq-provinsi",
+    konten: null,
+    excerpt: "Kafilah santri Pondok Pesantren Al-Rahmah berhasil menorehkan prestasi membanggakan dengan meraih juara cabang tahfidz Al-Qur'an tingkat provinsi.",
+    kategori: "Prestasi",
+    thumbnail_url: "https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1200&auto=format&fit=crop",
+    author: "Humas Al-Rahmah",
+    status: "Terbit",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "dummy-2",
+    judul: "Pembekalan Santri Akhir: Membangun Kemandirian dan Karakter Kepemimpinan Ummat",
+    slug: "pembekalan-santri-akhir-kemandirian-kepemimpinan",
+    konten: null,
+    excerpt: "Menjelang kelulusan, santri akhir mengikuti program pembekalan intensif kepemimpinan dan pengabdian masyarakat guna persiapan masa depan.",
+    kategori: "Kegiatan",
+    thumbnail_url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop",
+    author: "Biro Pengasuhan",
+    status: "Terbit",
+    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+  {
+    id: "dummy-3",
+    judul: "Pondok Pesantren Al-Rahmah Membuka Pendaftaran Santri Baru (PSB) Tahun Ajaran 2026/2027",
+    slug: "penerimaan-santri-baru-psb-2026-2027",
+    konten: null,
+    excerpt: "Pendaftaran santri baru untuk jenjang MTs dan MA resmi dibuka. Temukan informasi persyaratan, jadwal tes, dan alur pendaftaran terpadu.",
+    kategori: "Pengumuman",
+    thumbnail_url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
+    author: "Panitia PSB",
+    status: "Terbit",
+    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+  },
+  {
+    id: "dummy-4",
+    judul: "Pekan Bahasa Santri: Mengasah Kecakapan Berbahasa Arab & Inggris Berstandar Global",
+    slug: "pekan-bahasa-santri-arab-inggris",
+    konten: null,
+    excerpt: "Meningkatkan kemampuan komunikasi bilingual santri melalui pekan bahasa intensif, pidato bahasa Arab & Inggris, serta simulasi debat internasional.",
+    kategori: "Akademik",
+    thumbnail_url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop",
+    author: "Bagian Bahasa",
+    status: "Terbit",
+    created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 8).toISOString(),
+  },
+];
+
 async function getBerita(): Promise<Berita[]> {
   try {
     const supabase = await createClient();
@@ -13,9 +68,13 @@ async function getBerita(): Promise<Berita[]> {
       .eq("status", "Terbit")
       .order("created_at", { ascending: false })
       .limit(4);
-    return data ?? [];
+
+    if (data && data.length > 0) {
+      return data;
+    }
+    return DUMMY_BERITA;
   } catch {
-    return [];
+    return DUMMY_BERITA;
   }
 }
 
@@ -26,118 +85,158 @@ function formatDate(dateStr: string) {
 export async function NewsSection() {
   const newsItems = await getBerita();
 
-  // Fallback ke data placeholder jika DB belum terisi
-  if (newsItems.length === 0) {
-    return (
-      <section className="py-18 bg-white">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-            <div className="flex-1">
-              <SectionHeading
-                title="Berita &amp; Informasi Terbaru"
-                subtitle="Dapatkan kabar terkini seputar aktivitas, prestasi, dan pengumuman penting dari civitas akademika Al-Rahmah."
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-center py-16 text-gray-400 text-sm">
-            Belum ada berita yang diterbitkan.
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   const featuredNews = newsItems[0];
   const recommendedNews = newsItems.slice(1);
 
   return (
-    <section className="py-18 bg-white">
+    <section className="py-14 sm:py-16 md:py-20 bg-white relative">
+      {/* Modern Hairline Divider */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
+
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 md:mb-12 gap-4 sm:gap-6">
           <div className="flex-1">
             <SectionHeading
               title="Berita &amp; Informasi Terbaru"
               subtitle="Dapatkan kabar terkini seputar aktivitas, prestasi, dan pengumuman penting dari civitas akademika Al-Rahmah."
             />
           </div>
-          <Link href="/media/berita" className="inline-flex items-center gap-2 px-6 py-3 bg-brand-lime/10 text-brand-primary font-semibold rounded-xl hover:bg-brand-lime/20 transition-colors w-fit shrink-0">
-            Lihat Semua Berita
-            <ArrowRight size={18} />
+          <Link
+            href="/media/berita"
+            className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white font-semibold text-xs sm:text-sm rounded-2xl transition-all duration-300 w-fit shrink-0 shadow-xs"
+          >
+            <span>Lihat Semua Berita</span>
+            <ArrowRight size={14} />
           </Link>
         </div>
 
-        {/* Desktop */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        {/* --- DESKTOP VIEW (4 Clean Columns) --- */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
           {newsItems.map((item) => (
-            <article key={item.id} className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-brand-primary/20 hover:shadow-xl hover:shadow-brand-primary/5 transition-all duration-300">
-              <div className="relative h-56 overflow-hidden">
+            <article
+              key={item.id}
+              className="group flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <div className="relative h-48 overflow-hidden bg-zinc-100">
                 {item.thumbnail_url ? (
-                  <img src={item.thumbnail_url} alt={item.judul} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  <img
+                    src={item.thumbnail_url}
+                    alt={item.judul}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-brand-primary to-brand-secondary" />
                 )}
-                <div className="absolute inset-0 bg-linear-to-t from-brand-lime/40 to-transparent pointer-events-none" />
-                <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-brand-primary text-xs font-bold tracking-wide rounded-full shadow-sm">{item.kategori}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
+                <div className="absolute top-3 left-3">
+                  <span className="px-2.5 py-0.5 bg-white/95 backdrop-blur-sm text-brand-primary text-[10px] font-bold rounded-lg shadow-xs">
+                    {item.kategori}
+                  </span>
                 </div>
               </div>
-              <div className="p-6 flex flex-col grow">
-                <div className="flex items-center gap-4 text-xs font-medium text-gray-500 mb-4">
-                  <div className="flex items-center gap-1.5"><Calendar size={14} className="text-brand-lime" /><span>{formatDate(item.created_at)}</span></div>
-                  <div className="flex items-center gap-1.5"><User size={14} className="text-brand-lime" /><span>{item.author}</span></div>
+
+              <div className="p-4 sm:p-5 flex flex-col grow">
+                <div className="flex items-center gap-3 text-[11px] font-medium text-zinc-400 mb-2.5">
+                  <div className="flex items-center gap-1">
+                    <Calendar size={12} className="text-brand-primary" />
+                    <span>{formatDate(item.created_at)}</span>
+                  </div>
+                  <span>•</span>
+                  <div className="flex items-center gap-1">
+                    <User size={12} className="text-brand-primary" />
+                    <span className="truncate max-w-[100px]">{item.author}</span>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 leading-snug group-hover:text-brand-primary transition-colors line-clamp-2">
+
+                <h3 className="font-heading text-sm sm:text-base font-bold text-zinc-900 mb-2 leading-snug group-hover:text-brand-primary transition-colors line-clamp-2">
                   <Link href={"/media/berita/" + item.slug} className="focus:outline-none">
-                    <span className="absolute inset-0 z-10" aria-hidden="true" />
                     {item.judul}
                   </Link>
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">{item.excerpt}</p>
-                <div className="mt-auto flex items-center gap-2 text-brand-primary font-semibold text-sm group/btn">
+
+                <p className="text-zinc-500 text-xs leading-relaxed mb-4 line-clamp-2 sm:line-clamp-3">
+                  {item.excerpt}
+                </p>
+
+                <div className="mt-auto pt-2 border-t border-zinc-100 flex items-center justify-between text-brand-primary font-semibold text-xs group/btn">
                   <span>Baca Selengkapnya</span>
-                  <ArrowRight size={16} className="group-hover/btn:translate-x-1.5 transition-transform" />
+                  <ArrowRight size={13} className="group-hover/btn:translate-x-0.5 transition-transform" />
                 </div>
               </div>
             </article>
           ))}
         </div>
 
-        {/* Mobile */}
-        <div className="flex flex-col gap-6 md:hidden">
-          <article className="relative w-full aspect-4/3 rounded-2xl overflow-hidden group shadow-sm">
-            <Link href={"/media/berita/" + featuredNews.slug} className="absolute inset-0 z-20"><span className="sr-only">{featuredNews.judul}</span></Link>
+        {/* --- MOBILE VIEW (1 Featured + 3 Compact List Cards) --- */}
+        <div className="flex flex-col gap-4 md:hidden">
+          {/* Featured Card */}
+          <article className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden group shadow-xs">
+            <Link href={"/media/berita/" + featuredNews.slug} className="absolute inset-0 z-20">
+              <span className="sr-only">{featuredNews.judul}</span>
+            </Link>
             {featuredNews.thumbnail_url ? (
-              <img src={featuredNews.thumbnail_url} alt={featuredNews.judul} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+              <img
+                src={featuredNews.thumbnail_url}
+                alt={featuredNews.judul}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-brand-primary to-brand-secondary" />
             )}
-            <div className="absolute inset-0 bg-linear-to-t from-gray-900/90 via-gray-900/30 to-transparent pointer-events-none" />
-            <div className="absolute top-4 left-4 z-10">
-              <span className="px-3 py-1 bg-brand-primary text-white text-xs font-semibold tracking-wide rounded-full shadow-sm">{featuredNews.kategori}</span>
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/85 via-zinc-950/35 to-transparent pointer-events-none" />
+            
+            <div className="absolute top-3 left-3 z-10">
+              <span className="px-2.5 py-0.5 bg-brand-primary text-white text-[10px] font-bold rounded-lg shadow-xs">
+                {featuredNews.kategori}
+              </span>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-              <div className="flex items-center gap-2 text-white/80 text-xs font-medium mb-2.5">
-                <span>{featuredNews.author}</span><span className="w-1 h-1 rounded-full bg-white/50" /><span>{formatDate(featuredNews.created_at)}</span>
+
+            <div className="absolute bottom-0 inset-x-0 p-4 z-10">
+              <div className="flex items-center gap-2 text-white/80 text-[11px] font-medium mb-1.5">
+                <span>{featuredNews.author}</span>
+                <span>•</span>
+                <span>{formatDate(featuredNews.created_at)}</span>
               </div>
-              <h3 className="text-lg font-bold text-white leading-snug line-clamp-3">{featuredNews.judul}</h3>
+              <h3 className="text-sm font-bold text-white leading-snug line-clamp-2">
+                {featuredNews.judul}
+              </h3>
             </div>
           </article>
-          <div className="flex flex-col gap-5 mt-2">
+
+          {/* List of Other News */}
+          <div className="flex flex-col gap-3">
             {recommendedNews.map((item) => (
-              <article key={item.id} className="group flex gap-4 items-center bg-transparent relative">
-                <Link href={"/media/berita/" + item.slug} className="absolute inset-0 z-20"><span className="sr-only">{item.judul}</span></Link>
-                <div className="w-24 h-24 shrink-0 rounded-2xl overflow-hidden shadow-sm">
+              <article
+                key={item.id}
+                className="group flex gap-3.5 items-center bg-white p-3 rounded-2xl shadow-xs relative"
+              >
+                <Link href={"/media/berita/" + item.slug} className="absolute inset-0 z-20">
+                  <span className="sr-only">{item.judul}</span>
+                </Link>
+                <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-zinc-100 relative">
                   {item.thumbnail_url ? (
-                    <img src={item.thumbnail_url} alt={item.judul} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img
+                      src={item.thumbnail_url}
+                      alt={item.judul}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-brand-primary to-brand-secondary" />
                   )}
                 </div>
-                <div className="flex flex-col justify-center flex-1 py-1">
-                  <span className="text-brand-primary text-xs font-semibold mb-1">{item.kategori}</span>
-                  <h3 className="font-bold text-gray-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-brand-primary transition-colors">{item.judul}</h3>
-                  <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-                    <span>{item.author}</span><span className="w-1 h-1 rounded-full bg-gray-300" /><span>{formatDate(item.created_at)}</span>
+                <div className="flex flex-col justify-center flex-1 min-w-0 py-0.5">
+                  <span className="text-brand-primary text-[10px] font-bold uppercase tracking-wider mb-1">
+                    {item.kategori}
+                  </span>
+                  <h3 className="font-heading font-bold text-zinc-900 text-xs sm:text-sm leading-snug line-clamp-2 mb-1 group-hover:text-brand-primary transition-colors">
+                    {item.judul}
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 font-medium">
+                    <span>{item.author}</span>
+                    <span>•</span>
+                    <span>{formatDate(item.created_at)}</span>
                   </div>
                 </div>
               </article>

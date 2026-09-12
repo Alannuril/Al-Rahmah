@@ -1,4 +1,5 @@
 import { Building } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export const metadata = {
   title: "Badan Wakaf - Al-Rahmah",
@@ -7,66 +8,79 @@ export const metadata = {
 
 export default function BadanWakafPage() {
   return (
-    <div className="flex flex-col w-full min-h-screen pt-24 bg-gray-50">
-      {/* Banner */}
-      <section className="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden bg-brand-primary">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-primary to-brand-primary/80 z-10"></div>
-        <div className="relative z-20 text-center px-4">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">
-            Badan Wakaf
-          </h1>
-          <p className="text-white/90 text-lg max-w-2xl mx-auto">
-            Lembaga pengelola amanah umat untuk keberlangsungan pendidikan
-          </p>
-        </div>
-      </section>
+    <div className="pt-28 sm:pt-32 pb-20 sm:pb-24 min-h-screen bg-surface/40">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <SectionHeading
+          title="Badan Wakaf"
+          subtitle="Lembaga pengelola amanah umat untuk keberlanjutan dan kemandirian pendidikan pesantren."
+          centered
+        />
 
-      {/* Content */}
-      <section className="py-16 md:py-24 container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 mb-12">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                <Building size={32} />
+        {/* Content */}
+        <div className="mt-10 sm:mt-14 max-w-4xl mx-auto space-y-8">
+          {/* Main Card */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 md:p-10 shadow-xs">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-2xl bg-brand-primary/5 text-brand-primary flex items-center justify-center">
+                <Building size={20} strokeWidth={1.8} />
               </div>
-              <h2 className="text-3xl font-heading font-bold text-gray-900">Tentang Badan Wakaf</h2>
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-zinc-900 tracking-tight">
+                Tentang Badan Wakaf
+              </h2>
             </div>
-            
-            <div className="prose prose-lg text-gray-600 max-w-none">
-              <p className="mb-4">
+
+            <div className="space-y-4 text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              <p>
                 Badan Wakaf Pondok Pesantren Al-Rahmah merupakan lembaga resmi yang ditugaskan 
                 untuk mengelola, memelihara, dan mengembangkan aset-aset wakaf yang dipercayakan 
                 oleh umat kepada pesantren.
               </p>
               <p>
                 Wakaf merupakan pilar penting dalam kemandirian institusi pendidikan Islam. 
-                Melalui pengelolaan wakaf yang profesional, transparan, dan produktif, kami 
-                berkomitmen untuk mendukung seluruh kegiatan operasional dan pengembangan 
-                Pondok Pesantren Al-Rahmah ke depannya.
+                Melalui tata kelola yang amanah, transparan, dan produktif, kami berkomitmen 
+                untuk mendukung seluruh operasional dan pengembangan sarana santri secara berkesinambungan.
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-brand-primary mb-4">Visi Badan Wakaf</h3>
-              <p className="text-gray-600">
+          {/* Visi & Misi Wakaf Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="bg-white p-6 sm:p-7 rounded-3xl shadow-xs">
+              <h3 className="text-base font-heading font-bold text-brand-primary mb-2 tracking-tight">
+                Visi Badan Wakaf
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
                 Menjadi lembaga pengelola wakaf yang profesional, amanah, dan produktif 
                 guna mewujudkan kemandirian finansial Pondok Pesantren Al-Rahmah.
               </p>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-brand-primary mb-4">Misi Badan Wakaf</h3>
-              <ul className="list-disc pl-5 space-y-2 text-gray-600">
-                <li>Mengamankan aset-aset wakaf pesantren.</li>
-                <li>Meningkatkan nilai tambah dan produktivitas aset wakaf.</li>
-                <li>Menyalurkan hasil pengelolaan wakaf untuk pengembangan pendidikan.</li>
-                <li>Membangun kepercayaan umat melalui transparansi dan akuntabilitas.</li>
+
+            <div className="bg-white p-6 sm:p-7 rounded-3xl shadow-xs">
+              <h3 className="text-base font-heading font-bold text-brand-primary mb-2 tracking-tight">
+                Misi Badan Wakaf
+              </h3>
+              <ul className="space-y-2 text-xs sm:text-sm text-zinc-600">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0" />
+                  <span>Mengamankan dan memproduktifkan aset-aset wakaf pesantren.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0" />
+                  <span>Meningkatkan nilai tambah sarana pendidikan santri.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0" />
+                  <span>Menyalurkan hasil wakaf bagi keberlanjutan beasiswa santri dhuafa.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0" />
+                  <span>Menjaga transparansi dan akuntabilitas laporan berkala kepada umat.</span>
+                </li>
               </ul>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

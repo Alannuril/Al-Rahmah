@@ -8,7 +8,6 @@ export default function PendidikanPage() {
         <SectionHeading 
           title="Program Pendidikan" 
           subtitle="Kurikulum komprehensif yang dirancang untuk menjawab tantangan masa depan dengan landasan iman yang teguh."
-          badge="Akademik Inti"
           centered
         />
 

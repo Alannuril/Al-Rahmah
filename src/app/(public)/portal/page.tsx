@@ -9,7 +9,6 @@ export default function PortalPage() {
         <SectionHeading 
           title="Portal Digital Madrasah" 
           subtitle="Sistem Informasi Manajemen Terpadu Pondok Pesantren Al-Rahmah untuk Staff dan Wali Santri."
-          badge="Admin Area"
           centered
           light
         />

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Plus, Trash2, Calendar, ImageIcon, Loader2, ImagePlus, X, FolderPlus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { GaleriAlbum, GaleriFoto } from "@/lib/supabase/types";
+import { AlRahmahLoader } from "@/components/ui/AlRahmahLoader";
 
 const anim = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
 
@@ -260,10 +261,12 @@ export default function KelolaGaleriPage() {
 
       {/* Album List Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-64 bg-white rounded-2xl border border-gray-100 animate-pulse" />
-          ))}
+        <div className="bg-white rounded-2xl border border-gray-100 p-12">
+          <AlRahmahLoader
+            size="md"
+            label="Memuat Album Galeri..."
+            sublabel="Menghubungkan ke database Al-Rahmah..."
+          />
         </div>
       ) : albums.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">

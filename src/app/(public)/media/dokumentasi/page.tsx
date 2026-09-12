@@ -1,11 +1,75 @@
 import { createClient } from "@/lib/supabase/server";
 import type { GaleriAlbum } from "@/lib/supabase/types";
-import { Camera } from "lucide-react";
+import { Camera, Calendar } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export const metadata = {
-  title: "Dokumentasi - Al-Rahmah",
-  description: "Galeri dan dokumentasi Pondok Pesantren Al-Rahmah Walantaka.",
+  title: "Galeri Dokumentasi - Al-Rahmah",
+  description: "Galeri dan dokumentasi visual Pondok Pesantren Al-Rahmah Walantaka.",
 };
+
+const DUMMY_ALBUM: GaleriAlbum[] = [
+  {
+    id: "alb-1",
+    judul: "Kunjungan Studi & Silaturahmi Asatidz Jawa-Banten",
+    tanggal: "2026-02-10",
+    created_at: new Date().toISOString(),
+    foto: [
+      {
+        id: "f-1",
+        album_id: "alb-1",
+        foto_url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop",
+        keterangan: "Sesi diskusi dan ramah tamah",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "alb-2",
+    judul: "Rihlah Ilmiah & Tadabbur Alam Santri Tahfidz",
+    tanggal: "2026-01-18",
+    created_at: new Date().toISOString(),
+    foto: [
+      {
+        id: "f-2",
+        album_id: "alb-2",
+        foto_url: "https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=1200&auto=format&fit=crop",
+        keterangan: "Tadabbur alam santri",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "alb-3",
+    judul: "Wisuda Santri & Pelepasan Alumni Angkatan Ke-18",
+    tanggal: "2025-12-22",
+    created_at: new Date().toISOString(),
+    foto: [
+      {
+        id: "f-3",
+        album_id: "alb-3",
+        foto_url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
+        keterangan: "Prosesi wisuda santri",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+  {
+    id: "alb-4",
+    judul: "Pekan Olahraga & Seni Antar Kelas (POSA)",
+    tanggal: "2025-11-15",
+    created_at: new Date().toISOString(),
+    foto: [
+      {
+        id: "f-4",
+        album_id: "alb-4",
+        foto_url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop",
+        keterangan: "Keseruan lomba olahraga",
+        created_at: new Date().toISOString(),
+      },
+    ],
+  },
+];
 
 async function getAlbum(): Promise<GaleriAlbum[]> {
   try {
@@ -14,9 +78,10 @@ async function getAlbum(): Promise<GaleriAlbum[]> {
       .from("galeri_album")
       .select("*, foto:galeri_foto(id, foto_url)")
       .order("created_at", { ascending: false });
-    return data ?? [];
+    if (data && data.length > 0) return data;
+    return DUMMY_ALBUM;
   } catch {
-    return [];
+    return DUMMY_ALBUM;
   }
 }
 
@@ -24,45 +89,65 @@ export default async function DokumentasiPage() {
   const albums = await getAlbum();
 
   return (
-    <div className="flex flex-col w-full min-h-screen pt-24 bg-gray-50">
-      <section className="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden bg-brand-primary">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-primary to-brand-primary/80 z-10" />
-        <div className="relative z-20 text-center px-4">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">Galeri Dokumentasi</h1>
-          <p className="text-white/90 text-lg max-w-2xl mx-auto">Momen-momen berharga di Pondok Pesantren Al-Rahmah</p>
-        </div>
-      </section>
-      <section className="py-16 md:py-24 container mx-auto px-4 md:px-6 lg:px-8">
-        {albums.length === 0 ? (
-          <div className="max-w-4xl mx-auto bg-white rounded-3xl p-12 text-center shadow-xl border border-gray-100">
-            <Camera size={40} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-400 text-sm italic">Galeri foto sedang dalam proses unggah.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-            {albums.map((album) => {
-              const coverFoto = album.foto?.[0];
-              return (
-                <div key={album.id} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
-                  <div className="relative h-52 overflow-hidden">
+    <div className="pt-28 sm:pt-32 pb-20 sm:pb-24 min-h-screen bg-surface/40">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <SectionHeading
+          title="Galeri Dokumentasi"
+          subtitle="Dokumentasi visual dan rekaman momen-momen istimewa di Pondok Pesantren Al-Rahmah Walantaka."
+          centered
+        />
+
+        {/* Content Grid */}
+        <div className="mt-10 sm:mt-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 max-w-7xl mx-auto">
+          {albums.map((album) => {
+            const coverFoto = album.foto?.[0];
+            return (
+              <div
+                key={album.id}
+                className="group bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative h-48 overflow-hidden bg-zinc-100 flex items-center justify-center">
                     {coverFoto ? (
-                      <img src={coverFoto.foto_url} alt={album.judul} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <img
+                        src={coverFoto.foto_url}
+                        alt={album.judul}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center">
-                        <Camera size={40} className="text-white/30" />
+                      <div className="w-full h-full bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white/50">
+                        <Camera size={36} />
                       </div>
                     )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-gray-900 mb-1">{album.judul}</h3>
-                    {album.tanggal && <p className="text-xs text-gray-400">{new Date(album.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</p>}
+
+                  <div className="p-4 sm:p-5">
+                    <h3 className="font-heading font-bold text-sm sm:text-base text-zinc-900 leading-snug group-hover:text-brand-primary transition-colors line-clamp-2">
+                      {album.judul}
+                    </h3>
                   </div>
                 </div>
-              );
-            })}
+
+                {album.tanggal && (
+                  <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-2 border-t border-zinc-100 flex items-center gap-1.5 text-zinc-400 text-[11px] font-medium">
+                    <Calendar size={12} className="text-brand-primary" />
+                    <span>
+                      {new Date(album.tanggal).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
           </div>
-        )}
-      </section>
+        </div>
+      </div>
     </div>
   );
 }

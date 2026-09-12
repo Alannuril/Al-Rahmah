@@ -80,12 +80,12 @@ export function HeroSection() {
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight mb-3 sm:mb-4 drop-shadow-md">
               Membentuk Generasi{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400">
-                Qurani &amp; Berprestasi
+                Cerdas &amp; Berkarakter
               </span>
             </h1>
 
             <p className="text-sm sm:text-base lg:text-lg text-white/85 max-w-lg leading-relaxed font-normal mb-6 sm:mb-8 drop-shadow-sm">
-              Pendidikan Islam terpadu dan pembinaan karakter santri berasrama modern.
+              Berkarakter Rahmatan Lil &apos;Alamin, berpedoman pada Al-Qur&apos;an dan Hadits, serta merangkul anak yatim dan kaum dhuafa.
             </p>
 
             {/* CTA Button */}

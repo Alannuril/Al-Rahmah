@@ -7,10 +7,13 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Spinner } from '@/components/ui/Spinner';
+import { AlRahmahLoader } from '@/components/ui/AlRahmahLoader';
+import { useLoading } from '@/components/providers/LoadingProvider';
 import { Badge } from '@/components/ui/Badge';
 import { Toast } from '@/components/ui/Toast';
 
 export default function DesignSystemPage() {
+  const { showLoading } = useLoading();
   return (
     <main className="min-h-screen py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
       <div className="text-center max-w-3xl mx-auto">
@@ -250,8 +253,46 @@ export default function DesignSystemPage() {
               <Badge variant="outline">Outline Badge</Badge>
             </div>
             
-            <h3 className="text-lg font-bold border-b border-brand-paper pb-4 pt-4">Loaders & Spinners</h3>
-            <div className="flex items-center gap-8 bg-brand-paper/30 p-6 rounded-xl">
+            <h3 className="text-lg font-bold border-b border-brand-paper pb-4 pt-4">Loaders &amp; Spinners Al-Rahmah</h3>
+            
+            {/* Branded AlRahmahLoader Showcase */}
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-around gap-6 bg-brand-paper/40 p-6 rounded-2xl">
+                <div className="flex flex-col items-center gap-2">
+                  <AlRahmahLoader size="sm" mode="inline" />
+                  <span className="text-[11px] font-semibold text-zinc-500">Size: SM (36px)</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AlRahmahLoader size="md" mode="inline" />
+                  <span className="text-[11px] font-semibold text-zinc-500">Size: MD (56px)</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AlRahmahLoader size="lg" mode="inline" />
+                  <span className="text-[11px] font-semibold text-zinc-500">Size: LG (76px)</span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <AlRahmahLoader size="xl" mode="inline" />
+                  <span className="text-[11px] font-semibold text-zinc-500">Size: XL (104px)</span>
+                </div>
+              </div>
+
+              {/* Interactive Modal Loader Button */}
+              <div className="flex items-center justify-between p-4 bg-emerald-50/60 rounded-2xl border border-emerald-100">
+                <div>
+                  <h4 className="text-sm font-bold text-emerald-950">Uji Coba Modal Load Spinner</h4>
+                  <p className="text-xs text-emerald-800/70">Klik untuk melihat tampilan modal loading interaktif yang digunakan sistem.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => showLoading("Memuat Data...", "Menyiapkan informasi sistem untuk Anda...")}
+                  className="px-4 py-2 bg-brand-primary hover:bg-brand-primary/90 text-white text-xs font-semibold rounded-xl shadow-xs transition-all"
+                >
+                  Munculkan Modal
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-8 bg-brand-paper/30 p-6 rounded-xl mt-4">
               <Spinner size="sm" variant="primary" />
               <Spinner size="md" variant="primary" />
               <Spinner size="lg" variant="primary" />

@@ -39,8 +39,42 @@ export async function LocationMapSection() {
           className="mb-8 sm:mb-10"
         />
 
-        {/* Minimalist Grid: Info & Map - Seamless & Borderless */}
+        {/* Minimalist Grid: Map on Top, Info on Bottom (Desktop: Side by Side) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          {/* Interactive Map (Compact & Clean Borderless) */}
+          <div className="lg:col-span-7 rounded-3xl overflow-hidden shadow-sm relative h-[280px] sm:h-[320px] lg:h-auto min-h-[280px] lg:min-h-[360px] bg-zinc-100">
+            <iframe
+              src={GOOGLE_MAPS_EMBED_URL}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Peta Lokasi Pondok Pesantren Al-Rahmah Walantaka"
+              className="w-full h-full min-h-[280px]"
+            />
+
+            {/* Floating Tag without borders */}
+            <div className="absolute top-3 left-3 z-10">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-sm shadow-sm text-[11px] font-semibold text-zinc-800">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Al-Rahmah Walantaka</span>
+              </div>
+            </div>
+
+            {/* Floating Open Button without borders */}
+            <a
+              href={GOOGLE_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-sm hover:bg-white shadow-sm text-[11px] font-semibold text-brand-primary transition-all"
+            >
+              <span>Perbesar</span>
+              <ExternalLink size={11} />
+            </a>
+          </div>
+
           {/* Info Card (Clean White Surface without borders) */}
           <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col justify-between gap-6">
             <div className="space-y-4">
@@ -116,40 +150,6 @@ export async function LocationMapSection() {
                 </a>
               )}
             </div>
-          </div>
-
-          {/* Interactive Map (Compact & Clean Borderless) */}
-          <div className="lg:col-span-7 rounded-3xl overflow-hidden shadow-sm relative h-[280px] sm:h-[320px] lg:h-auto min-h-[280px] bg-zinc-100">
-            <iframe
-              src={GOOGLE_MAPS_EMBED_URL}
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen={true}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Peta Lokasi Pondok Pesantren Al-Rahmah Walantaka"
-              className="w-full h-full min-h-[280px]"
-            />
-
-            {/* Floating Tag without borders */}
-            <div className="absolute top-3 left-3 z-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-sm shadow-sm text-[11px] font-semibold text-zinc-800">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Al-Rahmah Walantaka</span>
-              </div>
-            </div>
-
-            {/* Floating Open Button without borders */}
-            <a
-              href={GOOGLE_MAPS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-sm hover:bg-white shadow-sm text-[11px] font-semibold text-brand-primary transition-all"
-            >
-              <span>Perbesar</span>
-              <ExternalLink size={11} />
-            </a>
           </div>
         </div>
       </div>
