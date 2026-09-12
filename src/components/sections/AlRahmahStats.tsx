@@ -1,4 +1,4 @@
-import { Calendar, Award, GraduationCap, BookOpen, Map } from "lucide-react";
+import { Calendar, GraduationCap, BookOpen, Map } from "lucide-react";
 
 const statsData = [
   {
@@ -10,56 +10,82 @@ const statsData = [
   {
     id: 2,
     value: "A",
-    label: "Akreditasi Madrasah Aliyah",
+    label: "Akreditasi MA",
+    sublabel: "Madrasah Aliyah",
     icon: GraduationCap,
   },
   {
     id: 3,
     value: "B",
-    label: "Akreditasi Madrasah Tsanawiyah",
+    label: "Akreditasi MTs",
+    sublabel: "Madrasah Tsanawiyah",
     icon: BookOpen,
   },
   {
     id: 4,
     value: "2",
-    label: "Kombinasi Kurikulum (Gontor & Kemenag)",
+    label: "Kombinasi Kurikulum",
+    sublabel: "Gontor & Kemenag",
     icon: Map,
   },
 ];
 
 export function AlRahmahStats() {
   return (
-    <section className="bg-white/80 py-12 md:py-20 w-full relative z-10">
+    <section className="py-8 sm:py-10 md:py-14 bg-white relative z-10">
+      {/* Modern Soft Boundary Lines (Atas & Bawah) */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
+
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 custom-grid-lines">
+        <div className="grid grid-cols-2 md:grid-cols-4">
           {statsData.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div 
-                key={stat.id} 
-                className="w-full flex flex-col items-center justify-start text-center py-8 md:py-4 lg:py-8 px-4 transition-transform duration-300 hover:-translate-y-1 relative group"
+              <div
+                key={stat.id}
+                className="relative flex flex-col items-center text-center py-4 px-3 sm:px-6 transition-all duration-300 group"
               >
-                <div className="mb-4 text-brand-primary/80">
-                  <Icon size={36} strokeWidth={1.5} />
+                {/* Modern Soft Icon Container */}
+                <div className="w-10 h-10 rounded-2xl bg-brand-primary/5 text-brand-primary flex items-center justify-center mb-2.5 group-hover:scale-110 group-hover:bg-brand-primary group-hover:text-white transition-all duration-300">
+                  <Icon size={20} strokeWidth={1.8} />
                 </div>
-                <h3 className="text-4xl lg:text-5xl font-bold text-brand-primary mb-3 tracking-tight">
+
+                {/* Value / Angka */}
+                <span className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-primary tracking-tight">
                   {stat.value}
-                </h3>
-                <p className="text-gray-600 font-medium text-sm lg:text-base max-w-36 md:max-w-50 mx-auto leading-relaxed">
+                </span>
+
+                {/* Label */}
+                <span className="text-xs sm:text-sm font-semibold text-zinc-800 mt-1 leading-tight">
                   {stat.label}
-                </p>
-                
-                {/* Linestrip Horizontal (Mobile: baris atas, Desktop: none) */}
-                {index < 2 && (
-                  <div className="absolute bottom-0 left-0 right-0 h-px bg-brand-primary/20 md:hidden" />
+                </span>
+
+                {/* Sublabel */}
+                {stat.sublabel && (
+                  <span className="text-[11px] text-zinc-400 mt-0.5 leading-tight hidden sm:block">
+                    {stat.sublabel}
+                  </span>
                 )}
-                
-                {/* Linestrip Vertikal */}
-                {/* Di Mobile: pemisah kolom 1 & 2 (index ganjil) */}
-                {/* Di Desktop: pemisah antar semua kolom kecuali yang terakhir */}
-                <div className="absolute right-0 top-0 bottom-0 w-px bg-brand-primary/20 hidden md:block" style={{ display: index === 3 ? 'none' : '' }} />
-                {(index % 2 === 0) && (
-                  <div className="absolute right-0 top-0 bottom-0 w-px bg-brand-primary/20 md:hidden" />
+
+                {/* ============================================================ */}
+                {/* Modern Clean Vertical Separator (Desktop) */}
+                {/* Garis hairline vertikal dengan gradien fade di ujungnya */}
+                {/* ============================================================ */}
+                {index < 3 && (
+                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-16 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent" />
+                )}
+
+                {/* ============================================================ */}
+                {/* Modern Clean Separator (Mobile 2x2 Grid) */}
+                {/* ============================================================ */}
+                {/* Pemisah vertikal kolom kiri & kanan di mobile */}
+                {index % 2 === 0 && (
+                  <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 h-12 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent" />
+                )}
+                {/* Pemisah horizontal baris atas & bawah di mobile */}
+                {index < 2 && (
+                  <div className="md:hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
                 )}
               </div>
             );

@@ -4,6 +4,7 @@ import { AlRahmahStats } from "@/components/sections/AlRahmahStats";
 import { HighlightSection } from "@/components/sections/HighlightSection";
 import { NewsSection } from "@/components/sections/NewsSection";
 import { GalleryFeed } from "@/components/sections/GalleryFeed";
+import { LocationMapSection } from "@/components/sections/LocationMapSection";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <HighlightSection />
       <NewsSection />
       <GalleryFeed />
+      <LocationMapSection />
     </div>
   );
 }

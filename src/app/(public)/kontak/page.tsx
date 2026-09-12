@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Phone, Mail, MapPin, Send, MessageCircle } from "lucide-react";
+import { Phone, Mail, MapPin, Send, MessageCircle, ExternalLink, Compass } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { PengaturanWebsite } from "@/lib/supabase/types";
 
@@ -187,17 +187,30 @@ Terima kasih.`;
               </ul>
             </div>
 
-            <div className="relative z-10 w-full h-[220px] rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/10">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126907.03960351717!2d106.07925102553924!3d-6.1158498808605335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e418b76eaebd217%3A0xe543ed9b31911979!2sWalantaka%2C%20Serang%20City%2C%20Banten!5e0!3m2!1sen!2sid!4v1709424683072!5m2!1sen!2sid"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={true}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="opacity-90 hover:opacity-100 transition-opacity duration-500"
-              />
+            <div className="relative z-10 w-full rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/10 flex flex-col">
+              <div className="relative w-full h-[220px]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.6912405338826!2d106.2131152!3d-6.172079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e421e377265e6c5%3A0xdc894d9c993a8e4f!2sPondok%20Pesantren%20Al%20Rahmah%20Walantaka!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={true}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Peta Lokasi Pondok Pesantren Al-Rahmah Walantaka"
+                  className="w-full h-full opacity-90 hover:opacity-100 transition-opacity duration-500"
+                />
+              </div>
+              <a
+                href="https://maps.app.goo.gl/J1PeZhP9SzcFiC3M8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-brand-primary/95 hover:bg-brand-secondary text-white text-xs font-semibold tracking-wide uppercase transition-colors border-t border-white/10"
+              >
+                <Compass size={15} />
+                <span>Buka Petunjuk Arah di Google Maps</span>
+                <ExternalLink size={13} />
+              </a>
             </div>
           </div>
         </div>

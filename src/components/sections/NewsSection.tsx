@@ -36,7 +36,6 @@ export async function NewsSection() {
               <SectionHeading
                 title="Berita &amp; Informasi Terbaru"
                 subtitle="Dapatkan kabar terkini seputar aktivitas, prestasi, dan pengumuman penting dari civitas akademika Al-Rahmah."
-                badge="Kabar Al-Rahmah"
               />
             </div>
           </div>
@@ -59,7 +58,6 @@ export async function NewsSection() {
             <SectionHeading
               title="Berita &amp; Informasi Terbaru"
               subtitle="Dapatkan kabar terkini seputar aktivitas, prestasi, dan pengumuman penting dari civitas akademika Al-Rahmah."
-              badge="Kabar Al-Rahmah"
             />
           </div>
           <Link href="/media/berita" className="inline-flex items-center gap-2 px-6 py-3 bg-brand-lime/10 text-brand-primary font-semibold rounded-xl hover:bg-brand-lime/20 transition-colors w-fit shrink-0">

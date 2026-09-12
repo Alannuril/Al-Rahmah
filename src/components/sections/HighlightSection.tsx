@@ -78,9 +78,8 @@ export function HighlightSection() {
         <SectionHeading 
           title="Fasilitas & Keunggulan Kami" 
           subtitle="Lingkungan pendidikan modern yang didesain secara komprehensif untuk mendukung potensi terbaik santri dalam menuntut ilmu."
-          badge="Mengapa Al-Rahmah?"
           centered
-          className="mb-16"
+          className="mb-10 sm:mb-12"
         />
 
         {/* --- DESKTOP VIEW --- */}

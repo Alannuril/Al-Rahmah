@@ -66,25 +66,25 @@ export function HeroSection() {
 
         {/* Clean Vignette Gradient - Natural & Airy while preserving text contrast */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/50 z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/75 lg:to-black/50 z-10 pointer-events-none" />
       </div>
 
       {/* Main Content Container */}
-      <div className="w-full max-w-[1300px] relative z-20 mx-auto px-4 sm:px-6 lg:px-7 pt-24 pb-16 min-h-screen flex items-center justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
+      <div className="w-full max-w-[1300px] relative z-20 mx-auto px-4 sm:px-6 lg:px-7 pt-24 pb-20 sm:pb-16 min-h-[100dvh] lg:min-h-screen flex flex-col justify-between lg:justify-center">
+        <div className="flex-1 flex flex-col justify-between lg:justify-center lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center w-full">
           
-          {/* Left Column (Desktop) / Bottom (Mobile): Text & CTA Button centered together */}
-          <div className="flex flex-col items-start text-left order-2 lg:order-1 max-w-xl">
+          {/* Left Column (Desktop) / Bottom (Mobile): Text & CTA Button */}
+          <div className="flex flex-col items-start text-left order-2 lg:order-1 max-w-xl mt-auto lg:mt-0 pt-6 lg:pt-0">
             
             {/* Heading & Description */}
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight mb-4 drop-shadow-md">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight mb-3 sm:mb-4 drop-shadow-md">
               Membentuk Generasi{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400">
                 Qurani &amp; Berprestasi
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-white/85 max-w-lg leading-relaxed font-normal mb-8 drop-shadow-sm">
+            <p className="text-sm sm:text-base lg:text-lg text-white/85 max-w-lg leading-relaxed font-normal mb-6 sm:mb-8 drop-shadow-sm">
               Pendidikan Islam terpadu dan pembinaan karakter santri berasrama modern.
             </p>
 
@@ -99,8 +99,8 @@ export function HeroSection() {
 
           </div>
 
-          {/* Right Column (Desktop) / Top (Mobile): Two Students Reading - Oval Design */}
-          <div className="flex justify-center lg:justify-end items-center relative order-1 lg:order-2">
+          {/* Right Column (Desktop) / Center (Mobile): Two Students Reading - Oval Design */}
+          <div className="flex-1 flex justify-center lg:justify-end items-center relative order-1 lg:order-2 my-auto lg:my-0 py-4 lg:py-0">
             {/* Ambient Soft Glow */}
             <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 via-brand-lime/10 to-transparent rounded-full blur-3xl pointer-events-none scale-90" />
 

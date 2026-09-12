@@ -67,11 +67,10 @@ export async function GalleryFeed() {
       <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-brand-secondary/5 rounded-tr-full blur-3xl z-0" />
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-12 gap-6">
           <SectionHeading
             title="Galeri Aktivitas"
             subtitle="Intip keseruan dan semangat belajar para santri di Pondok Pesantren Al-Rahmah."
-            badge="Momen Berharga"
             light
           />
           <a

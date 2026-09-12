@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Phone, Mail, MapPin, Camera, Globe, MonitorPlay, Video } from "lucide-react";
+import { Phone, Mail, MapPin, Camera, Video, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { PengaturanWebsite } from "@/lib/supabase/types";
+
+const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/J1PeZhP9SzcFiC3M8";
 
 async function getPengaturan(): Promise<PengaturanWebsite | null> {
   try {
@@ -21,49 +23,54 @@ export async function Footer() {
   const setting = await getPengaturan();
 
   const namaWebsite = setting?.nama_website || "Al-Rahmah";
-  const tagline = setting?.tagline || "Membentuk Generasi Qurani, Berakhlak, dan Berprestasi.";
+  const tagline =
+    setting?.tagline || "Membentuk Generasi Qurani, Berakhlak, dan Berprestasi.";
   const noWa = setting?.no_whatsapp || "+62 812-3456-7890";
-  const alamat = setting?.alamat || "Jl. Raya Walantaka No. 1, Kecamatan Walantaka, Kota Serang, Provinsi Banten 42183";
-  const instagramUrl = setting?.instagram_url || "https://instagram.com/alrahmah.walantaka";
-  const youtubeUrl = setting?.youtube_url || "https://youtube.com/@alrahmahwalantaka";
+  const alamat =
+    setting?.alamat ||
+    "Jl. Raya Walantaka No. 1, Walantaka, Kota Serang, Banten 42183";
+  const instagramUrl =
+    setting?.instagram_url || "https://instagram.com/alrahmah.walantaka";
+  const youtubeUrl =
+    setting?.youtube_url || "https://youtube.com/@alrahmahwalantaka";
 
   const cleanWaNumber = noWa.replace(/[^0-9]/g, "");
 
   return (
-    <footer className="bg-brand-primary text-white pt-24 pb-12 relative overflow-hidden">
-      {/* Decorative gradient blur */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-secondary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-
+    <footer className="bg-brand-primary text-white pt-10 pb-6 md:pt-14 md:pb-8 relative overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
-          {/* Brand Col */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-brand-primary flex items-center justify-center text-white font-bold text-2xl shadow-lg border border-white/20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-8 mb-10">
+          {/* Kolom 1: Brand & Sosial */}
+          <div className="flex flex-col gap-3">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center text-white font-bold text-lg shadow-sm">
                 A
               </div>
               <div className="flex flex-col">
-                <span className="font-heading font-bold text-2xl leading-tight tracking-tight text-white">
+                <span className="font-heading font-bold text-lg leading-none text-white">
                   Al-Rahmah
                 </span>
-                <span className="text-xs font-semibold uppercase tracking-widest text-brand-lime">
-                  Islamic Boarding School
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-lime mt-0.5">
+                  Walantaka – Serang
                 </span>
               </div>
             </Link>
-            <p className="text-white/70 leading-relaxed text-sm pr-4">
-              {tagline} Mengintegrasikan pendidikan agama, kurikulum terpadu, dan pembinaan karakter dalam lingkungan pondok pesantren modern.
+
+            <p className="text-white/70 text-xs leading-relaxed max-w-sm">
+              {tagline}
             </p>
-            <div className="flex items-center gap-3 mt-2">
+
+            {/* Social Media Icons */}
+            <div className="flex items-center gap-2 mt-1">
               {instagramUrl && (
                 <a
                   href={instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   title="Instagram"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-secondary hover:text-white hover:border-brand-secondary transition-all duration-300"
+                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
                 >
-                  <Camera size={18} />
+                  <Camera size={15} />
                 </a>
               )}
               {youtubeUrl && (
@@ -72,9 +79,9 @@ export async function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   title="YouTube"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-secondary hover:text-white hover:border-brand-secondary transition-all duration-300"
+                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
                 >
-                  <Video size={18} />
+                  <Video size={15} />
                 </a>
               )}
               {cleanWaNumber && (
@@ -82,53 +89,102 @@ export async function Footer() {
                   href={`https://wa.me/${cleanWaNumber}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  title="WhatsApp Official"
-                  className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-secondary hover:text-white hover:border-brand-secondary transition-all duration-300"
+                  title="WhatsApp Resmi"
+                  className="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
                 >
-                  <Phone size={18} />
+                  <Phone size={15} />
                 </a>
               )}
             </div>
           </div>
 
-          {/* Links Col 1 */}
-          <div className="lg:col-span-2 lg:col-start-6">
-            <h4 className="font-heading font-semibold text-lg mb-6 text-white tracking-wide">Pintasan</h4>
-            <ul className="flex flex-col gap-4">
-              <li><Link href="/profil" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Profil Pondok</Link></li>
-              <li><Link href="/tentang/visi-misi" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Visi &amp; Misi</Link></li>
-              <li><Link href="/pendidikan" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Program Pendidikan</Link></li>
-              <li><Link href="/media/dokumentasi" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Galeri Dokumentasi</Link></li>
-            </ul>
+          {/* Link Columns: 2 kolom berdampingan di Mobile, langsung di Desktop */}
+          <div className="grid grid-cols-2 gap-4 md:contents">
+            {/* Kolom 2: Pintasan Navigasi */}
+            <div>
+              <h4 className="font-semibold text-xs uppercase tracking-wider text-brand-lime mb-3">
+                Pintasan
+              </h4>
+              <ul className="flex flex-col gap-2 text-xs text-white/75">
+                <li>
+                  <Link href="/profil" className="hover:text-white transition-colors">
+                    Profil Pondok
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/tentang/visi-misi" className="hover:text-white transition-colors">
+                    Visi &amp; Misi
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pendidikan" className="hover:text-white transition-colors">
+                    Program Pendidikan
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/media/dokumentasi" className="hover:text-white transition-colors">
+                    Galeri Dokumentasi
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Kolom 3: Informasi PSB & Media */}
+            <div>
+              <h4 className="font-semibold text-xs uppercase tracking-wider text-brand-lime mb-3">
+                Informasi
+              </h4>
+              <ul className="flex flex-col gap-2 text-xs text-white/75">
+                <li>
+                  <Link href="/psb" className="hover:text-white transition-colors">
+                    Pendaftaran (PSB)
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/media/berita" className="hover:text-white transition-colors">
+                    Berita &amp; Kabar
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/media/kejuaraan" className="hover:text-white transition-colors">
+                    Prestasi Santri
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/kontak" className="hover:text-white transition-colors">
+                    Hubungi Kami
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {/* Links Col 2 */}
-          <div className="lg:col-span-2">
-            <h4 className="font-heading font-semibold text-lg mb-6 text-white tracking-wide">Informasi</h4>
-            <ul className="flex flex-col gap-4">
-              <li><Link href="/psb" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Pendaftaran (PSB)</Link></li>
-              <li><Link href="/media/berita" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Berita &amp; Kabar</Link></li>
-              <li><Link href="/media/kejuaraan" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Prestasi Santri</Link></li>
-              <li><Link href="/kontak" className="text-white/70 hover:text-brand-secondary transition-colors text-sm">Hubungi Kami</Link></li>
-            </ul>
-          </div>
-
-          {/* Contact Col */}
-          <div className="lg:col-span-3 lg:col-start-10">
-            <h4 className="font-heading font-semibold text-lg mb-6 text-white tracking-wide">Hubungi Kami</h4>
-            <ul className="flex flex-col gap-5 text-sm text-white/70">
-              <li className="flex items-start gap-3">
-                <MapPin size={20} className="text-brand-secondary shrink-0 mt-0.5" />
-                <span className="leading-relaxed">{alamat}</span>
+          {/* Kolom 4: Kontak & Lokasi Cepat */}
+          <div>
+            <h4 className="font-semibold text-xs uppercase tracking-wider text-brand-lime mb-3">
+              Kontak &amp; Lokasi
+            </h4>
+            <ul className="flex flex-col gap-2.5 text-xs text-white/75">
+              <li className="flex items-start gap-2">
+                <MapPin size={14} className="text-brand-secondary shrink-0 mt-0.5" />
+                <a
+                  href={GOOGLE_MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors leading-relaxed flex items-start gap-1 group"
+                  title="Buka di Google Maps"
+                >
+                  <span>{alamat}</span>
+                </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone size={20} className="text-brand-secondary shrink-0" />
+              <li className="flex items-center gap-2">
+                <Phone size={14} className="text-brand-secondary shrink-0" />
                 {cleanWaNumber ? (
                   <a
                     href={`https://wa.me/${cleanWaNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-brand-secondary transition-colors"
+                    className="hover:text-white transition-colors"
                   >
                     {noWa}
                   </a>
@@ -136,18 +192,23 @@ export async function Footer() {
                   <span>{noWa}</span>
                 )}
               </li>
-              <li className="flex items-center gap-3">
-                <Mail size={20} className="text-brand-secondary shrink-0" />
+              <li className="flex items-center gap-2">
+                <Mail size={14} className="text-brand-secondary shrink-0" />
                 <span>info@alrahmah.sch.id</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/40">
-          <p>&copy; {new Date().getFullYear()} {namaWebsite}. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="/admin/login" className="hover:text-white transition-colors">Portal Admin</Link>
+        {/* Bottom Minimal Bar */}
+        <div className="pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-white/50">
+          <p>
+            &copy; {new Date().getFullYear()} {namaWebsite}. All rights reserved.
+          </p>
+          <div className="flex gap-4">
+            <Link href="/admin/login" className="hover:text-white transition-colors">
+              Portal Admin
+            </Link>
           </div>
         </div>
       </div>
