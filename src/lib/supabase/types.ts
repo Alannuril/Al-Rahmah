@@ -13,6 +13,7 @@ export interface Berita {
   excerpt: string | null;
   kategori: string;
   thumbnail_url: string | null;
+  gambar_urls?: string[] | null;
   author: string;
   status: BeritaStatus;
   created_at: string;

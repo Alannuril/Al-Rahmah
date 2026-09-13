@@ -1,8 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, User, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { Berita } from "@/lib/supabase/types";
+import { NewsImageCarousel } from "@/components/news/NewsImageCarousel";
+import { getBeritaImages, cleanBeritaContent } from "@/lib/utils/newsGallery";
+
+import { DUMMY_BERITA } from "@/lib/constants/dummyNews";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -17,9 +21,10 @@ async function getBeritaBySlug(slug: string): Promise<Berita | null> {
       .eq("slug", slug)
       .eq("status", "Terbit")
       .single();
-    return data;
+    if (data) return data;
+    return DUMMY_BERITA.find((b) => b.slug === slug) ?? null;
   } catch {
-    return null;
+    return DUMMY_BERITA.find((b) => b.slug === slug) ?? null;
   }
 }
 
@@ -49,6 +54,9 @@ export default async function DetailBeritaPage({ params }: PageProps) {
     year: "numeric",
   });
 
+  const images = getBeritaImages(berita);
+  const articleContent = cleanBeritaContent(berita.konten);
+
   return (
     <div className="flex flex-col w-full min-h-screen pt-28 pb-20 bg-gray-50">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
@@ -75,11 +83,6 @@ export default async function DetailBeritaPage({ params }: PageProps) {
               <Calendar size={13} className="text-brand-primary" />
               <span>{formattedDate}</span>
             </div>
-            <span className="text-gray-300">•</span>
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
-              <User size={13} className="text-brand-primary" />
-              <span>{berita.author}</span>
-            </div>
           </div>
 
           {/* Heading */}
@@ -94,21 +97,18 @@ export default async function DetailBeritaPage({ params }: PageProps) {
             </p>
           )}
 
-          {/* Featured Image */}
-          {berita.thumbnail_url && (
-            <div className="mb-8 rounded-2xl overflow-hidden shadow-md border border-gray-100 aspect-video relative">
-              <img
-                src={berita.thumbnail_url}
-                alt={berita.judul}
-                className="w-full h-full object-cover"
-              />
-            </div>
+          {/* Multi-Image Carousel / Featured Image (Scrollable if >1 image) */}
+          {images.length > 0 && (
+            <NewsImageCarousel
+              images={images}
+              alt={berita.judul}
+            />
           )}
 
           {/* Article Body */}
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed space-y-4 font-sans">
-            {berita.konten ? (
-              berita.konten.split("\n").map((paragraph, index) => {
+            {articleContent ? (
+              articleContent.split("\n").map((paragraph, index) => {
                 const trimmed = paragraph.trim();
                 if (!trimmed) return null;
                 return <p key={index}>{trimmed}</p>;

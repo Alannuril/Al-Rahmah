@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { NewsCard } from "@/components/news/NewsCard";
 import { createClient } from "@/lib/supabase/server";
 import type { Berita } from "@/lib/supabase/types";
 
@@ -112,60 +113,10 @@ export async function NewsSection() {
           </Link>
         </div>
 
-        {/* --- DESKTOP VIEW (4 Clean Columns) --- */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+        {/* --- DESKTOP VIEW (4 Clean Columns - Editorial Design System) --- */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
           {newsItems.map((item) => (
-            <article
-              key={item.id}
-              className="group flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <div className="relative h-48 overflow-hidden bg-zinc-100">
-                {item.thumbnail_url ? (
-                  <img
-                    src={item.thumbnail_url}
-                    alt={item.judul}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-brand-primary to-brand-secondary" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
-                <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-0.5 bg-white/95 backdrop-blur-sm text-brand-primary text-[10px] font-bold rounded-lg shadow-xs">
-                    {item.kategori}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-4 sm:p-5 flex flex-col grow">
-                <div className="flex items-center gap-3 text-[11px] font-medium text-zinc-400 mb-2.5">
-                  <div className="flex items-center gap-1">
-                    <Calendar size={12} className="text-brand-primary" />
-                    <span>{formatDate(item.created_at)}</span>
-                  </div>
-                  <span>•</span>
-                  <div className="flex items-center gap-1">
-                    <User size={12} className="text-brand-primary" />
-                    <span className="truncate max-w-[100px]">{item.author}</span>
-                  </div>
-                </div>
-
-                <h3 className="font-heading text-sm sm:text-base font-bold text-zinc-900 mb-2 leading-snug group-hover:text-brand-primary transition-colors line-clamp-2">
-                  <Link href={"/media/berita/" + item.slug} className="focus:outline-none">
-                    {item.judul}
-                  </Link>
-                </h3>
-
-                <p className="text-zinc-500 text-xs leading-relaxed mb-4 line-clamp-2 sm:line-clamp-3">
-                  {item.excerpt}
-                </p>
-
-                <div className="mt-auto pt-2 border-t border-zinc-100 flex items-center justify-between text-brand-primary font-semibold text-xs group/btn">
-                  <span>Baca Selengkapnya</span>
-                  <ArrowRight size={13} className="group-hover/btn:translate-x-0.5 transition-transform" />
-                </div>
-              </div>
-            </article>
+            <NewsCard key={item.id} berita={item} />
           ))}
         </div>
 
@@ -194,9 +145,7 @@ export async function NewsSection() {
             </div>
 
             <div className="absolute bottom-0 inset-x-0 p-4 z-10">
-              <div className="flex items-center gap-2 text-white/80 text-[11px] font-medium mb-1.5">
-                <span>{featuredNews.author}</span>
-                <span>•</span>
+              <div className="text-white/80 text-[11px] font-medium mb-1.5">
                 <span>{formatDate(featuredNews.created_at)}</span>
               </div>
               <h3 className="text-sm font-bold text-white leading-snug line-clamp-2">
@@ -234,8 +183,6 @@ export async function NewsSection() {
                     {item.judul}
                   </h3>
                   <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 font-medium">
-                    <span>{item.author}</span>
-                    <span>•</span>
                     <span>{formatDate(item.created_at)}</span>
                   </div>
                 </div>

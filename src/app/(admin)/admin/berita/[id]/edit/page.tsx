@@ -2,10 +2,11 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Plus, Trash2, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { BeritaStatus } from "@/lib/supabase/types";
+import { getBeritaImages, encodeBeritaContent, cleanBeritaContent } from "@/lib/utils/newsGallery";
 
 function slugify(text: string): string {
   return text
@@ -23,12 +24,13 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const [imageUrls, setImageUrls] = useState<string[]>([""]);
+
   const [form, setForm] = useState({
     judul: "",
     slug: "",
     kategori: "Informasi",
     author: "Humas",
-    thumbnail_url: "",
     excerpt: "",
     konten: "",
     status: "Terbit" as BeritaStatus,
@@ -49,20 +51,44 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
         return;
       }
 
+      // Ambil daftar gambar (hingga 3 gambar)
+      const existingImages = getBeritaImages(data);
+      setImageUrls(existingImages.length > 0 ? existingImages : [""]);
+
       setForm({
         judul: data.judul || "",
         slug: data.slug || "",
         kategori: data.kategori || "Informasi",
         author: data.author || "Humas",
-        thumbnail_url: data.thumbnail_url || "",
         excerpt: data.excerpt || "",
-        konten: data.konten || "",
+        konten: cleanBeritaContent(data.konten),
         status: (data.status as BeritaStatus) || "Terbit",
       });
       setLoading(false);
     }
     loadBerita();
   }, [id]);
+
+  const handleImageChange = (index: number, value: string) => {
+    setImageUrls((prev) => {
+      const updated = [...prev];
+      updated[index] = value;
+      return updated;
+    });
+  };
+
+  const handleAddImage = () => {
+    if (imageUrls.length < 3) {
+      setImageUrls((prev) => [...prev, ""]);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImageUrls((prev) => {
+      if (prev.length === 1) return [""];
+      return prev.filter((_, i) => i !== index);
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,21 +104,46 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
     setSaving(true);
     setError("");
 
+    const validImages = imageUrls.map((u) => u.trim()).filter(Boolean).slice(0, 3);
+    const primaryThumbnail = validImages[0] || null;
+    const finalKonten = encodeBeritaContent(form.konten, validImages);
+
     const supabase = createClient();
-    const { error: updateError } = await supabase
+
+    const baseUpdatePayload = {
+      judul: form.judul,
+      slug: form.slug,
+      kategori: form.kategori,
+      author: form.author || "Humas",
+      thumbnail_url: primaryThumbnail,
+      excerpt: form.excerpt || null,
+      konten: finalKonten || null,
+      status: form.status,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Coba update dengan kolom gambar_urls jika ada
+    let { error: updateError } = await supabase
       .from("berita")
       .update({
-        judul: form.judul,
-        slug: form.slug,
-        kategori: form.kategori,
-        author: form.author || "Humas",
-        thumbnail_url: form.thumbnail_url || null,
-        excerpt: form.excerpt || null,
-        konten: form.konten || null,
-        status: form.status,
-        updated_at: new Date().toISOString(),
+        ...baseUpdatePayload,
+        gambar_urls: validImages.length > 0 ? validImages : null,
       })
       .eq("id", id);
+
+    // Jika Supabase error karena kolom gambar_urls belum ada di DB, fallback simpan tanpa kolom tersebut
+    if (
+      updateError &&
+      (updateError.message?.includes("gambar_urls") ||
+        updateError.code === "PGRST204" ||
+        updateError.code === "42703")
+    ) {
+      const fallbackRes = await supabase
+        .from("berita")
+        .update(baseUpdatePayload)
+        .eq("id", id);
+      updateError = fallbackRes.error;
+    }
 
     if (updateError) {
       setSaving(false);
@@ -114,6 +165,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Top action */}
       <div className="flex items-center justify-between">
         <Link
           href="/admin/berita"
@@ -127,7 +179,9 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
       <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm">
         <div className="mb-6 pb-6 border-b border-gray-100">
           <h1 className="text-xl font-heading font-bold text-gray-900">Edit Berita</h1>
-          <p className="text-sm text-gray-500 mt-1">Perbarui informasi artikel.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Perbarui data kabar atau informasi pondok pesantren.
+          </p>
         </div>
 
         {error && (
@@ -137,6 +191,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Judul & Slug */}
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
@@ -168,6 +223,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
+          {/* Kategori, Status, Author */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
@@ -212,27 +268,79 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-              URL Foto Sampul (Thumbnail)
-            </label>
-            <input
-              type="url"
-              value={form.thumbnail_url}
-              onChange={(e) => setForm({ ...form, thumbnail_url: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
-            />
-            {form.thumbnail_url && (
-              <div className="mt-3 relative h-48 w-full max-w-sm rounded-xl overflow-hidden border border-gray-200">
-                <img
-                  src={form.thumbnail_url}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
-                />
+          {/* Multi-Image Section (Maksimal 3 Gambar) */}
+          <div className="space-y-4 p-5 rounded-2xl bg-gray-50/70 border border-gray-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider">
+                  Foto &amp; Galeri Berita (Maksimal 3 Foto)
+                </label>
+                <p className="text-[11px] text-gray-500 mt-0.5">
+                  Foto 1 menjadi sampul utama. Jika menambahkan lebih dari 1 foto, pembaca dapat menggeser/scroll foto secara interaktif.
+                </p>
               </div>
-            )}
+
+              {imageUrls.length < 3 && (
+                <button
+                  type="button"
+                  onClick={handleAddImage}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+                >
+                  <Plus size={14} />
+                  Tambah Foto ({imageUrls.length}/3)
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-3 pt-2">
+              {imageUrls.map((url, idx) => (
+                <div
+                  key={idx}
+                  className="p-3.5 rounded-xl bg-white border border-gray-200/80 shadow-2xs space-y-2.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                      <ImageIcon size={14} className="text-brand-primary" />
+                      {idx === 0
+                        ? "Foto 1 (Sampul Utama / Thumbnail)"
+                        : `Foto Tambahan ${idx + 1}`}
+                    </span>
+
+                    {idx > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(idx)}
+                        className="text-gray-400 hover:text-red-500 p-1 transition-colors cursor-pointer"
+                        title="Hapus foto ini"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
+
+                  <input
+                    type="url"
+                    value={url}
+                    onChange={(e) => handleImageChange(idx, e.target.value)}
+                    placeholder="https://images.unsplash.com/... atau URL gambar lainnya"
+                    className="w-full px-3.5 py-2.5 rounded-lg bg-gray-50 border border-gray-100 text-xs text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
+                  />
+
+                  {url.trim() && (
+                    <div className="relative h-36 w-full max-w-xs rounded-lg overflow-hidden border border-gray-200 bg-gray-100 mt-2">
+                      <img
+                        src={url}
+                        alt={`Preview foto ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
+          {/* Ringkasan / Excerpt */}
           <div>
             <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
               Ringkasan Singkat (Excerpt)
@@ -245,6 +353,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
             />
           </div>
 
+          {/* Konten Lengkap */}
           <div>
             <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
               Isi Artikel Lengkap
@@ -257,14 +366,19 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
             />
           </div>
 
+          {/* Tombol Simpan */}
           <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70"
+              className="flex items-center gap-2 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 cursor-pointer"
             >
-              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-              Simpan Perubahan
+              {saving ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Save size={16} />
+              )}
+              Perbarui Berita
             </button>
             <Link
               href="/admin/berita"

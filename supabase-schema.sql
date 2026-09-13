@@ -17,11 +17,15 @@ create table if not exists berita (
   excerpt text,
   kategori text not null default 'Informasi',
   thumbnail_url text,
+  gambar_urls text[], -- Opsional: Array URL gambar (hingga 3 gambar) untuk fitur scroll gallery berita
   author text not null default 'Humas',
   status text not null default 'Draft' check (status in ('Draft', 'Terbit')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Jalankan jika tabel berita sudah ada sebelumnya:
+-- alter table berita add column if not exists gambar_urls text[];
 
 -- ============================================================
 -- TABEL GALERI

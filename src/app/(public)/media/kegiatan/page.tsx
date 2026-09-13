@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, User, ArrowRight } from "lucide-react";
+import { Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import type { Berita } from "@/lib/supabase/types";
@@ -84,7 +84,6 @@ export default async function KegiatanPage() {
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <SectionHeading
           title="Kegiatan Santri"
-          subtitle="Aktivitas harian, program pembinaan karakter, dan dinamika kebersamaan santri di asrama Al-Rahmah."
           centered
         />
 
@@ -119,11 +118,6 @@ export default async function KegiatanPage() {
                   <div className="flex items-center gap-1">
                     <Calendar size={12} className="text-brand-primary" />
                     <span>{formatDate(item.created_at)}</span>
-                  </div>
-                  <span>•</span>
-                  <div className="flex items-center gap-1">
-                    <User size={12} className="text-brand-primary" />
-                    <span className="truncate max-w-[100px]">{item.author}</span>
                   </div>
                 </div>
 

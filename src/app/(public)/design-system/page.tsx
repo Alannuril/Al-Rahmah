@@ -11,6 +11,8 @@ import { AlRahmahLoader } from '@/components/ui/AlRahmahLoader';
 import { useLoading } from '@/components/providers/LoadingProvider';
 import { Badge } from '@/components/ui/Badge';
 import { Toast } from '@/components/ui/Toast';
+import { NewsCard } from '@/components/news/NewsCard';
+import { FeaturedNewsHero } from '@/components/news/FeaturedNewsHero';
 
 export default function DesignSystemPage() {
   const { showLoading } = useLoading();
@@ -333,6 +335,84 @@ export default function DesignSystemPage() {
               onClose={() => {}} 
             />
           </Card>
+        </div>
+      </section>
+
+      {/* 5. Editorial & News Layout System */}
+      <section className="space-y-8">
+        <SectionHeading 
+          title="Editorial & News Cards" 
+          subtitle="Minimalist, borderless editorial cards with category, publication time, and read duration" 
+        />
+
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-zinc-100 shadow-xs space-y-10">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-400 mb-4">
+              1. 4-Column Flat Card Grid
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <NewsCard 
+                berita={{
+                  id: "ds-1",
+                  judul: "Santri Al-Rahmah Raih Juara 1 Tahfidz Al-Qur'an 30 Juz Tingkat Provinsi",
+                  slug: "santri-raih-juara-tahfidz",
+                  konten: null,
+                  excerpt: "Pencapaian membanggakan kafilah santri dalam musabaqah tahfidz bergengsi antar pesantren se-Jawa Barat dan Banten.",
+                  kategori: "Prestasi",
+                  thumbnail_url: "https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1200&auto=format&fit=crop",
+                  author: "Humas Al-Rahmah",
+                  status: "Terbit",
+                  created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+                  updated_at: new Date().toISOString(),
+                }}
+              />
+              <NewsCard 
+                berita={{
+                  id: "ds-2",
+                  judul: "Pembekalan Akhir Santri: Integritas Moral dan Kepemimpinan Ummat",
+                  slug: "pembekalan-akhir-santri",
+                  konten: null,
+                  excerpt: "Membekali generasi muda dengan adab, kepemimpinan Islam, serta kesiapan menyongsong studi perguruan tinggi dunia.",
+                  kategori: "Kegiatan",
+                  thumbnail_url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop",
+                  author: "Biro Pengasuhan",
+                  status: "Terbit",
+                  created_at: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+                  updated_at: new Date().toISOString(),
+                }}
+              />
+              <NewsCard 
+                berita={{
+                  id: "ds-3",
+                  judul: "Penerimaan Santri Baru (PSB) Tahun Ajaran 2026/2027 Resmi Dibuka",
+                  slug: "penerimaan-santri-baru-2026-2027",
+                  konten: null,
+                  excerpt: "Pendaftaran online terpadu jenjang MTs dan MA dengan kuota beasiswa bagi anak yatim dan dhuafa berprestasi.",
+                  kategori: "Pengumuman",
+                  thumbnail_url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
+                  author: "Panitia PSB",
+                  status: "Terbit",
+                  created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+                  updated_at: new Date().toISOString(),
+                }}
+              />
+              <NewsCard 
+                berita={{
+                  id: "ds-4",
+                  judul: "Pekan Bahasa Santri: Mengasah Retorika Bilingual Arab & Inggris",
+                  slug: "pekan-bahasa-santri",
+                  konten: null,
+                  excerpt: "Simulasi debat dan pidato bahasa internasional untuk meningkatkan kepercayaan diri santri di forum global.",
+                  kategori: "Akademik",
+                  thumbnail_url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop",
+                  author: "Bagian Bahasa",
+                  status: "Terbit",
+                  created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+                  updated_at: new Date().toISOString(),
+                }}
+              />
+            </div>
+          </div>
         </div>
       </section>
       
