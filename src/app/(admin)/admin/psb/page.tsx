@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Save, CheckCircle, XCircle, Users, Search, Filter,
-  Trash2, Eye, Check, X, Clock, Loader2, Phone, School, User
+  Trash2, Eye, Check, X, Clock, Loader2, Phone, School, User, ExternalLink, FileCheck
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { PsbSettings, PendaftarPsb, PsbStatus } from "@/lib/supabase/types";
@@ -33,6 +33,8 @@ export default function InformasiPSBPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("Semua");
   const [programFilter, setProgramFilter] = useState<string>("Semua");
+  const [kategoriFilter, setKategoriFilter] = useState<string>("Semua");
+  const [tingkatFilter, setTingkatFilter] = useState<string>("Semua");
   const [selectedPendaftar, setSelectedPendaftar] = useState<PendaftarPsb | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -73,7 +75,9 @@ export default function InformasiPSBPage() {
         (p) =>
           p.nama_lengkap.toLowerCase().includes(q) ||
           (p.nisn && p.nisn.toLowerCase().includes(q)) ||
-          (p.asal_sekolah && p.asal_sekolah.toLowerCase().includes(q))
+          (p.asal_sekolah && p.asal_sekolah.toLowerCase().includes(q)) ||
+          (p.email && p.email.toLowerCase().includes(q)) ||
+          (p.nama_wali && p.nama_wali.toLowerCase().includes(q))
       );
     }
     if (statusFilter !== "Semua") {
@@ -82,8 +86,14 @@ export default function InformasiPSBPage() {
     if (programFilter !== "Semua") {
       res = res.filter((p) => p.program === programFilter);
     }
+    if (kategoriFilter !== "Semua") {
+      res = res.filter((p) => (p.keterangan || "").toUpperCase() === kategoriFilter.toUpperCase());
+    }
+    if (tingkatFilter !== "Semua") {
+      res = res.filter((p) => (p.tingkat || p.program || "").toLowerCase().includes(tingkatFilter.toLowerCase()));
+    }
     setFilteredPendaftar(res);
-  }, [searchQuery, statusFilter, programFilter, pendaftarList]);
+  }, [searchQuery, statusFilter, programFilter, kategoriFilter, tingkatFilter, pendaftarList]);
 
   // Save Settings
   const handleSaveSettings = async () => {
@@ -288,7 +298,7 @@ export default function InformasiPSBPage() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -301,14 +311,23 @@ export default function InformasiPSBPage() {
               </select>
 
               <select
-                value={programFilter}
-                onChange={(e) => setProgramFilter(e.target.value)}
+                value={tingkatFilter}
+                onChange={(e) => setTingkatFilter(e.target.value)}
                 className="px-3 py-2.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-gray-700 outline-none"
               >
-                <option value="Semua">Semua Program</option>
-                <option value="Tahfidz">Tahfidz</option>
-                <option value="Reguler">Reguler</option>
-                <option value="Tahfidz & Reguler">Tahfidz &amp; Reguler</option>
+                <option value="Semua">Semua Jenjang</option>
+                <option value="MTs">MTs</option>
+                <option value="MA">MA</option>
+              </select>
+
+              <select
+                value={kategoriFilter}
+                onChange={(e) => setKategoriFilter(e.target.value)}
+                className="px-3 py-2.5 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-gray-700 outline-none"
+              >
+                <option value="Semua">Semua Kategori</option>
+                <option value="NON YATIM">Non-Yatim</option>
+                <option value="YATIM">Yatim</option>
               </select>
             </div>
           </div>
@@ -320,8 +339,8 @@ export default function InformasiPSBPage() {
                 <thead className="bg-gray-50/70 border-b border-gray-100 text-xs text-gray-500 uppercase font-semibold">
                   <tr>
                     <th className="px-6 py-4">Nama Santri</th>
-                    <th className="px-4 py-4">Program</th>
-                    <th className="px-4 py-4">Kontak WhatsApp</th>
+                    <th className="px-4 py-4">Jenjang &amp; Kategori</th>
+                    <th className="px-4 py-4">Kontak / Akun</th>
                     <th className="px-4 py-4">Asal Sekolah</th>
                     <th className="px-4 py-4">Status</th>
                     <th className="px-6 py-4 text-right">Aksi</th>
@@ -365,23 +384,35 @@ export default function InformasiPSBPage() {
                             </div>
                           </td>
                           <td className="px-4 py-4">
-                            <span className="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-primary/5 text-brand-primary">
-                              {p.program || "Tahfidz"}
-                            </span>
+                            <div className="flex flex-col gap-1 items-start">
+                              <span className="inline-flex px-2 py-0.5 rounded text-[11px] font-bold bg-brand-primary/10 text-brand-primary">
+                                {p.tingkat || p.program || "MTs"}
+                              </span>
+                              <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold ${
+                                (p.keterangan || "").toUpperCase() === "YATIM"
+                                  ? "bg-amber-100 text-amber-800"
+                                  : "bg-zinc-100 text-zinc-700"
+                              }`}>
+                                {p.keterangan || "NON YATIM"}
+                              </span>
+                            </div>
                           </td>
                           <td className="px-4 py-4 text-xs font-medium text-gray-600">
-                            {p.no_hp ? (
+                            {p.no_hp && (
                               <a
                                 href={`https://wa.me/${p.no_hp.replace(/[^0-9]/g, "")}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-brand-primary hover:underline"
+                                className="inline-flex items-center gap-1 text-brand-primary hover:underline block"
                               >
                                 <Phone size={12} />
                                 {p.no_hp}
                               </a>
-                            ) : (
-                              "-"
+                            )}
+                            {p.email && (
+                              <span className="text-[11px] text-gray-400 block truncate max-w-[140px]">
+                                {p.email}
+                              </span>
                             )}
                           </td>
                           <td className="px-4 py-4 text-xs text-gray-600">
@@ -463,8 +494,12 @@ export default function InformasiPSBPage() {
                     <p className="font-bold text-gray-800 mt-0.5">{selectedPendaftar.nama_lengkap}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 font-bold uppercase">Program Pilihan</p>
-                    <p className="font-semibold text-brand-primary mt-0.5">{selectedPendaftar.program || "-"}</p>
+                    <p className="text-xs text-gray-400 font-bold uppercase">Jenjang / Tingkat</p>
+                    <p className="font-semibold text-brand-primary mt-0.5">{selectedPendaftar.tingkat || selectedPendaftar.program || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase">Kategori</p>
+                    <p className="font-semibold text-gray-800 mt-0.5">{selectedPendaftar.keterangan || "NON YATIM"}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400 font-bold uppercase">Jenis Kelamin</p>
@@ -480,7 +515,7 @@ export default function InformasiPSBPage() {
                     <p className="text-xs text-gray-400 font-bold uppercase">NISN</p>
                     <p className="font-mono font-medium text-gray-700 mt-0.5">{selectedPendaftar.nisn || "-"}</p>
                   </div>
-                  <div>
+                  <div className="col-span-2">
                     <p className="text-xs text-gray-400 font-bold uppercase">Asal Sekolah</p>
                     <p className="font-medium text-gray-700 mt-0.5">{selectedPendaftar.asal_sekolah || "-"}</p>
                   </div>
@@ -493,12 +528,56 @@ export default function InformasiPSBPage() {
                     <p className="font-medium text-gray-700 mt-0.5">{selectedPendaftar.nama_ibu || "-"}</p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-xs text-gray-400 font-bold uppercase">No. WhatsApp Orang Tua / Wali</p>
+                    <p className="text-xs text-gray-400 font-bold uppercase">Nama Wali</p>
+                    <p className="font-medium text-gray-700 mt-0.5">{selectedPendaftar.nama_wali || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase">No. WhatsApp</p>
                     <p className="font-medium text-gray-700 mt-0.5">{selectedPendaftar.no_hp || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase">Email Akun Pendaftar</p>
+                    <p className="font-medium text-gray-700 mt-0.5 truncate">{selectedPendaftar.email || "-"}</p>
                   </div>
                   <div className="col-span-2">
                     <p className="text-xs text-gray-400 font-bold uppercase">Alamat Lengkap</p>
                     <p className="font-medium text-gray-700 mt-0.5 leading-relaxed">{selectedPendaftar.alamat || "-"}</p>
+                  </div>
+
+                  {/* Berkas & Dokumen Pendaftaran */}
+                  <div className="col-span-2 p-3.5 rounded-2xl bg-gray-50 border border-gray-100 space-y-2">
+                    <p className="text-xs text-gray-500 font-bold uppercase">Berkas Terlampir</p>
+                    <div className="flex flex-wrap gap-3">
+                      {selectedPendaftar.bukti_pembayaran_url ? (
+                        <a
+                          href={selectedPendaftar.bukti_pembayaran_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-brand-primary hover:bg-brand-primary/5 transition-all"
+                        >
+                          <FileCheck size={14} />
+                          <span>Lihat Bukti Transfer / Akta Kematian</span>
+                          <ExternalLink size={12} className="opacity-70" />
+                        </a>
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">Bukti transfer belum diunggah</span>
+                      )}
+
+                      {selectedPendaftar.foto_url ? (
+                        <a
+                          href={selectedPendaftar.foto_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-brand-primary hover:bg-brand-primary/5 transition-all"
+                        >
+                          <User size={14} />
+                          <span>Lihat Foto Santri</span>
+                          <ExternalLink size={12} className="opacity-70" />
+                        </a>
+                      ) : (
+                        <span className="text-xs text-gray-400 italic">Foto santri belum diunggah</span>
+                      )}
+                    </div>
                   </div>
                   <div className="col-span-2 pt-2 border-t border-gray-100 flex items-center justify-between">
                     <div>

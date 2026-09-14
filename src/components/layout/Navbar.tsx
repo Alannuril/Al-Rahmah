@@ -3,14 +3,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, User, LogOut, FileText } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
   const pathname = usePathname();
 
   const isHomePage = pathname === "/";
@@ -123,19 +126,72 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* CTA Button Wrapper - Expands when scrolled, collapses when at hero */}
-        <div className={clsx(
-          "hidden lg:flex items-center justify-end shrink-0 transition-all duration-300 py-1",
-          showCta
-            ? "w-48 opacity-100 translate-x-0 overflow-visible"
-            : "w-0 opacity-0 translate-x-4 overflow-hidden pointer-events-none"
-        )}>
-          <Link 
-            href="/psb" 
-            className="bg-brand-primary hover:bg-brand-secondary text-white font-bold text-sm tracking-wide px-7 py-3 rounded-full shadow-lg shadow-brand-primary/25 transition-all duration-300 hover:-translate-y-0.5 whitespace-nowrap inline-block"
-          >
-            Daftar Sekarang
-          </Link>
+        {/* User Account / CTA Button */}
+        <div className="hidden lg:flex items-center justify-end shrink-0 py-1 relative">
+          {user ? (
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className={clsx(
+                  "flex items-center gap-2 px-3.5 py-2 rounded-full border transition-all duration-300 text-xs font-semibold shadow-xs",
+                  isNavSolid
+                    ? "bg-white text-brand-primary border-zinc-200 hover:bg-zinc-50"
+                    : "bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md"
+                )}
+              >
+                <div className="w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-[10px]">
+                  {user.email?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <span className="max-w-[110px] truncate">{user.email?.split("@")[0]}</span>
+                <ChevronDown size={14} className={clsx("transition-transform duration-200", userMenuOpen ? "rotate-180" : "")} />
+              </button>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-zinc-100 p-2 z-50 text-xs">
+                  <div className="p-2.5 border-b border-zinc-100">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Akun Calon Santri</p>
+                    <p className="font-bold text-zinc-800 truncate mt-0.5">{user.email}</p>
+                  </div>
+                  <div className="py-1">
+                    <Link
+                      href="/psb/daftar"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-zinc-700 hover:bg-brand-primary/5 hover:text-brand-primary font-medium transition-colors"
+                    >
+                      <FileText size={14} />
+                      <span>Formulir E-PSB</span>
+                    </Link>
+                  </div>
+                  <div className="pt-1 border-t border-zinc-100">
+                    <button
+                      onClick={async () => {
+                        setUserMenuOpen(false);
+                        await signOut();
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-red-600 hover:bg-red-50 font-medium transition-colors text-left"
+                    >
+                      <LogOut size={14} />
+                      <span>Keluar (Logout)</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={clsx(
+              "transition-all duration-300",
+              showCta
+                ? "w-48 opacity-100 translate-x-0 overflow-visible"
+                : "w-0 opacity-0 translate-x-4 overflow-hidden pointer-events-none"
+            )}>
+              <Link 
+                href="/psb" 
+                className="bg-brand-primary hover:bg-brand-secondary text-white font-bold text-sm tracking-wide px-7 py-3 rounded-full shadow-lg shadow-brand-primary/25 transition-all duration-300 hover:-translate-y-0.5 whitespace-nowrap inline-block"
+              >
+                Daftar Sekarang
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -217,13 +273,52 @@ export function Navbar() {
               </div>
             );
           })}
-          <Link 
-            href="/psb" 
-            className="mt-4 text-center bg-brand-primary text-white hover:bg-brand-secondary transition-colors font-semibold px-6 py-3.5 rounded-xl text-lg shadow-md"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Daftar Sekarang
-          </Link>
+          {user ? (
+            <div className="mt-4 p-4 rounded-2xl bg-brand-primary/5 border border-brand-primary/10 space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-xs">
+                  {user.email?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-[10px] uppercase font-bold text-zinc-400">Akun Aktif</p>
+                  <p className="text-xs font-bold text-brand-primary truncate">{user.email}</p>
+                </div>
+              </div>
+              <Link
+                href="/psb/daftar"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-center bg-brand-primary text-white hover:bg-brand-secondary font-semibold px-4 py-3 rounded-xl text-sm transition-colors shadow-xs"
+              >
+                Buka Formulir E-PSB
+              </Link>
+              <button
+                onClick={async () => {
+                  setMobileMenuOpen(false);
+                  await signOut();
+                }}
+                className="w-full text-center text-xs font-semibold text-red-600 hover:underline py-1"
+              >
+                Keluar (Logout)
+              </button>
+            </div>
+          ) : (
+            <div className="mt-4 space-y-2">
+              <Link 
+                href="/psb" 
+                className="block text-center bg-brand-primary text-white hover:bg-brand-secondary transition-colors font-semibold px-6 py-3.5 rounded-xl text-base shadow-md"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Daftar Sekarang
+              </Link>
+              <Link
+                href="/psb/login"
+                className="block text-center text-xs font-bold text-brand-primary hover:underline py-1.5"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Masuk Akun Calon Santri
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -41,10 +41,29 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // If user logged in and tries to access login, redirect to /admin
+  // If user logged in and tries to access admin login, redirect to /admin
   if (request.nextUrl.pathname === "/admin/login" && user) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
+    return NextResponse.redirect(url);
+  }
+
+  // Protect /psb/daftar: only accessible if user is logged in
+  if (request.nextUrl.pathname.startsWith("/psb/daftar") && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/psb/login";
+    url.searchParams.set("redirect", "/psb/daftar");
+    return NextResponse.redirect(url);
+  }
+
+  // If user is already logged in and visits /psb/login or /psb/register, redirect to /psb/daftar
+  if (
+    (request.nextUrl.pathname === "/psb/login" ||
+      request.nextUrl.pathname === "/psb/register") &&
+    user
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/psb/daftar";
     return NextResponse.redirect(url);
   }
 

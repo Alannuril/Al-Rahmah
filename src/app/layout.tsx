@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { LoadingProvider } from "@/components/providers/LoadingProvider";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 export default function RootLayout({
   children,
@@ -27,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${inter.variable} ${outfit.variable} h-full antialiased scroll-smooth`}>
       <body className="min-h-full flex flex-col font-sans bg-brand-paper text-brand-primary">
-        <LoadingProvider>{children}</LoadingProvider>
+        <AuthProvider>
+          <LoadingProvider>{children}</LoadingProvider>
+        </AuthProvider>
       </body>
     </html>
   );
