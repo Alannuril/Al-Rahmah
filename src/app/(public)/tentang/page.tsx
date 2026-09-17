@@ -9,7 +9,7 @@ export const metadata = {
 
 const cards = [
   {
-    title: "Pimpinan Pondok",
+    title: "Nakhoda Al-Rahmah",
     desc: "Mengenal figur teladan dan sosok pimpinan di balik amanah Pondok Pesantren Al-Rahmah.",
     href: "/tentang/pimpinan",
     icon: Users,
@@ -17,7 +17,7 @@ const cards = [
   {
     title: "Badan Wakaf",
     desc: "Lembaga penjaga amanah wakaf umat untuk keberlanjutan dakwah dan sarana pendidikan.",
-    href: "/tentang/badan-wakaf",
+    href: "/tentang/pimpinan#badan-wakaf",
     icon: Building,
   },
   {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ChevronDown, User, LogOut, FileText } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, FileText } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -34,8 +34,7 @@ export function Navbar() {
       name: "Tentang Al-Rahmah", 
       href: "/tentang",
       subLinks: [
-        { name: "Pimpinan", href: "/tentang/pimpinan" },
-        { name: "Badan Wakaf", href: "/tentang/badan-wakaf" },
+        { name: "Nakhoda Al-Rahmah", href: "/tentang/pimpinan" },
         { name: "Visi Misi", href: "/tentang/visi-misi" },
         { name: "Sejarah Alrahmah", href: "/tentang/sejarah" }
       ]

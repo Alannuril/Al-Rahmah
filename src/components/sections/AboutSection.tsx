@@ -5,7 +5,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const aboutCards = [
   {
-    title: "Pimpinan Pondok",
+    title: "Nakhoda Al-Rahmah",
     desc: "Figur teladan & pengasuh",
     href: "/tentang/pimpinan",
     icon: Users,
@@ -13,7 +13,7 @@ const aboutCards = [
   {
     title: "Badan Wakaf",
     desc: "Amanah sarana & wakaf umat",
-    href: "/tentang/badan-wakaf",
+    href: "/tentang/pimpinan#badan-wakaf",
     icon: Building,
   },
   {
