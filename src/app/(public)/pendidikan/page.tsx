@@ -23,7 +23,7 @@ export default function PendidikanPage() {
         {/* Narasi Pengantar Visi & Misi Al-Rahmah */}
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
           <p className="text-sm sm:text-base md:text-lg text-zinc-600 leading-relaxed">
-            Berdiri di atas dan untuk semua golongan dengan berpedoman pada Al-Qur&apos;an dan Hadits, Pondok Pesantren Al-Rahmah berkomitmen membentuk generasi santri yang cerdas dan berkarakter <span className="text-brand-primary font-semibold">rahmatan lil &apos;alamin</span>, serta merangkul anak yatim dan kaum dhuafa untuk memperoleh pendidikan berkualitas.
+            Berdiri untuk semua golongan berlandaskan Al-Qur&apos;an dan Hadits, Pondok Pesantren Al-Rahmah berkomitmen mencetak generasi cerdas berkarakter <span className="text-brand-primary font-semibold">rahmatan lil &apos;alamin</span>, serta merangkul anak yatim dan dhuafa melalui pendidikan berkualitas.
           </p>
         </div>
 
