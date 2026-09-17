@@ -84,6 +84,18 @@ function RegisterForm() {
         return;
       }
 
+      if (data?.user?.email || email) {
+        // Send official welcome email asynchronously
+        fetch("/api/email/welcome", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: data?.user?.email || email.trim(),
+            name: namaLengkap.trim(),
+          }),
+        }).catch((e) => console.warn("Failed to trigger welcome email:", e));
+      }
+
       if (data?.session) {
         await refreshUser();
         router.push(redirectPath);

@@ -208,6 +208,34 @@ export default function PsbDaftarPage() {
       setSuccessData(data);
       setExistingList((prev) => [data, ...prev]);
       setShowNewForm(false);
+
+      // Trigger official PSB Receipt Email asynchronously
+      fetch("/api/email/psb-receipt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          registrationId: data.id,
+          namaSantri: form.nama_lengkap.trim().toUpperCase(),
+          tingkat: form.tingkat,
+          keterangan: form.keterangan,
+          nisn: form.nisn.trim() || "-",
+          namaOrangTua:
+            form.nama_wali?.trim() ||
+            form.nama_ayah?.trim() ||
+            form.nama_ibu?.trim() ||
+            "-",
+          noHp: form.no_hp.trim(),
+          email: form.email.trim() || user?.email,
+          tanggal: new Date().toLocaleDateString("id-ID", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+        }),
+      }).catch((mailErr) =>
+        console.warn("Failed to trigger psb receipt email:", mailErr)
+      );
     } catch (err: unknown) {
       setErrorMessage(
         (err as Error)?.message ||
