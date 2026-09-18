@@ -10,6 +10,7 @@ export interface NakhodaData {
   jabatan: string;
   peranTag: string;
   foto: string;
+  fotoPosition?: string;
   quote: string;
   ringkasan: string;
   biografiLengkap: string[];
@@ -79,7 +80,7 @@ export function NakhodaDetailModal({ nakhoda, onClose }: NakhodaDetailModalProps
                 alt={`Foto profil ${nakhoda.nama}`}
                 fill
                 sizes="160px"
-                className="object-cover object-top"
+                className={`object-cover ${nakhoda.fotoPosition || "object-top"}`}
               />
             </div>
 

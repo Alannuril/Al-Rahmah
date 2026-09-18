@@ -2,14 +2,13 @@ import Image from "next/image";
 import {
   MapPin,
   Calendar,
-  Quote,
   HeartHandshake,
 } from "lucide-react";
 
 export const metadata = {
   title: "Sejarah Al-Rahmah - Al-Rahmah",
   description:
-    "Menelusuri jejak perjuangan K.H. Abdul Rasyid Muslim dan Umi Hj. Enung Nurhayati dalam merintis Pondok Pesantren Al-Rahmah Walantaka dari pengajian salafiyah hingga madrasah unggulan berakreditasi A.",
+    "Jejak perjuangan dan pengabdian Al-Rahmah Walantaka dari pengajian salafiyah hingga madrasah unggulan berakreditasi A.",
 };
 
 const TIMELINE_EVENTS = [
@@ -19,7 +18,7 @@ const TIMELINE_EVENTS = [
     judul: "Pengajian Tradisional di Link. Lebak",
     lokasi: "Link. Lebak, Kel. Lebakwangi, Walantaka",
     deskripsi:
-      "Bermula dari kepedulian mendalam terhadap pendidikan moral generasi muda, K.H. Abdul Rasyid Muslim (Alm.) bersama Umi Hj. Enung Nurhayati menginisiasi pengajian tradisional (salafiyah) di lingkungan kampung. Majelis ini hadir sebagai oase bekal agama bagi anak-anak usia sekolah di sekitar koridor jalan Ciruas-Petir.",
+      "Bermula dari kepedulian mendalam terhadap pendidikan moral generasi muda, K.H. Abdul Rasyid Muslim (Alm.) bersama Umi Hj. Enung Nurhayati menginisiasi pengajian tradisional (salafiyah) di tengah masyarakat sekitar guna melayani kebutuhan bekal agama bagi anak-anak usia sekolah di sekitar koridor jalan Ciruas-Petir.",
     tag: "Akar Salafiyah",
   },
   {
@@ -28,7 +27,7 @@ const TIMELINE_EVENTS = [
     judul: "Formalisasi & Pendirian MAS Al-Rahmah",
     lokasi: "Kampus Al-Rahmah Walantaka",
     deskripsi:
-      "Menyadari pentingnya ijazah formal dan integrasi kurikulum bagi masa depan santri di era modern, K.H. Abdul Rasyid Muslim meresmikan Madrasah Aliyah Swasta (MAS) Al-Rahmah. Langkah strategis ini menjadi tonggak transformasi Al-Rahmah dari pengajian berbasis kampung menuju institusi pendidikan Islam terpadu.",
+      "Menyadari pentingnya ijazah formal dan integrasi kurikulum bagi masa depan santri di era modern, K.H. Abdul Rasyid Muslim meresmikan Madrasah Aliyah Swasta (MAS) Al-Rahmah. Langkah ini menandai transformasi resmi dari pengajian salafiyah rintisan menuju lembaga pendidikan Islam terpadu.",
     tag: "Formalisasi Pendidikan",
   },
   {
@@ -37,7 +36,7 @@ const TIMELINE_EVENTS = [
     judul: "Pembangunan Gedung & Asrama Permanen",
     lokasi: "Kawasan Pesantren",
     deskripsi:
-      "Guna menampung antusiasme dan lonjakan calon santri dari dalam maupun luar Kota Serang, pesantren membangun gedung kelas bertingkat dan asrama putra-putri terpisah secara bertahap. Kapasitas pendidikan melesat hingga mengelola 22 rombongan belajar (rombel) yang didukung oleh sekitar 30 tenaga pendidik berdedikasi.",
+      "Menjawab lonjakan santri dari dalam maupun luar Kota Serang, pesantren membangun ruang kelas bertingkat dan asrama terpisah secara bertahap, berkembang pesat hingga mengelola 22 rombongan belajar (rombel) didukung 30 tenaga pendidik berdedikasi.",
     tag: "22 Rombel & 30 Guru",
   },
   {
@@ -46,7 +45,7 @@ const TIMELINE_EVENTS = [
     judul: "Estafet Kepemimpinan & Akreditasi A",
     lokasi: "Walantaka, Serang, Banten",
     deskripsi:
-      "Pasca wafatnya sang perintis, K.H. Abdul Rasyid Muslim (Alm.), amanah pengelolaan dilanjutkan secara teguh oleh keluarga dan jajaran asatidz senior di bawah kepengasuhan Umi Hj. Enung Nurhayati. Dedikasi tersebut mengantarkan madrasah meraih predikat Akreditasi A, menjadikannya tujuan pendidikan Islam swasta unggulan di Kecamatan Walantaka.",
+      "Pasca wafatnya sang perintis K.H. Abdul Rasyid Muslim (Alm.), amanah pengelolaan dilanjutkan secara teguh oleh keluarga dan jajaran asatidz senior di bawah kepengasuhan Umi Hj. Enung Nurhayati, mengantarkan madrasah meraih predikat Akreditasi A unggul di Walantaka.",
     tag: "Akreditasi A Unggul",
   },
 ];
@@ -54,147 +53,109 @@ const TIMELINE_EVENTS = [
 export default function SejarahPage() {
   return (
     <div className="pt-28 sm:pt-32 pb-20 sm:pb-28 min-h-screen bg-surface/40">
+      {/* ============================================================ */}
+      {/* 1. HEADER HALAMAN: BERSIH & MINIMALIS                        */}
+      {/* ============================================================ */}
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl">
-
-        {/* ============================================================ */}
-        {/* 1. HEADER HALAMAN: CLEAN & MINIMALIS (TANPA BADGE)           */}
-        {/* ============================================================ */}
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12 sm:mb-16">
+        <div className="text-center max-w-3xl mx-auto space-y-3 mb-6 sm:mb-8">
           <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tight">
             Sejarah Al-Rahmah
           </h1>
           <p className="text-xs sm:text-sm md:text-base text-zinc-600 leading-relaxed">
-            Menelusuri jejak perjuangan, keikhlasan, dan estafet pengabdian dalam merintis
-            Pondok Pesantren Al-Rahmah Walantaka dari pengajian salafiyah kampung hingga
-            menjadi madrasah unggulan berakreditasi A.
+            Jejak perjuangan dan pengabdian Al-Rahmah dari pengajian salafiyah hingga madrasah unggulan berakreditasi A.
           </p>
         </div>
+      </div>
 
-        {/* ============================================================ */}
-        {/* 2. SECTION: TOKOH PENDIRI UTAMA                              */}
-        {/* ============================================================ */}
-        <section className="mb-14 sm:mb-20">
-          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10 space-y-1.5">
-            <h2 className="font-heading font-bold text-xl sm:text-2xl text-zinc-900 tracking-tight">
-              Tokoh Pendiri Utama
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-500">
-              Sosok perintis di balik peletakan batu pertama dan nilai-nilai dasar kepondokmodernan Al-Rahmah.
-            </p>
-          </div>
+      {/* ============================================================ */}
+      {/* 2. SECTION: TOKOH PENDIRI UTAMA (BUKAN CARD, FULL-WIDTH)     */}
+      {/*    - Transisi Gradasi Lembut dari Section A ke Section B     */}
+      {/*    - Latar Belakang Hijau #396e5f dengan Gradasi Halus Modern */}
+      {/*    - Foto Asli K.H. Abdul Rasyid Muslim (Alm.) Tampak Jelas   */}
+      {/*    - Desain Minimalis & Modern Tanpa Box / Card Border         */}
+      {/* ============================================================ */}
+      <section className="w-full bg-gradient-to-br from-[#3d7566] via-[#396e5f] to-[#2f5c4f] border-b border-[#2d564a] mb-12 sm:mb-16 pt-16 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 lg:pb-20 text-white relative overflow-hidden">
+        {/* Transisi Gradasi Halus: Dari Latar Section A (#E6E6E6) ke Section B (#396e5f) */}
+        <div
+          className="absolute inset-x-0 top-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-10"
+          style={{
+            background:
+              "linear-gradient(to bottom, #E6E6E6 0%, rgba(230, 230, 230, 0.75) 20%, rgba(230, 230, 230, 0.35) 55%, transparent 100%)",
+          }}
+        />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
-            {/* Tokoh 1: K.H. Abdul Rasyid Muslim (Alm.) */}
-            <div className="bg-white rounded-3xl overflow-hidden border border-zinc-200/80 shadow-xs flex flex-col justify-between group hover:border-emerald-300/80 transition-all duration-300">
-              <div>
-                <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-zinc-100">
-                  <Image
-                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop"
-                    alt="Foto dummy K.H. Abdul Rasyid Muslim (Alm.)"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3.5 left-3.5 z-10">
-                    <span className="text-[11px] font-semibold bg-white/90 backdrop-blur-md text-brand-primary px-3 py-1 rounded-full shadow-xs border border-white/60">
-                      Inisiator &amp; Pendiri Utama
-                    </span>
-                  </div>
-                  <div className="absolute bottom-3 right-3 z-10">
-                    <span className="text-[10px] text-white/90 bg-zinc-950/60 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-white/20">
-                      Foto Ilustratif Tokoh
-                    </span>
-                  </div>
-                </div>
+        {/* Subtle Ambient Light Wash */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/5 pointer-events-none" />
 
-                <div className="p-6 sm:p-7 space-y-2.5">
-                  <div>
-                    <h3 className="font-heading font-bold text-lg sm:text-xl text-zinc-900 tracking-tight">
-                      K.H. Abdul Rasyid Muslim (Alm.)
-                    </h3>
-                    <p className="text-xs font-semibold text-brand-primary mt-0.5">
-                      Dikenal sebagai K.H. Muslim / Kyai Rasyid
-                    </p>
-                  </div>
-
-                  <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                    Sosok ulama perintis sekaligus inisiator utama berdirinya Pondok Pesantren Al-Rahmah.
-                    Beliau memelopori pengajian tradisional berbasis kampung hingga mengawal langkah
-                    transformasi formal dengan mendirikan Madrasah Aliyah Swasta (MAS) Al-Rahmah pada tahun 2008.
-                  </p>
-                </div>
-              </div>
-
-              <div className="px-6 pb-6 pt-2">
-                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/80 flex items-start gap-2.5">
-                  <Quote size={15} className="text-brand-primary shrink-0 mt-0.5 opacity-90" />
-                  <p className="font-heading italic text-xs text-zinc-700 leading-relaxed">
-                    &ldquo;Mendidik dengan keikhlasan lillahi ta&apos;ala adalah kunci keberkahan bagi masa depan santri.&rdquo;
-                  </p>
-                </div>
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+            
+            {/* Foto K.H. Abdul Rasyid Muslim (Alm.) di sebelah Kiri */}
+            <div className="lg:col-span-5 relative flex justify-center items-end">
+              <div
+                className="relative w-full max-w-[320px] sm:max-w-[380px] lg:max-w-[460px] aspect-[534/721] flex items-end"
+                style={{
+                  maskImage:
+                    "linear-gradient(to top, transparent 0%, rgba(0,0,0,0.06) 10%, rgba(0,0,0,0.3) 22%, rgba(0,0,0,0.7) 34%, black 48%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to top, transparent 0%, rgba(0,0,0,0.06) 10%, rgba(0,0,0,0.3) 22%, rgba(0,0,0,0.7) 34%, black 48%)",
+                }}
+              >
+                <Image
+                  src="/images/rasyid-muslim.png"
+                  alt="K.H. Abdul Rasyid Muslim (Alm.) - Inisiator & Pendiri Utama Pondok Pesantren Al-Rahmah"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 320px, (max-width: 1024px) 380px, 460px"
+                  className="object-contain object-bottom"
+                />
               </div>
             </div>
 
-            {/* Tokoh 2: Umi Hj. Enung Nurhayati, S.Ag. */}
-            <div className="bg-white rounded-3xl overflow-hidden border border-zinc-200/80 shadow-xs flex flex-col justify-between group hover:border-emerald-300/80 transition-all duration-300">
-              <div>
-                <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-zinc-100">
-                  <Image
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop"
-                    alt="Foto dummy Umi Hj. Enung Nurhayati, S.Ag."
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3.5 left-3.5 z-10">
-                    <span className="text-[11px] font-semibold bg-white/90 backdrop-blur-md text-brand-primary px-3 py-1 rounded-full shadow-xs border border-white/60">
-                      Pendiri &amp; Pengasuh Yayasan
-                    </span>
-                  </div>
-                  <div className="absolute bottom-3 right-3 z-10">
-                    <span className="text-[10px] text-white/90 bg-zinc-950/60 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-white/20">
-                      Foto Ilustratif Tokoh
-                    </span>
-                  </div>
-                </div>
+            {/* Narasi Editorial Minimalis di sebelah Kanan */}
+            <div className="lg:col-span-7 space-y-6 text-left py-2">
+              <div className="space-y-2">
+                <span className="text-xs uppercase tracking-[0.2em] font-semibold text-emerald-300 block">
+                  Inisiator &amp; Pendiri Utama
+                </span>
 
-                <div className="p-6 sm:p-7 space-y-2.5">
-                  <div>
-                    <h3 className="font-heading font-bold text-lg sm:text-xl text-zinc-900 tracking-tight">
-                      Umi Hj. Enung Nurhayati, S.Ag.
-                    </h3>
-                    <p className="text-xs font-semibold text-brand-primary mt-0.5">
-                      Pengasuh &amp; Penjaga Khitah Yayasan
-                    </p>
-                  </div>
+                <h2 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-[1.15]">
+                  K.H. Abdul Rasyid Muslim <span className="text-emerald-200/75 font-normal text-2xl sm:text-3xl lg:text-4xl">(Alm.)</span>
+                </h2>
 
-                  <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                    Istri tercinta sekaligus rekan seperjuangan K.H. Abdul Rasyid Muslim yang turut
-                    meletakkan batu pertama pembangunan pesantren. Beliau mendedikasikan hidupnya
-                    dalam bimbingan spiritual, keputrian, serta melanjutkan kepemimpinan yayasan.
-                  </p>
-                </div>
+                <p className="text-xs sm:text-sm font-medium text-emerald-100/80">
+                  Dikenal masyarakat sebagai K.H. Muslim / Kyai Rasyid
+                </p>
               </div>
 
-              <div className="px-6 pb-6 pt-2">
-                <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-100/80 flex items-start gap-2.5">
-                  <Quote size={15} className="text-brand-primary shrink-0 mt-0.5 opacity-90" />
-                  <p className="font-heading italic text-xs text-zinc-700 leading-relaxed">
-                    &ldquo;Anak-anak... jadi santri itu harus sabar, ikhlas, dan senantiasa bertawakal.&rdquo;
-                  </p>
-                </div>
+              <p className="text-sm sm:text-base text-emerald-50/90 leading-relaxed max-w-xl font-normal">
+                Bersama sang istri, <strong className="text-white font-semibold">Umi Hj. Enung Nurhayati, S.Ag.</strong>, beliau meletakkan batu pertama pembangunan Al-Rahmah yang berakar dari keikhlasan pengajian tradisional (<em>salafiyah</em>) di Link. Lebak, hingga meresmikan Madrasah Aliyah Swasta pada tahun 2008. Seluruh keteladanan dan khitah perjuangan beliau terus hidup membina generasi santri berakhlakul karimah.
+              </p>
+
+              {/* Kutipan Mutiara Hikmah Minimalis */}
+              <div className="pt-2 border-l-2 border-emerald-400/70 pl-5 max-w-lg">
+                <p className="font-heading italic text-sm sm:text-base text-emerald-100 leading-relaxed">
+                  &ldquo;Keikhlasan berjuang di surau sederhana adalah fondasi terkuat yang mengalirkan keberkahan bagi ribuan santri yang menuntut ilmu.&rdquo;
+                </p>
               </div>
             </div>
-          </div>
-        </section>
 
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 3. SECTION BERIKUTNYA: KONTEN DALAM CONTAINER STANDARD       */}
+      {/* ============================================================ */}
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl">
         {/* ============================================================ */}
-        {/* 3. SECTION: TITIK AWAL SEJARAH (BASIS KOMUNITAS)             */}
+        {/* 3. SECTION: TITIK AWAL & BASIS KOMUNITAS                     */}
         {/* ============================================================ */}
         <section className="mb-14 sm:mb-20">
           <div className="bg-white rounded-3xl overflow-hidden border border-zinc-200/80 shadow-xs">
             <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
-              {/* Visual Suasana Pesantren / Ilustrasi Sejarah */}
+              
+              {/* Visual Dokumentasi Ilustratif Sejarah Lingkungan Pesantren */}
               <div className="lg:col-span-5 relative min-h-[260px] sm:min-h-[340px] lg:min-h-full bg-zinc-100">
                 <Image
                   src="https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1200&auto=format&fit=crop"
@@ -224,37 +185,38 @@ export default function SejarahPage() {
 
                   <div className="space-y-3.5 text-xs sm:text-sm text-zinc-600 leading-relaxed">
                     <p>
-                      Jauh sebelum berkembang menjadi kampus pendidikan modern terpadu seperti saat ini,
-                      aktivitas dakwah dan pendidikan Al-Rahmah berakar kuat di tengah-tengah masyarakat
-                      kampus kampung, tepatnya di Link. Lebak, Kelurahan Lebakwangi, Walantaka.
+                      Jauh sebelum berkembang menjadi komplek pendidikan modern terpadu seperti saat ini,
+                      aktivitas keagamaan dan dakwah Al-Rahmah berakar kuat di tengah-tengah masyarakat setempat,
+                      tepatnya di Link. Lebak, Kelurahan Lebakwangi, Walantaka.
                     </p>
                     <p>
                       Pola pembelajarannya bermula dari pengajian tradisional (<em>salafiyah</em>) yang
                       didirikan guna menjawab kebutuhan bekal agama bagi anak-anak usia sekolah di sekitar
-                      koridor jalan Ciruas-Petir. Dengan penuh ketelatenan, anak-anak dibimbing membaca
-                      Al-Qur&apos;an, memahami tata cara ibadah dasar, serta dibina akhlaknya dalam suasana
-                      kekeluargaan yang hangat.
+                      koridor jalan Ciruas-Petir. Dengan penuh ketulusan, K.H. Abdul Rasyid Muslim bersama
+                      Umi Hj. Enung Nurhayati membimbing santri membaca Al-Qur&apos;an, memahami tauhid,
+                      dan menanamkan adab serta akhlakul karimah dalam suasana kekeluargaan.
                     </p>
                     <p>
-                      Dukungan dan kepercayaan masyarakat sekitar yang begitu besar menjadi bahan bakar
-                      semangat bagi perintis untuk terus mengembangkan sarana dan mutu kelembagaan hingga
-                      melangkah ke jenjang pendidikan formal.
+                      Tingginya antusiasme serta kepercayaan masyarakat sekitar menjadi pemicu utama bagi
+                      perintis untuk memperluas jangkauan dakwah, hingga bertransformasi menjadi lembaga
+                      pendidikan formal yang melahirkan generasi berprestasi.
                     </p>
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-zinc-100 flex flex-wrap gap-2 text-xs font-medium text-zinc-600">
                   <span className="px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200/70">
-                    Akar Salafiyah Kampung
+                    Akar Salafiyah Rintisan
                   </span>
                   <span className="px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200/70">
                     Koridor Ciruas-Petir
                   </span>
                   <span className="px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200/70">
-                    Berbasis Masyarakat
+                    Pendidikan Berbasis Umat
                   </span>
                 </div>
               </div>
+
             </div>
           </div>
         </section>

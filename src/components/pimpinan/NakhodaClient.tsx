@@ -14,8 +14,8 @@ const NAKHODA_LIST: NakhodaData[] = [
     nama: "KH. Mahfud Romli",
     jabatan: "Pimpinan & Pengasuh Pesantren",
     peranTag: "Pimpinan & Penanggung Jawab Utama",
-    // Ganti URL foto dengan foto asli saat sudah tersedia
-    foto: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
+    foto: "/images/kh-mahfud-romli.jpg",
+    fotoPosition: "object-[35%_center]",
     quote:
       "Membina generasi santri berakhlak mulia, cerdas, dan berkarakter kepondokmodernan yang kokoh.",
     ringkasan:
@@ -150,7 +150,7 @@ export function NakhodaClient() {
                       alt={`Foto profil ${nakhoda.nama}`}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                      className={`object-cover ${nakhoda.fotoPosition || "object-top"} group-hover:scale-105 transition-transform duration-700`}
                     />
 
                     {/* Badge Peran Melayang di Sudut Kiri Atas */}
