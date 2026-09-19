@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Users, Building, Target, History, ArrowRight } from "lucide-react";
+import { Users, Sparkles, Target, History, ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const aboutCards = [
@@ -11,10 +11,10 @@ const aboutCards = [
     icon: Users,
   },
   {
-    title: "Badan Wakaf",
-    desc: "Amanah sarana & wakaf umat",
-    href: "/tentang/pimpinan#badan-wakaf",
-    icon: Building,
+    title: "Panca Jiwa",
+    desc: "Falsafah karakter santri",
+    href: "/tentang/pimpinan#panca-jiwa",
+    icon: Sparkles,
   },
   {
     title: "Visi & Misi",

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Users, Building, Target, History, ArrowRight, BookOpen, Heart, Sparkles } from "lucide-react";
+import { Users, Target, History, ArrowRight, BookOpen, Heart, Sparkles } from "lucide-react";
 
 export const metadata = {
   title: "Tentang Al-Rahmah",
@@ -15,10 +15,10 @@ const cards = [
     icon: Users,
   },
   {
-    title: "Badan Wakaf",
-    desc: "Lembaga penjaga amanah wakaf umat untuk keberlanjutan dakwah dan sarana pendidikan.",
-    href: "/tentang/pimpinan#badan-wakaf",
-    icon: Building,
+    title: "Panca Jiwa",
+    desc: "Fondasi falsafah dan pembentukan karakter kepondokmodernan santri Al-Rahmah.",
+    href: "/tentang/pimpinan#panca-jiwa",
+    icon: Sparkles,
   },
   {
     title: "Visi & Misi",
