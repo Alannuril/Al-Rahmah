@@ -1,4 +1,5 @@
 import { Calendar, GraduationCap, BookOpen, Map } from "lucide-react";
+import { StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 
 const statsData = [
   {
@@ -38,12 +39,13 @@ export function AlRahmahStats() {
       <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4">
+        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-2 md:grid-cols-4">
           {statsData.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div
+              <StaggerItem
                 key={stat.id}
+                variant="zoom-in"
                 className="relative flex flex-col items-center text-center py-4 px-3 sm:px-6 transition-all duration-300 group"
               >
                 {/* Modern Soft Icon Container */}
@@ -68,29 +70,22 @@ export function AlRahmahStats() {
                   </span>
                 )}
 
-                {/* ============================================================ */}
                 {/* Modern Clean Vertical Separator (Desktop) */}
-                {/* Garis hairline vertikal dengan gradien fade di ujungnya */}
-                {/* ============================================================ */}
                 {index < 3 && (
-                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-16 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent" />
+                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-16 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
                 )}
 
-                {/* ============================================================ */}
                 {/* Modern Clean Separator (Mobile 2x2 Grid) */}
-                {/* ============================================================ */}
-                {/* Pemisah vertikal kolom kiri & kanan di mobile */}
                 {index % 2 === 0 && (
-                  <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 h-12 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent" />
+                  <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 h-12 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
                 )}
-                {/* Pemisah horizontal baris atas & bawah di mobile */}
                 {index < 2 && (
-                  <div className="md:hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
+                  <div className="md:hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent pointer-events-none" />
                 )}
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

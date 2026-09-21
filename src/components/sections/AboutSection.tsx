@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Users, Sparkles, Target, History, ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 
 const aboutCards = [
   {
@@ -39,17 +40,19 @@ export function AboutSection() {
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         {/* Section Heading - Ringkas & Padat */}
-        <SectionHeading
-          title="Sekilas Tentang Al-Rahmah"
-          subtitle="Berdiri di atas dan untuk semua golongan, berpedoman pada Al-Qur'an dan Hadits sebagai perekat umat."
-          centered
-          className="mb-6 sm:mb-10"
-        />
+        <ScrollReveal variant="fade-up" duration={0.6}>
+          <SectionHeading
+            title="Sekilas Tentang Al-Rahmah"
+            subtitle="Berdiri di atas dan untuk semua golongan, berpedoman pada Al-Qur'an dan Hadits sebagai perekat umat."
+            centered
+            className="mb-6 sm:mb-10"
+          />
+        </ScrollReveal>
 
         {/* Split Content */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-stretch max-w-6xl mx-auto">
-          {/* Left Column: Foto Pondok (Memanjang Rapi Sejajar Atas-Bawah) */}
-          <div className="lg:col-span-5 flex flex-col">
+          {/* Left Column: Foto Pondok (Slide-in from Left) */}
+          <ScrollReveal variant="slide-left" duration={0.7} className="lg:col-span-5 flex flex-col">
             <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] lg:aspect-auto lg:flex-1 min-h-[260px] lg:min-h-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs group bg-zinc-100">
               <Image
                 src="/images/gedung1.jpeg"
@@ -63,10 +66,10 @@ export function AboutSection() {
                 Pondok Pesantren Al-Rahmah
               </span>
             </div>
-          </div>
+          </ScrollReveal>
 
-          {/* Right Column: Narasi Singkat, 4 Kartu & Tombol Selengkapnya */}
-          <div className="lg:col-span-7 flex flex-col justify-center">
+          {/* Right Column: Narasi Singkat, 4 Kartu & Tombol Selengkapnya (Slide-in from Right) */}
+          <ScrollReveal variant="slide-right" duration={0.7} delay={0.15} className="lg:col-span-7 flex flex-col justify-center">
             <div>
               <h3 className="font-heading font-bold text-base sm:text-lg lg:text-xl text-zinc-900 tracking-tight">
                 Cerdas &amp; Berkarakter Rahmatan Lil &apos;Alamin
@@ -76,37 +79,38 @@ export function AboutSection() {
               </p>
             </div>
 
-            {/* 4 Cards: Grid 2 Kolom Kompak di Mobile & Desktop */}
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5 mt-4 sm:mt-5">
+            {/* 4 Cards: Grid 2 Kolom Kompak di Mobile & Desktop with Stagger */}
+            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 gap-2.5 sm:gap-3.5 mt-4 sm:mt-5">
               {aboutCards.map((card, idx) => {
                 const Icon = card.icon;
                 return (
-                  <Link
-                    href={card.href}
-                    key={idx}
-                    className="group bg-white rounded-2xl p-3 sm:p-4 shadow-xs hover:shadow-md hover:-translate-y-0.5 border border-zinc-100/80 transition-all duration-200 flex flex-col justify-between gap-2.5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-brand-primary/10 text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 flex items-center justify-center shrink-0">
-                        <Icon size={16} strokeWidth={1.8} />
+                  <StaggerItem key={idx} variant="zoom-in">
+                    <Link
+                      href={card.href}
+                      className="group bg-white rounded-2xl p-3 sm:p-4 shadow-xs hover:shadow-md hover:-translate-y-0.5 border border-zinc-100/80 transition-all duration-200 flex flex-col justify-between gap-2.5 h-full"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-brand-primary/10 text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 flex items-center justify-center shrink-0">
+                          <Icon size={16} strokeWidth={1.8} />
+                        </div>
+                        <div className="w-6 h-6 rounded-full bg-zinc-50 text-zinc-400 group-hover:bg-brand-primary group-hover:text-white flex items-center justify-center transition-all duration-300 shrink-0">
+                          <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
+                        </div>
                       </div>
-                      <div className="w-6 h-6 rounded-full bg-zinc-50 text-zinc-400 group-hover:bg-brand-primary group-hover:text-white flex items-center justify-center transition-all duration-300 shrink-0">
-                        <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                    </div>
 
-                    <div>
-                      <h4 className="font-heading font-bold text-xs sm:text-sm text-zinc-900 group-hover:text-brand-primary transition-colors tracking-tight">
-                        {card.title}
-                      </h4>
-                      <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 line-clamp-1">
-                        {card.desc}
-                      </p>
-                    </div>
-                  </Link>
+                      <div>
+                        <h4 className="font-heading font-bold text-xs sm:text-sm text-zinc-900 group-hover:text-brand-primary transition-colors tracking-tight">
+                          {card.title}
+                        </h4>
+                        <p className="text-[11px] sm:text-xs text-zinc-400 mt-0.5 line-clamp-1">
+                          {card.desc}
+                        </p>
+                      </div>
+                    </Link>
+                  </StaggerItem>
                 );
               })}
-            </div>
+            </StaggerContainer>
 
             {/* Tombol Selengkapnya di Bawah 4 Card (Full Width) */}
             <div className="mt-4 sm:mt-5">
@@ -118,7 +122,7 @@ export function AboutSection() {
                 <ArrowRight size={14} />
               </Link>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

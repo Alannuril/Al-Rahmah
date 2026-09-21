@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const BACKGROUND_IMAGES = [
   { 
@@ -77,35 +78,77 @@ export function HeroSection() {
           <div className="flex flex-col items-start text-left order-2 lg:order-1 max-w-xl mt-auto lg:mt-0 pt-6 lg:pt-0">
             
             {/* Heading & Description */}
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight mb-3 sm:mb-4 drop-shadow-md">
+            <motion.h1 
+              initial={{ opacity: 0, y: 35 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+              className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight mb-3 sm:mb-4 drop-shadow-md"
+            >
               Membentuk Generasi{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400">
                 Cerdas &amp; Berkarakter
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-sm sm:text-base lg:text-lg text-white/85 max-w-lg leading-relaxed font-normal mb-6 sm:mb-8 drop-shadow-sm">
+            <motion.p 
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              className="text-sm sm:text-base lg:text-lg text-white/85 max-w-lg leading-relaxed font-normal mb-6 sm:mb-8 drop-shadow-sm"
+            >
               Berkarakter Rahmatan Lil &apos;Alamin, berpedoman pada Al-Qur&apos;an dan Hadits, serta merangkul anak yatim dan kaum dhuafa.
-            </p>
+            </motion.p>
 
             {/* CTA Button */}
-            <Link
-              href="/psb"
-              className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 text-sm sm:text-[15px] font-semibold rounded-full bg-brand-lime hover:bg-brand-accent text-brand-primary shadow-md shadow-black/15 hover:-translate-y-0.5 transition-all duration-300 group"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.48, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span>Daftar Sekarang</span>
-              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-            </Link>
+              <Link
+                href="/psb"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-2.5 sm:py-3 text-sm sm:text-[15px] font-semibold rounded-full bg-brand-lime hover:bg-brand-accent text-brand-primary shadow-md shadow-black/15 hover:-translate-y-0.5 transition-all duration-300 group"
+              >
+                <span>Daftar Sekarang</span>
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              </Link>
+            </motion.div>
 
           </div>
 
-          {/* Right Column (Desktop) / Center (Mobile): Two Students Reading - Oval Design */}
+          {/* Right Column (Desktop) / Center (Mobile): Two Students Reading - Oval Design with Soft Float */}
           <div className="flex-1 flex justify-center lg:justify-end items-center relative order-1 lg:order-2 my-auto lg:my-0 py-4 lg:py-0">
-            {/* Ambient Soft Glow */}
-            <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 via-brand-lime/10 to-transparent rounded-full blur-3xl pointer-events-none scale-90" />
+            {/* Ambient Soft Glow with Gentle Pulse */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ 
+                opacity: 1,
+                scale: [0.9, 1.06, 0.9] 
+              }}
+              transition={{ 
+                opacity: { duration: 1, delay: 0.2 },
+                scale: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+              }}
+              className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 via-brand-lime/10 to-transparent rounded-full blur-3xl pointer-events-none" 
+            />
 
-            {/* Oval Image Container - Proportional & Clean */}
-            <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[380px] xl:max-w-[420px] aspect-[1602/1362] transition-transform duration-500 hover:scale-[1.02]">
+            {/* Oval Image Container with Slide-in and Subtle Floating Animation */}
+            <motion.div 
+              initial={{ opacity: 0, x: 50, scale: 0.94 }}
+              animate={{ 
+                opacity: 1, 
+                x: 0, 
+                scale: 1,
+                y: [0, -8, 0]
+              }}
+              transition={{ 
+                opacity: { duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] },
+                x: { duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] },
+                scale: { duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] },
+                y: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.15 }
+              }}
+              className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[380px] xl:max-w-[420px] aspect-[1602/1362] transition-transform duration-500 hover:scale-[1.02]"
+            >
               <Image
                 src="/images/model-gradien.png"
                 alt="Santriwati Pondok Pesantren Al-Rahmah sedang membaca buku"
@@ -114,14 +157,19 @@ export function HeroSection() {
                 className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.3)]"
                 priority
               />
-            </div>
+            </motion.div>
           </div>
 
         </div>
       </div>
 
       {/* Minimalist Slide Indicator Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.65 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2.5"
+      >
         {BACKGROUND_IMAGES.map((_, index) => (
           <button
             key={index}
@@ -134,7 +182,7 @@ export function HeroSection() {
             aria-label={`Pindah ke slide ${index + 1}`}
           />
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

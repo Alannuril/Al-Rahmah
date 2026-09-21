@@ -48,8 +48,8 @@ const NAKHODA_LIST: NakhodaData[] = [
     nama: "Umi Hj. Enung Nurhayati, S.Ag.",
     jabatan: "Pengasuh & Pendiri Yayasan",
     peranTag: "Pengasuh & Pendiri Yayasan",
-    // Ganti URL foto dengan foto asli saat sudah tersedia
-    foto: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop",
+    foto: "/images/umi-enung-nahkoda.jpg",
+    fotoPosition: "object-top",
     quote:
       "Anak-anak... jadi santri itu harus sabar, ikhlas, dan tawakal.",
     ringkasan:

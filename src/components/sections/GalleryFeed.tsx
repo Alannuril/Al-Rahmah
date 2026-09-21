@@ -3,6 +3,7 @@ import { Camera as Instagram } from "lucide-react";
 import clsx from "clsx";
 import { createClient } from "@/lib/supabase/server";
 import type { GaleriFoto, PengaturanWebsite } from "@/lib/supabase/types";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 
 const FALLBACK_ITEMS = [
   { src: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1974&auto=format&fit=crop", type: "Dokumentasi", span: "col-span-1 row-span-1" },
@@ -67,40 +68,44 @@ export async function GalleryFeed() {
       <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-brand-secondary/5 rounded-tr-full blur-3xl z-0" />
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-12 gap-6">
-          <SectionHeading
-            title="Galeri Aktivitas"
-            subtitle="Intip keseruan dan semangat belajar para santri di Pondok Pesantren Al-Rahmah."
-            light
-          />
-          <a
-            href={instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 px-6 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full transition-all backdrop-blur-md shadow-xl group whitespace-nowrap hover:-translate-y-1"
-          >
-            <Instagram size={20} className="text-brand-secondary group-hover:scale-110 transition-transform" />
-            <span className="font-semibold tracking-wide text-sm">{igHandle}</span>
-          </a>
-        </div>
+        <ScrollReveal variant="fade-up" duration={0.6}>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-12 gap-6">
+            <SectionHeading
+              title="Galeri Aktivitas"
+              subtitle="Intip keseruan dan semangat belajar para santri di Pondok Pesantren Al-Rahmah."
+              light
+            />
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 px-6 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full transition-all backdrop-blur-md shadow-xl group whitespace-nowrap hover:-translate-y-1"
+            >
+              <Instagram size={20} className="text-brand-secondary group-hover:scale-110 transition-transform" />
+              <span className="font-semibold tracking-wide text-sm">{igHandle}</span>
+            </a>
+          </div>
+        </ScrollReveal>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-3 md:gap-5 h-[500px] md:h-[700px]">
+        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 md:grid-cols-4 grid-rows-2 gap-3 md:gap-5 h-[500px] md:h-[700px]">
           {photos.map((item, index) => (
-            <div key={index} className={clsx("group relative rounded-2xl md:rounded-3xl overflow-hidden bg-brand-secondary shadow-lg", item.span)}>
-              <div className="absolute inset-0 bg-brand-primary/20 group-hover:bg-transparent transition-colors z-10 duration-500 mix-blend-overlay" />
-              <img
-                src={item.src}
-                alt={`Gallery ${item.type}`}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex flex-col justify-end p-6 md:p-8">
-                <span className="text-white font-bold tracking-widest uppercase bg-brand-secondary shadow-lg shadow-brand-secondary/30 px-5 py-2 rounded-full w-fit text-xs backdrop-blur-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                  {item.type}
-                </span>
+            <StaggerItem key={index} variant="zoom-in" className={clsx("h-full w-full", item.span)}>
+              <div className="group relative rounded-2xl md:rounded-3xl overflow-hidden bg-brand-secondary shadow-lg h-full w-full">
+                <div className="absolute inset-0 bg-brand-primary/20 group-hover:bg-transparent transition-colors z-10 duration-500 mix-blend-overlay" />
+                <img
+                  src={item.src}
+                  alt={`Gallery ${item.type}`}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex flex-col justify-end p-6 md:p-8">
+                  <span className="text-white font-bold tracking-widest uppercase bg-brand-secondary shadow-lg shadow-brand-secondary/30 px-5 py-2 rounded-full w-fit text-xs backdrop-blur-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    {item.type}
+                  </span>
+                </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

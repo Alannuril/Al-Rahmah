@@ -2,6 +2,7 @@ import { MapPin, Navigation, Clock, ExternalLink, Compass } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { createClient } from "@/lib/supabase/server";
 import type { PengaturanWebsite } from "@/lib/supabase/types";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/J1PeZhP9SzcFiC3M8";
 const GOOGLE_MAPS_EMBED_URL =
@@ -32,17 +33,19 @@ export async function LocationMapSection() {
   return (
     <section className="py-12 sm:py-16 bg-surface/40 relative">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <SectionHeading
-          title="Lokasi Pondok Pesantren"
-          subtitle="Walantaka, Kota Serang – Akses mudah via Tol Walantaka / Serang Timur."
-          centered
-          className="mb-8 sm:mb-10"
-        />
+        <ScrollReveal variant="fade-up" duration={0.6}>
+          <SectionHeading
+            title="Lokasi Pondok Pesantren"
+            subtitle="Walantaka, Kota Serang – Akses mudah via Tol Walantaka / Serang Timur."
+            centered
+            className="mb-8 sm:mb-10"
+          />
+        </ScrollReveal>
 
         {/* Minimalist Grid: Map on Top, Info on Bottom (Desktop: Side by Side) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          {/* Interactive Map (Compact & Clean Borderless) */}
-          <div className="lg:col-span-7 rounded-3xl overflow-hidden shadow-sm relative h-[280px] sm:h-[320px] lg:h-auto min-h-[280px] lg:min-h-[360px] bg-zinc-100">
+          {/* Interactive Map (Compact & Clean Borderless with Zoom-In) */}
+          <ScrollReveal variant="zoom-in" duration={0.7} className="lg:col-span-7 rounded-3xl overflow-hidden shadow-sm relative h-[280px] sm:h-[320px] lg:h-auto min-h-[280px] lg:min-h-[360px] bg-zinc-100">
             <iframe
               src={GOOGLE_MAPS_EMBED_URL}
               width="100%"
@@ -73,10 +76,10 @@ export async function LocationMapSection() {
               <span>Perbesar</span>
               <ExternalLink size={11} />
             </a>
-          </div>
+          </ScrollReveal>
 
-          {/* Info Card (Clean White Surface without borders) */}
-          <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col justify-between gap-6">
+          {/* Info Card (Clean White Surface with Slide-Right) */}
+          <ScrollReveal variant="slide-right" duration={0.7} delay={0.15} className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col justify-between gap-6">
             <div className="space-y-4">
               {/* Alamat */}
               <div className="flex items-start gap-3">
@@ -150,7 +153,7 @@ export async function LocationMapSection() {
                 </a>
               )}
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

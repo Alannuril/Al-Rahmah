@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { BookOpen, Home, Users, Trophy, ChevronRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import Link from "next/link";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 
 const highlights = [
   {
@@ -75,53 +76,56 @@ export function HighlightSection() {
   return (
     <section className="py-18 bg-brand-paper">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <SectionHeading 
-          title="Fasilitas & Keunggulan Kami" 
-          subtitle="Lingkungan pendidikan modern yang didesain secara komprehensif untuk mendukung potensi terbaik santri dalam menuntut ilmu."
-          centered
-          className="mb-10 sm:mb-12"
-        />
+        <ScrollReveal variant="fade-up" duration={0.6}>
+          <SectionHeading 
+            title="Fasilitas & Keunggulan Kami" 
+            subtitle="Lingkungan pendidikan modern yang didesain secara komprehensif untuk mendukung potensi terbaik santri dalam menuntut ilmu."
+            centered
+            className="mb-10 sm:mb-12"
+          />
+        </ScrollReveal>
 
-        {/* --- DESKTOP VIEW --- */}
-        <div className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8">
+        {/* --- DESKTOP VIEW with Stagger --- */}
+        <StaggerContainer staggerDelay={0.1} className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8">
           {highlights.map((item, index) => (
-            <div
-              key={index}
-              className="group flex flex-col md:flex-row items-start gap-4 h-full bg-white rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/60 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-brand-accent/30 cursor-pointer"
-            >
-              <div className="w-full md:w-44 h-44 md:h-full shrink-0 bg-gray-100 relative overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-brand-lime/40 to-transparent pointer-events-none"></div>
-              </div>
-
-              <div className="p-6 flex flex-col grow">
-                <div className="shrink-0 w-12 h-12 rounded-xl bg-brand-lime/15 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300 mb-3">
-                  <item.icon size={20} strokeWidth={2} />
+            <StaggerItem key={index} variant="zoom-in">
+              <div
+                className="group flex flex-col md:flex-row items-start gap-4 h-full bg-white rounded-2xl overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-brand-paper/60 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-brand-accent/30 cursor-pointer"
+              >
+                <div className="w-full md:w-44 h-44 md:h-full shrink-0 bg-gray-100 relative overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-brand-lime/40 to-transparent pointer-events-none"></div>
                 </div>
 
-                <h3 className="font-semibold text-lg text-gray-900 tracking-tight mb-2 group-hover:text-brand-primary transition-colors">
-                  {item.title}
-                </h3>
+                <div className="p-6 flex flex-col grow">
+                  <div className="shrink-0 w-12 h-12 rounded-xl bg-brand-lime/15 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300 mb-3">
+                    <item.icon size={20} strokeWidth={2} />
+                  </div>
 
-                <p className="text-gray-600 leading-relaxed text-sm grow mb-4">
-                  {item.description}
-                </p>
+                  <h3 className="font-semibold text-lg text-gray-900 tracking-tight mb-2 group-hover:text-brand-primary transition-colors">
+                    {item.title}
+                  </h3>
 
-                <Link href={item.link} className="mt-auto inline-flex items-center gap-1 text-brand-primary font-semibold text-xs tracking-wide group/link w-fit">
-                  <span className="group-hover/link:underline underline-offset-4">Pelajari Lebih Lanjut</span>
-                  <ChevronRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
-                </Link>
+                  <p className="text-gray-600 leading-relaxed text-sm grow mb-4">
+                    {item.description}
+                  </p>
+
+                  <Link href={item.link} className="mt-auto inline-flex items-center gap-1 text-brand-primary font-semibold text-xs tracking-wide group/link w-fit">
+                    <span className="group-hover/link:underline underline-offset-4">Pelajari Lebih Lanjut</span>
+                    <ChevronRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* --- MOBILE VIEW (CAROUSEL) --- */}
-        <div className="md:hidden relative">
+        <ScrollReveal variant="fade-up" duration={0.6} className="md:hidden relative">
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
@@ -181,7 +185,7 @@ export function HighlightSection() {
               />
             ))}
           </div>
-        </div>
+        </ScrollReveal>
 
       </div>
     </section>

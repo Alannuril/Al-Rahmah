@@ -34,9 +34,9 @@ export default function PendidikanPage() {
             <div className="lg:col-span-6 relative">
               <div className="relative aspect-[16/11] sm:aspect-[4/3] rounded-3xl overflow-hidden bg-zinc-100 shadow-xs border border-zinc-200/80">
                 <img
-                  src="https://images.unsplash.com/photo-1643429096345-9de0d2ab7e7c?q=80&w=1200&auto=format&fit=crop"
-                  alt="Santri belajar bersama di kelas madrasah"
-                  className="w-full h-full object-cover"
+                  src="/images/pendidikan-mts.jpg"
+                  alt="Suasana kegiatan belajar mengajar santri Madrasah Tsanawiyah (MTs) Al-Rahmah"
+                  className="w-full h-full object-cover object-left"
                 />
               </div>
             </div>
@@ -179,8 +179,8 @@ export default function PendidikanPage() {
             <div className="lg:col-span-6 relative order-1 lg:order-2">
               <div className="relative aspect-[16/11] sm:aspect-[4/3] rounded-3xl overflow-hidden bg-zinc-100 shadow-xs border border-zinc-200/80">
                 <img
-                  src="https://images.unsplash.com/photo-1757141975400-27fa436fbfbc?q=80&w=1200&auto=format&fit=crop"
-                  alt="Santri dalam kegiatan belajar di kelas madrasah"
+                  src="/images/pendidikan-ma.jpg"
+                  alt="Santriwati Madrasah Aliyah (MA) Al-Rahmah berbaris tertib di lingkungan pesantren"
                   className="w-full h-full object-cover"
                 />
               </div>

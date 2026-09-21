@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { NewsCard } from "@/components/news/NewsCard";
 import { createClient } from "@/lib/supabase/server";
 import type { Berita } from "@/lib/supabase/types";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 
 const DUMMY_BERITA: Berita[] = [
   {
@@ -97,31 +98,35 @@ export async function NewsSection() {
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 md:mb-12 gap-4 sm:gap-6">
-          <div className="flex-1">
-            <SectionHeading
-              title="Berita &amp; Informasi Terbaru"
-              subtitle="Dapatkan kabar terkini seputar aktivitas, prestasi, dan pengumuman penting dari civitas akademika Al-Rahmah."
-            />
+        <ScrollReveal variant="fade-up" duration={0.6}>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 md:mb-12 gap-4 sm:gap-6">
+            <div className="flex-1">
+              <SectionHeading
+                title="Berita &amp; Informasi Terbaru"
+                subtitle="Dapatkan kabar terkini seputar aktivitas, prestasi, dan pengumuman penting dari civitas akademika Al-Rahmah."
+              />
+            </div>
+            <Link
+              href="/media/berita"
+              className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white font-semibold text-xs sm:text-sm rounded-2xl transition-all duration-300 w-fit shrink-0 shadow-xs"
+            >
+              <span>Lihat Semua Berita</span>
+              <ArrowRight size={14} />
+            </Link>
           </div>
-          <Link
-            href="/media/berita"
-            className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white font-semibold text-xs sm:text-sm rounded-2xl transition-all duration-300 w-fit shrink-0 shadow-xs"
-          >
-            <span>Lihat Semua Berita</span>
-            <ArrowRight size={14} />
-          </Link>
-        </div>
+        </ScrollReveal>
 
-        {/* --- DESKTOP VIEW (4 Clean Columns - Editorial Design System) --- */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
+        {/* --- DESKTOP VIEW (4 Clean Columns - Editorial Design System with Stagger) --- */}
+        <StaggerContainer staggerDelay={0.1} className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
           {newsItems.map((item) => (
-            <NewsCard key={item.id} berita={item} />
+            <StaggerItem key={item.id} variant="fade-up">
+              <NewsCard berita={item} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* --- MOBILE VIEW (1 Featured + 3 Compact List Cards) --- */}
-        <div className="flex flex-col gap-4 md:hidden">
+        <ScrollReveal variant="fade-up" className="flex flex-col gap-4 md:hidden">
           {/* Featured Card */}
           <article className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden group shadow-xs">
             <Link href={"/media/berita/" + featuredNews.slug} className="absolute inset-0 z-20">
@@ -189,7 +194,7 @@ export async function NewsSection() {
               </article>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );
