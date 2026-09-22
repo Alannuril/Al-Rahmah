@@ -33,12 +33,20 @@ const statsData = [
 
 export function AlRahmahStats() {
   return (
-    <section className="py-8 sm:py-10 md:py-14 bg-white relative z-10">
-      {/* Modern Soft Boundary Lines (Atas & Bawah) */}
+    <section className="pt-8 sm:pt-10 md:pt-14 pb-12 sm:pb-16 md:pb-20 bg-white relative z-10 overflow-hidden">
+      {/* Modern Soft Boundary Line (Atas) */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
 
-      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+      {/* Gradasi Hijau Halus Meluncur dari Panca Jiwa ke Akreditasi (Bawah ke Atas) */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-24 sm:h-32 md:h-40 pointer-events-none z-0"
+        style={{
+          background:
+            "linear-gradient(to top, #1c483a 0%, rgba(28, 72, 58, 0.7) 18%, rgba(28, 72, 58, 0.3) 48%, rgba(28, 72, 58, 0.06) 78%, transparent 100%)",
+        }}
+      />
+
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
         <StaggerContainer staggerDelay={0.1} className="grid grid-cols-2 md:grid-cols-4">
           {statsData.map((stat, index) => {
             const Icon = stat.icon;

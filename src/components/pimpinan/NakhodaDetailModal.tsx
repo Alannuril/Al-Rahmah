@@ -56,7 +56,7 @@ export function NakhodaDetailModal({ nakhoda, onClose }: NakhodaDetailModalProps
       aria-modal="true"
     >
       <div
-        className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 border border-zinc-200/80"
+        className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 border border-zinc-200/80"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button Floating */}
@@ -74,7 +74,7 @@ export function NakhodaDetailModal({ nakhoda, onClose }: NakhodaDetailModalProps
           
           {/* Header Tokoh: Foto & Info Utama */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 pt-2 sm:pt-0">
-            <div className="relative w-28 h-36 sm:w-32 sm:h-40 rounded-2xl overflow-hidden shadow-xs border border-zinc-200/80 bg-zinc-100 shrink-0">
+            <div className="relative w-28 h-36 sm:w-32 sm:h-40 rounded-xl overflow-hidden shadow-xs border border-zinc-200/80 bg-zinc-100 shrink-0">
               <Image
                 src={nakhoda.foto}
                 alt={`Foto profil ${nakhoda.nama}`}
@@ -126,7 +126,7 @@ export function NakhodaDetailModal({ nakhoda, onClose }: NakhodaDetailModalProps
               {nakhoda.fokusKontribusi.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200/70 space-y-1 hover:border-emerald-200/80 transition-colors"
+                  className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/70 space-y-1 hover:border-emerald-200/80 transition-colors"
                 >
                   <div className="flex items-center gap-2 text-zinc-900 font-semibold text-xs sm:text-sm">
                     <CheckCircle2 size={14} className="text-brand-primary shrink-0" />

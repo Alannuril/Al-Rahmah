@@ -1,7 +1,7 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { AnnouncementBanner } from "@/components/sections/AnnouncementBanner";
 import { AlRahmahStats } from "@/components/sections/AlRahmahStats";
-import { AboutSection } from "@/components/sections/AboutSection";
+import { PancaJiwaSection } from "@/components/sections/PancaJiwaSection";
 import { NewsSection } from "@/components/sections/NewsSection";
 import { HighlightSection } from "@/components/sections/HighlightSection";
 import { GalleryFeed } from "@/components/sections/GalleryFeed";
@@ -13,7 +13,7 @@ export default function Home() {
       <HeroSection />
       <AnnouncementBanner />
       <AlRahmahStats />
-      <AboutSection />
+      <PancaJiwaSection />
       <NewsSection />
       <HighlightSection />
       <GalleryFeed />

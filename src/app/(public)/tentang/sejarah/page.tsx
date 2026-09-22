@@ -74,7 +74,7 @@ export default function SejarahPage() {
       {/*    - Foto Asli K.H. Abdul Rasyid Muslim (Alm.) Tampak Jelas   */}
       {/*    - Desain Minimalis & Modern Tanpa Box / Card Border         */}
       {/* ============================================================ */}
-      <section className="w-full bg-gradient-to-br from-[#3d7566] via-[#396e5f] to-[#2f5c4f] border-b border-[#2d564a] mb-12 sm:mb-16 pt-16 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 lg:pb-20 text-white relative overflow-hidden">
+      <section className="w-full bg-gradient-to-br from-[#3d7566] via-[#396e5f] to-[#2f5c4f] border-b border-[#2d564a] pt-16 sm:pt-24 lg:pt-28 pb-12 sm:pb-16 lg:pb-20 text-white relative overflow-hidden">
         {/* Transisi Gradasi Halus: Dari Latar Section A (#E6E6E6) ke Section B (#396e5f) */}
         <div
           className="absolute inset-x-0 top-0 h-28 sm:h-36 lg:h-44 pointer-events-none z-10"
@@ -145,81 +145,103 @@ export default function SejarahPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 3. SECTION BERIKUTNYA: KONTEN DALAM CONTAINER STANDARD       */}
+      {/* 3. SECTION: TITIK AWAL & BASIS KOMUNITAS (BUKAN CARD)        */}
+      {/*    - Menggunakan foto arsip rintisan asli sebagai background */}
+      {/*    - Penjelasan berada di sisi kanan tanpa card pembungkus   */}
+      {/*    - Gradient scrim halus memastikan teks terbaca jelas       */}
+      {/* ============================================================ */}
+      <section className="w-full relative min-h-[580px] lg:min-h-[640px] flex items-center py-16 sm:py-24 lg:py-28 overflow-hidden mb-14 sm:mb-20 text-white">
+        {/* Background Image: Foto Asli Rintisan Pengajian Awal di Link. Lebak */}
+        <Image
+          src="/images/sejarah-titik-awal.jpg"
+          alt="Dokumentasi asli sejarah titik awal pengajian salafiyah Al-Rahmah di Link. Lebak"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[25%_center] lg:object-[20%_center]"
+        />
+
+        {/* Ambient Gradient Scrim / Overlay: Transparan di kiri (fokus foto), gelap pekat di kanan (kontras teks) */}
+        <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-black/40 via-[#071711]/85 to-[#071711] lg:from-black/20 lg:via-[#071711]/85 lg:to-[#071711] pointer-events-none" />
+
+        {/* Transisi Halus Atas (dari Section 2 hijau) & Bawah (ke Section 4 light surface) */}
+        <div className="absolute inset-x-0 top-0 h-16 sm:h-24 bg-gradient-to-b from-[#2f5c4f]/90 via-[#2f5c4f]/40 to-transparent pointer-events-none z-10" />
+        <div className="absolute inset-x-0 bottom-0 h-20 sm:h-32 bg-gradient-to-t from-surface via-surface/60 to-transparent pointer-events-none z-10" />
+
+        {/* Konten Bersih Berbasis Tipografi Tanpa Pelapis Card */}
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+            
+            {/* Sisi Kiri: Terbuka untuk memperlihatkan keaslian foto bersejarah */}
+            <div className="hidden lg:flex flex-col justify-end h-full pt-44">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-sm border border-white/15 text-white/90 text-xs w-fit shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse" />
+                <span className="font-medium tracking-wide">
+                  Dokumentasi Arsip: Pengajian Salafiyah Rintisan di Link. Lebak
+                </span>
+              </div>
+            </div>
+
+            {/* Sisi Kanan: Penjelasan Sejarah Langsung di Atas Background (Tanpa Card) */}
+            <div className="lg:col-span-6 lg:col-start-7 space-y-6">
+              <div className="space-y-3">
+                {/* Mobile Caption Tag */}
+                <div className="lg:hidden inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 backdrop-blur-xs border border-white/15 text-emerald-300 text-[11px] font-medium w-fit mb-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                  <span>Dokumentasi Arsip Rintisan</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-300">
+                  <MapPin size={14} className="text-emerald-400 shrink-0" />
+                  <span>Link. Lebak, Kel. Lebakwangi, Walantaka, Serang</span>
+                </div>
+
+                <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-snug">
+                  Titik Awal &amp; Basis Komunitas
+                </h2>
+              </div>
+
+              <div className="space-y-4 text-xs sm:text-sm text-zinc-200/90 leading-relaxed font-normal">
+                <p>
+                  Jauh sebelum berkembang menjadi komplek pendidikan modern terpadu seperti saat ini,
+                  aktivitas keagamaan dan dakwah Al-Rahmah berakar kuat di tengah-tengah masyarakat setempat,
+                  tepatnya di Link. Lebak, Kelurahan Lebakwangi, Walantaka.
+                </p>
+                <p>
+                  Pola pembelajarannya bermula dari pengajian tradisional (<em className="text-emerald-300 font-medium not-italic">salafiyah</em>) yang
+                  didirikan guna menjawab kebutuhan bekal agama bagi anak-anak usia sekolah di sekitar
+                  koridor jalan Ciruas-Petir. Dengan penuh ketulusan, <strong className="text-white font-semibold">K.H. Abdul Rasyid Muslim</strong> bersama{" "}
+                  <strong className="text-white font-semibold">Umi Hj. Enung Nurhayati</strong> membimbing santri membaca Al-Qur&apos;an, memahami tauhid,
+                  dan menanamkan adab serta akhlakul karimah dalam suasana kekeluargaan.
+                </p>
+                <p>
+                  Tingginya antusiasme serta kepercayaan masyarakat sekitar menjadi pemicu utama bagi
+                  perintis untuk memperluas jangkauan dakwah, hingga bertransformasi menjadi lembaga
+                  pendidikan formal yang melahirkan generasi berprestasi.
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-white/15 flex flex-wrap gap-2 text-xs font-medium text-emerald-100">
+                <span className="px-3 py-1 rounded-lg bg-white/10 border border-white/15 backdrop-blur-xs">
+                  Akar Salafiyah Rintisan
+                </span>
+                <span className="px-3 py-1 rounded-lg bg-white/10 border border-white/15 backdrop-blur-xs">
+                  Koridor Ciruas-Petir
+                </span>
+                <span className="px-3 py-1 rounded-lg bg-white/10 border border-white/15 backdrop-blur-xs">
+                  Pendidikan Berbasis Umat
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 4. SECTION BERIKUTNYA: KONTEN DALAM CONTAINER STANDARD       */}
       {/* ============================================================ */}
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl">
-        {/* ============================================================ */}
-        {/* 3. SECTION: TITIK AWAL & BASIS KOMUNITAS                     */}
-        {/* ============================================================ */}
-        <section className="mb-14 sm:mb-20">
-          <div className="bg-white rounded-3xl overflow-hidden border border-zinc-200/80 shadow-xs">
-            <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
-              
-              {/* Visual Dokumentasi Ilustratif Sejarah Lingkungan Pesantren */}
-              <div className="lg:col-span-5 relative min-h-[260px] sm:min-h-[340px] lg:min-h-full bg-zinc-100">
-                <Image
-                  src="https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1200&auto=format&fit=crop"
-                  alt="Ilustrasi lingkungan pondok pesantren Al-Rahmah"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/75 via-transparent to-transparent flex flex-col justify-end p-5">
-                  <span className="text-[10px] font-semibold text-white/90 bg-zinc-900/60 backdrop-blur-xs px-2.5 py-1 rounded-full w-fit border border-white/20">
-                    Dokumentasi Ilustratif Sejarah
-                  </span>
-                </div>
-              </div>
-
-              {/* Narasi Titik Awal Sejarah */}
-              <div className="lg:col-span-7 p-6 sm:p-8 md:p-10 flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-brand-primary">
-                    <MapPin size={14} />
-                    <span>Link. Lebak, Kel. Lebakwangi, Walantaka, Serang</span>
-                  </div>
-
-                  <h2 className="font-heading font-bold text-xl sm:text-2xl lg:text-3xl text-zinc-900 tracking-tight leading-snug">
-                    Titik Awal &amp; Basis Komunitas
-                  </h2>
-
-                  <div className="space-y-3.5 text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                    <p>
-                      Jauh sebelum berkembang menjadi komplek pendidikan modern terpadu seperti saat ini,
-                      aktivitas keagamaan dan dakwah Al-Rahmah berakar kuat di tengah-tengah masyarakat setempat,
-                      tepatnya di Link. Lebak, Kelurahan Lebakwangi, Walantaka.
-                    </p>
-                    <p>
-                      Pola pembelajarannya bermula dari pengajian tradisional (<em>salafiyah</em>) yang
-                      didirikan guna menjawab kebutuhan bekal agama bagi anak-anak usia sekolah di sekitar
-                      koridor jalan Ciruas-Petir. Dengan penuh ketulusan, K.H. Abdul Rasyid Muslim bersama
-                      Umi Hj. Enung Nurhayati membimbing santri membaca Al-Qur&apos;an, memahami tauhid,
-                      dan menanamkan adab serta akhlakul karimah dalam suasana kekeluargaan.
-                    </p>
-                    <p>
-                      Tingginya antusiasme serta kepercayaan masyarakat sekitar menjadi pemicu utama bagi
-                      perintis untuk memperluas jangkauan dakwah, hingga bertransformasi menjadi lembaga
-                      pendidikan formal yang melahirkan generasi berprestasi.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-zinc-100 flex flex-wrap gap-2 text-xs font-medium text-zinc-600">
-                  <span className="px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200/70">
-                    Akar Salafiyah Rintisan
-                  </span>
-                  <span className="px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200/70">
-                    Koridor Ciruas-Petir
-                  </span>
-                  <span className="px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-200/70">
-                    Pendidikan Berbasis Umat
-                  </span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
 
         {/* ============================================================ */}
         {/* 4. SECTION: TONGGAK SEJARAH & TRANSFORMASI (TIMELINE)         */}
