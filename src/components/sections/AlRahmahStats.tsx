@@ -33,41 +33,32 @@ const statsData = [
 
 export function AlRahmahStats() {
   return (
-    <section className="pt-8 sm:pt-10 md:pt-14 pb-12 sm:pb-16 md:pb-20 bg-white relative z-10 overflow-hidden">
+    <section className="py-8 sm:py-10 md:py-12 bg-white relative z-10 overflow-hidden">
       {/* Modern Soft Boundary Line (Atas) */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
 
-      {/* Gradasi Hijau Halus Meluncur dari Panca Jiwa ke Akreditasi (Bawah ke Atas) */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-24 sm:h-32 md:h-40 pointer-events-none z-0"
-        style={{
-          background:
-            "linear-gradient(to top, #1c483a 0%, rgba(28, 72, 58, 0.7) 18%, rgba(28, 72, 58, 0.3) 48%, rgba(28, 72, 58, 0.06) 78%, transparent 100%)",
-        }}
-      />
-
       <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-2 md:grid-cols-4">
+        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 md:grid-cols-4">
           {statsData.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <StaggerItem
                 key={stat.id}
-                variant="zoom-in"
-                className="relative flex flex-col items-center text-center py-4 px-3 sm:px-6 transition-all duration-300 group"
+                variant="fade-up"
+                className="relative flex flex-col items-center text-center py-3 sm:py-4 px-3 sm:px-6"
               >
-                {/* Modern Soft Icon Container */}
-                <div className="w-10 h-10 rounded-2xl bg-brand-primary/5 text-brand-primary flex items-center justify-center mb-2.5 group-hover:scale-110 group-hover:bg-brand-primary group-hover:text-white transition-all duration-300">
-                  <Icon size={20} strokeWidth={1.8} />
+                {/* Soft & Clean Icon Chip (Static, Tanpa Animasi Hover) */}
+                <div className="w-10 h-10 rounded-xl bg-[#396E5F]/8 text-[#396E5F] flex items-center justify-center mb-2.5">
+                  <Icon size={19} strokeWidth={1.75} />
                 </div>
 
                 {/* Value / Angka */}
-                <span className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-primary tracking-tight">
+                <span className="text-2xl sm:text-3xl lg:text-4xl font-bold font-heading text-[#2A5C4E] tracking-tight">
                   {stat.value}
                 </span>
 
                 {/* Label */}
-                <span className="text-xs sm:text-sm font-semibold text-zinc-800 mt-1 leading-tight">
+                <span className="text-xs sm:text-sm font-semibold text-zinc-700 mt-1 leading-tight">
                   {stat.label}
                 </span>
 
@@ -78,14 +69,14 @@ export function AlRahmahStats() {
                   </span>
                 )}
 
-                {/* Modern Clean Vertical Separator (Desktop) */}
+                {/* Clean Vertical Separator (Desktop) */}
                 {index < 3 && (
-                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-16 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
+                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-12 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
                 )}
 
-                {/* Modern Clean Separator (Mobile 2x2 Grid) */}
+                {/* Clean Separator (Mobile 2x2 Grid) */}
                 {index % 2 === 0 && (
-                  <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 h-12 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
+                  <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 h-10 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
                 )}
                 {index < 2 && (
                   <div className="md:hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent pointer-events-none" />
@@ -95,6 +86,9 @@ export function AlRahmahStats() {
           })}
         </StaggerContainer>
       </div>
+
+      {/* Modern Soft Boundary Line (Bawah) */}
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
     </section>
   );
 }

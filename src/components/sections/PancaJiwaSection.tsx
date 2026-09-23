@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 
 interface PancaJiwaItem {
@@ -45,7 +43,7 @@ const PANCA_JIWA_LIST: PancaJiwaItem[] = [
 
 export function PancaJiwaSection() {
   return (
-    <section id="panca-jiwa" className="relative w-full overflow-hidden bg-[#1c483a] py-16 sm:py-20 md:py-24 scroll-mt-20">
+    <section id="panca-jiwa" className="relative w-full overflow-hidden bg-[#1c483a] py-10 sm:py-16 md:py-20 scroll-mt-20">
       {/* Background Image: Santri Berbaris Rapi */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -61,7 +59,7 @@ export function PancaJiwaSection() {
 
         {/* Halus: Fade Lembut di Batas Atas Seam ke #1c483a */}
         <div
-          className="absolute inset-x-0 top-0 h-32 sm:h-48 pointer-events-none"
+          className="absolute inset-x-0 top-0 h-24 sm:h-48 pointer-events-none"
           style={{
             background: "linear-gradient(to bottom, #1c483a 0%, rgba(28, 72, 58, 0.8) 40%, transparent 100%)",
           }}
@@ -75,42 +73,42 @@ export function PancaJiwaSection() {
       <div className="container relative z-10 mx-auto px-4 md:px-6 lg:px-8 max-w-7xl text-white">
         {/* Header Section with Scroll Animation */}
         <ScrollReveal variant="fade-up" duration={0.6}>
-          <div className="text-center max-w-2xl mx-auto space-y-3 mb-10 sm:mb-14 lg:mb-16">
-            <span className="text-[11px] sm:text-xs font-semibold tracking-widest uppercase text-brand-lime/90 block">
+          <div className="text-center max-w-2xl mx-auto space-y-1.5 sm:space-y-3 mb-6 sm:mb-10 lg:mb-12">
+            <span className="text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-brand-lime/90 block">
               Nilai &amp; Karakter Pondok
             </span>
-            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white drop-shadow-sm">
+            <h2 className="font-heading text-xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white drop-shadow-sm">
               Panca Jiwa Al-Rahmah
             </h2>
-            <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal max-w-xl mx-auto drop-shadow-xs">
+            <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal max-w-xl mx-auto drop-shadow-xs line-clamp-2 sm:line-clamp-none">
               Pilar pembentukan karakter kepondokmodernan yang mengakar kuat pada diri santri serta menjadi ruh keteladanan para pendidik di Al-Rahmah.
             </p>
           </div>
         </ScrollReveal>
 
-        {/* 4 Pilar Grid with Staggered Scroll Animation */}
-        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* 4 Pilar Grid: 2x2 pada Mobile, 4 Kolom pada Desktop */}
+        <StaggerContainer staggerDelay={0.06} className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
           {PANCA_JIWA_LIST.map((pilar) => (
             <StaggerItem key={pilar.nomor} variant="zoom-in" className="h-full">
-              <div className="group bg-[#102d23]/60 hover:bg-[#102d23]/80 border border-white/15 hover:border-emerald-300/50 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-lg hover:shadow-emerald-950/25 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full">
+              <div className="group bg-[#102d23]/65 hover:bg-[#102d23]/85 border border-white/15 hover:border-emerald-300/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 lg:p-6 backdrop-blur-md shadow-sm hover:shadow-emerald-950/25 transition-all duration-300 flex flex-col justify-between h-full">
                 <div>
                   {/* Header Kartu: Nomor & Teks Arab */}
-                  <div className="flex items-center justify-between gap-2 pb-3.5 mb-3.5 border-b border-white/10">
-                    <span className="text-xs font-mono font-bold text-emerald-300 tracking-wider">
+                  <div className="flex items-center justify-between gap-1 pb-2 sm:pb-3 mb-2 sm:mb-3 border-b border-white/10">
+                    <span className="text-[11px] sm:text-xs font-mono font-bold text-emerald-300 tracking-wider">
                       {pilar.nomor}
                     </span>
-                    <span className="text-sm font-serif text-white/90 tracking-wide">
+                    <span className="text-xs sm:text-sm font-serif text-white/90 tracking-wide">
                       {pilar.arab}
                     </span>
                   </div>
 
                   {/* Judul Pilar */}
-                  <h3 className="font-heading text-base sm:text-lg font-bold text-white tracking-tight mb-2 group-hover:text-emerald-200 transition-colors">
+                  <h3 className="font-heading text-xs sm:text-base lg:text-lg font-bold text-white tracking-tight mb-1 sm:mb-2 group-hover:text-emerald-200 transition-colors leading-snug">
                     {pilar.judul}
                   </h3>
 
                   {/* Deskripsi */}
-                  <p className="text-xs sm:text-[13px] text-zinc-100/90 leading-relaxed font-normal">
+                  <p className="text-[10px] sm:text-xs lg:text-[13px] text-zinc-100/85 leading-relaxed font-normal line-clamp-3 sm:line-clamp-none">
                     {pilar.deskripsi}
                   </p>
                 </div>
@@ -118,19 +116,6 @@ export function PancaJiwaSection() {
             </StaggerItem>
           ))}
         </StaggerContainer>
-
-        {/* Action Button: Menghubungkan ke Halaman Pimpinan & Filosofi Pesantren */}
-        <ScrollReveal variant="fade-up" delay={0.2} duration={0.6}>
-          <div className="mt-10 sm:mt-12 text-center">
-            <Link
-              href="/tentang/pimpinan#panca-jiwa"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 hover:border-emerald-300 text-white text-xs sm:text-sm font-medium backdrop-blur-sm transition-all duration-300 group shadow-sm"
-            >
-              <span>Pelajari Profil &amp; Nakhoda Pesantren</span>
-              <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform text-emerald-300" />
-            </Link>
-          </div>
-        </ScrollReveal>
       </div>
     </section>
   );

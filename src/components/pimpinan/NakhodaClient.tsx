@@ -321,29 +321,29 @@ export function NakhodaClient() {
             </div>
           </ScrollReveal>
 
-          {/* 4 Pilar Grid with Staggered Scroll Animation */}
-          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* 4 Pilar Grid with Staggered Scroll Animation (2x2 on Mobile, 4 Columns on Desktop) */}
+          <StaggerContainer staggerDelay={0.06} className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
             {PANCA_JIWA_LIST.map((pilar) => (
               <StaggerItem key={pilar.nomor} variant="zoom-in" className="h-full">
-                <div className="group bg-[#102d23]/60 hover:bg-[#102d23]/80 border border-white/15 hover:border-emerald-300/50 rounded-xl p-5 sm:p-6 backdrop-blur-md shadow-lg hover:shadow-emerald-950/25 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full">
+                <div className="group bg-[#102d23]/65 hover:bg-[#102d23]/85 border border-white/15 hover:border-emerald-300/40 rounded-xl sm:rounded-2xl p-3 sm:p-5 lg:p-6 backdrop-blur-md shadow-sm hover:shadow-emerald-950/25 transition-all duration-300 flex flex-col justify-between h-full">
                   <div>
                     {/* Header Kartu: Nomor & Teks Arab */}
-                    <div className="flex items-center justify-between gap-2 pb-3.5 mb-3.5 border-b border-white/10">
-                      <span className="text-xs font-mono font-bold text-emerald-300 tracking-wider">
+                    <div className="flex items-center justify-between gap-1 pb-2 sm:pb-3 mb-2 sm:mb-3 border-b border-white/10">
+                      <span className="text-[11px] sm:text-xs font-mono font-bold text-emerald-300 tracking-wider">
                         {pilar.nomor}
                       </span>
-                      <span className="text-sm font-serif text-white/90 tracking-wide">
+                      <span className="text-xs sm:text-sm font-serif text-white/90 tracking-wide">
                         {pilar.arab}
                       </span>
                     </div>
 
                     {/* Judul Pilar */}
-                    <h3 className="font-heading text-base sm:text-lg font-bold text-white tracking-tight mb-2 group-hover:text-emerald-200 transition-colors">
+                    <h3 className="font-heading text-xs sm:text-base lg:text-lg font-bold text-white tracking-tight mb-1 sm:mb-2 group-hover:text-emerald-200 transition-colors leading-snug">
                       {pilar.judul}
                     </h3>
 
                     {/* Deskripsi */}
-                    <p className="text-xs sm:text-[13px] text-zinc-100/90 leading-relaxed font-normal">
+                    <p className="text-[10px] sm:text-xs lg:text-[13px] text-zinc-100/85 leading-relaxed font-normal line-clamp-3 sm:line-clamp-none">
                       {pilar.deskripsi}
                     </p>
                   </div>
