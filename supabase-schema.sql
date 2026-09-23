@@ -94,30 +94,6 @@ values (
   'Pondok Pesantren Al-Rahmah Walantaka membuka pendaftaran santri baru untuk tahun ajaran 2026/2027.'
 ) on conflict do nothing;
 
--- ============================================================
--- TABEL PENDAFTAR PSB
--- ============================================================
-create table if not exists pendaftar_psb (
-  id uuid primary key default gen_random_uuid(),
-  nama_lengkap text not null,
-  tempat_lahir text,
-  tanggal_lahir date,
-  jenis_kelamin text check (jenis_kelamin in ('Laki-laki', 'Perempuan')),
-  program text check (program in ('Tahfidz', 'Reguler', 'Tahfidz & Reguler')),
-  nama_ayah text,
-  nama_ibu text,
-  no_hp text,
-  alamat text,
-  asal_sekolah text,
-  nisn text,
-  status text not null default 'Menunggu' check (status in ('Menunggu', 'Lulus', 'Tidak Lulus')),
-  tahun_ajaran text,
-  kk_url text,
-  akta_url text,
-  rapor_url text,
-  foto_url text,
-  created_at timestamptz not null default now()
-);
 
 -- ============================================================
 -- TABEL PENGATURAN WEBSITE
@@ -156,7 +132,6 @@ alter table galeri_foto enable row level security;
 alter table pengumuman enable row level security;
 alter table prestasi enable row level security;
 alter table psb_settings enable row level security;
-alter table pendaftar_psb enable row level security;
 alter table pengaturan_website enable row level security;
 
 -- PUBLIC: boleh baca berita yang sudah terbit
@@ -225,11 +200,6 @@ create policy "Authenticated full access psb settings"
   using (auth.role() = 'authenticated')
   with check (auth.role() = 'authenticated');
 
-create policy "Authenticated full access pendaftar"
-  on pendaftar_psb for all
-  using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
-
 create policy "Authenticated full access pengaturan"
   on pengaturan_website for all
   using (auth.role() = 'authenticated')
@@ -242,5 +212,4 @@ create policy "Authenticated full access pengaturan"
 -- 2. "berita-thumbnails" (Public)
 -- 3. "prestasi"          (Public)
 -- 4. "psb-brosur"        (Public)
--- 5. "psb-dokumen"       (Private / authenticated only)
 -- ============================================================

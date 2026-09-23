@@ -12,7 +12,7 @@ interface DashboardStats {
   totalBerita: number;
   totalGaleri: number;
   totalPengumuman: number;
-  totalPendaftar: number;
+  statusPsb: string;
 }
 
 interface RecentActivity {
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
     totalBerita: 0,
     totalGaleri: 0,
     totalPengumuman: 0,
-    totalPendaftar: 0,
+    statusPsb: "Dibuka",
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,12 +48,12 @@ export default function AdminDashboard() {
     async function fetchStats() {
       const supabase = createClient();
 
-      const [beritaRes, galeriRes, pengumumanRes, pendaftarRes, activityRes] =
+      const [beritaRes, galeriRes, pengumumanRes, psbRes, activityRes] =
         await Promise.all([
           supabase.from("berita").select("id", { count: "exact", head: true }),
           supabase.from("galeri_foto").select("id", { count: "exact", head: true }),
           supabase.from("pengumuman").select("id", { count: "exact", head: true }).eq("status", "Aktif"),
-          supabase.from("pendaftar_psb").select("id", { count: "exact", head: true }),
+          supabase.from("psb_settings").select("status").limit(1).maybeSingle(),
           supabase.from("berita").select("judul, created_at").order("created_at", { ascending: false }).limit(3),
         ]);
 
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
         totalBerita: beritaRes.count ?? 0,
         totalGaleri: galeriRes.count ?? 0,
         totalPengumuman: pengumumanRes.count ?? 0,
-        totalPendaftar: pendaftarRes.count ?? 0,
+        statusPsb: psbRes.data?.status ?? "Dibuka",
       });
 
       if (activityRes.data) {
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
     { label: "Total Berita", value: stats.totalBerita.toString(), change: "artikel", icon: Newspaper, color: "from-brand-primary to-emerald-700", bgLight: "bg-brand-primary/5", textColor: "text-brand-primary" },
     { label: "Total Foto Galeri", value: stats.totalGaleri.toString(), change: "foto", icon: Images, color: "from-brand-secondary to-emerald-500", bgLight: "bg-brand-secondary/10", textColor: "text-brand-secondary" },
     { label: "Pengumuman Aktif", value: stats.totalPengumuman.toString(), change: "aktif", icon: Megaphone, color: "from-amber-500 to-orange-500", bgLight: "bg-amber-50", textColor: "text-amber-600" },
-    { label: "Pendaftar PSB", value: stats.totalPendaftar.toString(), change: "terdaftar", icon: Users, color: "from-brand-lime to-brand-accent", bgLight: "bg-brand-lime/10", textColor: "text-brand-primary" },
+    { label: "Status PSB", value: stats.statusPsb, change: "gelombang aktif", icon: Users, color: "from-brand-lime to-brand-accent", bgLight: "bg-brand-lime/10", textColor: "text-brand-primary" },
   ];
 
   return (
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
               { label: "Tambah Berita", href: "/admin/berita", icon: FileText },
               { label: "Upload Galeri", href: "/admin/galeri", icon: ImagePlus },
               { label: "Buat Pengumuman", href: "/admin/pengumuman", icon: Megaphone },
-              { label: "Lihat Pendaftar", href: "/admin/psb", icon: Users },
+              { label: "Pengaturan PSB", href: "/admin/psb", icon: Users },
             ].map((action) => {
               const Icon = action.icon;
               return (

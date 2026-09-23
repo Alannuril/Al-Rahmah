@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const host = request.headers.get("host");
     const proto = request.headers.get("x-forwarded-proto") || "http";
     const origin = `${proto}://${host}`;
-    const targetPortalUrl = portalUrl || `${origin}/psb/daftar`;
+    const targetPortalUrl = portalUrl || `${origin}/psb`;
 
     const result = await sendWelcomeEmail({
       email: email.trim(),

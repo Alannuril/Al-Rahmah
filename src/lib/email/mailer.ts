@@ -2,7 +2,6 @@ import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs";
 import { renderWelcomeEmail, type WelcomeEmailData } from "./templates/welcomeEmail";
-import { renderPsbReceiptEmail, type PsbReceiptEmailData } from "./templates/psbReceiptEmail";
 import { renderLoginAlertEmail, type LoginAlertEmailData } from "./templates/loginAlertEmail";
 
 export interface SendMailResult {
@@ -118,17 +117,6 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<SendMail
   });
 }
 
-/**
- * Send official PSB registration receipt email
- */
-export async function sendPsbReceiptEmail(data: PsbReceiptEmailData): Promise<SendMailResult> {
-  const { subject, html } = renderPsbReceiptEmail(data);
-  return sendMail({
-    to: data.email,
-    subject,
-    html,
-  });
-}
 
 /**
  * Send login alert notification email

@@ -16,7 +16,7 @@ export function renderLoginAlertEmail({
     timeStyle: "medium",
   }),
   device = "Browser Web",
-  portalUrl = "http://localhost:3000/psb/daftar",
+  portalUrl = "http://localhost:3000/psb",
 }: LoginAlertEmailData): { subject: string; html: string } {
   const displayName = name && name.trim().length > 0 ? name.trim() : "Bapak/Ibu Calon Wali Santri";
   const subject = "Pemberitahuan Masuk Akun - Portal E-PSB Al-Rahmah";

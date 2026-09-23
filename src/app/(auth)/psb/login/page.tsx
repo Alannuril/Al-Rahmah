@@ -34,7 +34,7 @@ function GoogleIcon({ className = "w-4 h-4" }: { className?: string }) {
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get("redirect") || "/psb/daftar";
+  const redirectPath = searchParams.get("redirect") || "/psb";
   const oauthError = searchParams.get("error");
   const { refreshUser } = useAuth();
 

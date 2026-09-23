@@ -9,7 +9,7 @@ export interface WelcomeEmailData {
 export function renderWelcomeEmail({
   name,
   email,
-  portalUrl = "http://localhost:3000/psb/daftar",
+  portalUrl = "http://localhost:3000/psb",
 }: WelcomeEmailData): { subject: string; html: string } {
   const displayName = name && name.trim().length > 0 ? name.trim() : "Bapak/Ibu Calon Wali Santri";
   const subject = "Pendaftaran Akun Berhasil - Portal PSB Pondok Pesantren Al-Rahmah";

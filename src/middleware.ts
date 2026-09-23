@@ -48,22 +48,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Protect /psb/daftar: only accessible if user is logged in
-  if (request.nextUrl.pathname.startsWith("/psb/daftar") && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/psb/login";
-    url.searchParams.set("redirect", "/psb/daftar");
-    return NextResponse.redirect(url);
-  }
-
-  // If user is already logged in and visits /psb/login or /psb/register, redirect to /psb/daftar
+  // If user is already logged in and visits /psb/login or /psb/register, redirect to /psb
   if (
     (request.nextUrl.pathname === "/psb/login" ||
       request.nextUrl.pathname === "/psb/register") &&
     user
   ) {
     const url = request.nextUrl.clone();
-    url.pathname = "/psb/daftar";
+    url.pathname = "/psb";
     return NextResponse.redirect(url);
   }
 
