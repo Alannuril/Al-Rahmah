@@ -1,24 +1,17 @@
 import Image from "next/image";
-import Link from "next/link";
-import { MapPin, ArrowLeft, ArrowRight } from "lucide-react";
+import { MapPin } from "lucide-react";
 
-export const metadata = {
-  title: "Sejarah Al-Rahmah - Al-Rahmah",
-  description:
-    "Jejak perjuangan dan pengabdian Al-Rahmah Walantaka dari pengajian salafiyah hingga madrasah unggulan berakreditasi A.",
-};
-
-export default function SejarahPage() {
+export function SejarahSection() {
   return (
-    <div className="pt-28 sm:pt-32 min-h-screen bg-surface/40">
+    <section id="sejarah" aria-labelledby="sejarah-heading" className="scroll-mt-24 bg-brand-paper pt-12 sm:pt-16">
       {/* ============================================================ */}
       {/* 1. HEADER HALAMAN: BERSIH & MINIMALIS                        */}
       {/* ============================================================ */}
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl">
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-6 sm:mb-8">
-          <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tight">
+          <h2 id="sejarah-heading" className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tight">
             Sejarah Al-Rahmah
-          </h1>
+          </h2>
           <p className="text-xs sm:text-sm md:text-base text-zinc-600 leading-relaxed">
             Jejak perjuangan dan pengabdian Al-Rahmah dari pengajian salafiyah hingga madrasah unggulan berakreditasi A.
           </p>
@@ -63,7 +56,6 @@ export default function SejarahPage() {
                   src="/images/rasyid-muslim.png"
                   alt="K.H. Abdul Rasyid Muslim (Alm.) - Inisiator & Pendiri Utama Pondok Pesantren Al-Rahmah"
                   fill
-                  priority
                   sizes="(max-width: 768px) 320px, (max-width: 1024px) 380px, 460px"
                   className="object-contain object-bottom"
                 />
@@ -77,9 +69,9 @@ export default function SejarahPage() {
                   Inisiator &amp; Pendiri Utama
                 </span>
 
-                <h2 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-[1.15]">
+                <h3 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-[1.15]">
                   K.H. Abdul Rasyid Muslim <span className="text-emerald-200/75 font-normal text-2xl sm:text-3xl lg:text-4xl">(Alm.)</span>
-                </h2>
+                </h3>
 
                 <p className="text-xs sm:text-sm font-medium text-emerald-100/80">
                   Dikenal masyarakat sebagai K.H. Muslim / Kyai Rasyid
@@ -114,7 +106,6 @@ export default function SejarahPage() {
           src="/images/sejarah-titik-awal.jpg"
           alt="Dokumentasi asli sejarah titik awal pengajian salafiyah Al-Rahmah di Link. Lebak"
           fill
-          priority
           sizes="100vw"
           className="object-cover object-[25%_center] lg:object-[20%_center]"
         />
@@ -154,9 +145,9 @@ export default function SejarahPage() {
                   <span>Link. Lebak, Kel. Lebakwangi, Walantaka, Serang</span>
                 </div>
 
-                <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-snug">
+                <h3 className="font-heading font-bold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-snug">
                   Titik Awal &amp; Basis Komunitas
-                </h2>
+                </h3>
               </div>
 
               <div className="space-y-4 text-xs sm:text-sm text-zinc-200/90 leading-relaxed font-normal">
@@ -196,25 +187,6 @@ export default function SejarahPage() {
         </div>
       </section>
 
-      <nav aria-label="Halaman tentang pesantren" className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <Link
-          href="/tentang/visi-misi"
-          className="inline-flex min-h-11 items-center gap-3 text-sm font-medium text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
-        >
-          <ArrowLeft size={18} aria-hidden="true" />
-          Visi &amp; Misi
-        </Link>
-        <Link
-          href="/tentang/pimpinan"
-          className="inline-flex min-h-11 items-center gap-4 self-end text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
-        >
-          <span>
-            <span className="block text-xs text-zinc-500">Selanjutnya</span>
-            <span className="text-sm font-semibold">Nakhoda Al-Rahmah</span>
-          </span>
-          <ArrowRight size={18} aria-hidden="true" />
-        </Link>
-      </nav>
-    </div>
+    </section>
   );
 }

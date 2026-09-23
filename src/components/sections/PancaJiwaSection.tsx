@@ -123,7 +123,7 @@ export function PancaJiwaSection() {
         <ScrollReveal variant="fade-up" delay={0.2} duration={0.6}>
           <div className="mt-10 sm:mt-12 text-center">
             <Link
-              href="/tentang/pimpinan#panca-jiwa"
+              href="/tentang#panca-jiwa"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 hover:border-emerald-300 text-white text-xs sm:text-sm font-medium backdrop-blur-sm transition-all duration-300 group shadow-sm"
             >
               <span>Pelajari Profil &amp; Nakhoda Pesantren</span>
@@ -135,4 +135,3 @@ export function PancaJiwaSection() {
     </section>
   );
 }
-

@@ -34,9 +34,9 @@ export function Navbar() {
       name: "Tentang Al-Rahmah", 
       href: "/tentang",
       subLinks: [
-        { name: "Visi Misi", href: "/tentang/visi-misi" },
-        { name: "Sejarah Al-Rahmah", href: "/tentang/sejarah" },
-        { name: "Nakhoda Al-Rahmah", href: "/tentang/pimpinan" }
+        { name: "Visi Misi", href: "/tentang#visi-misi" },
+        { name: "Sejarah Al-Rahmah", href: "/tentang#sejarah" },
+        { name: "Nakhoda Al-Rahmah", href: "/tentang#nakhoda" }
       ]
     },
     { name: "Pendidikan", href: "/pendidikan" },

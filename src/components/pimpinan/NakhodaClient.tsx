@@ -158,7 +158,7 @@ export function NakhodaClient() {
 
   return (
     <>
-      <section className="relative pt-28 sm:pt-32 pb-20 sm:pb-28 lg:pb-32 bg-surface/40 overflow-hidden">
+      <section id="nakhoda" aria-labelledby="nakhoda-heading" className="relative scroll-mt-24 pt-12 sm:pt-16 pb-20 sm:pb-28 lg:pb-32 bg-brand-paper overflow-hidden">
         {/* Subtle Ambient Emerald Glow */}
         <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[600px] h-[280px] bg-gradient-to-b from-emerald-100/40 via-brand-secondary/10 to-transparent rounded-full blur-3xl pointer-events-none -z-0" />
 
@@ -177,14 +177,15 @@ export function NakhodaClient() {
           {/* SECTION HEADER: ENTRANCE ANIMATION                           */}
           {/* ============================================================ */}
           <div className="text-center max-w-2xl mx-auto space-y-2 mb-10 sm:mb-14">
-            <motion.h1
+            <motion.h2
+              id="nakhoda-heading"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               className="font-heading text-2xl sm:text-3xl lg:text-[36px] font-bold text-zinc-900 tracking-tight"
             >
               Nakhoda Al-Rahmah
-            </motion.h1>
+            </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -244,9 +245,9 @@ export function NakhodaClient() {
                   {/* Informasi Singkat & Ringkas */}
                   <div className="p-5 sm:p-6 space-y-2.5">
                     <div>
-                      <h2 className="font-heading font-bold text-lg sm:text-xl text-zinc-900 tracking-tight leading-snug">
+                      <h3 className="font-heading font-bold text-lg sm:text-xl text-zinc-900 tracking-tight leading-snug">
                         {nakhoda.nama}
-                      </h2>
+                      </h3>
                       <p className="text-xs font-semibold text-brand-primary mt-1">
                         {nakhoda.jabatan}
                       </p>
@@ -281,7 +282,7 @@ export function NakhodaClient() {
       {/* ============================================================ */}
       {/* SECTION: PANCA JIWA AL-RAHMAH (FULL WIDTH MODERN & SOFT)     */}
       {/* ============================================================ */}
-      <section id="panca-jiwa" className="relative w-full overflow-hidden bg-[#1c483a] py-20 sm:py-28 md:py-32 lg:py-36 scroll-mt-20">
+      <section id="panca-jiwa" className="relative w-full overflow-hidden bg-[#1c483a] py-20 sm:py-28 md:py-32 lg:py-36 scroll-mt-24">
         {/* Background Image: Santri Berbaris Rapi - Percerah & Lebih Hidup */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -362,4 +363,3 @@ export function NakhodaClient() {
     </>
   );
 }
-

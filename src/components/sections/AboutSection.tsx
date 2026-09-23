@@ -8,25 +8,25 @@ const aboutCards = [
   {
     title: "Nakhoda Al-Rahmah",
     desc: "Figur teladan & pengasuh",
-    href: "/tentang/pimpinan",
+    href: "/tentang#nakhoda",
     icon: Users,
   },
   {
     title: "Panca Jiwa",
     desc: "Falsafah karakter santri",
-    href: "/tentang/pimpinan#panca-jiwa",
+    href: "/tentang#panca-jiwa",
     icon: Sparkles,
   },
   {
     title: "Visi & Misi",
     desc: "Arah & komitmen pendidikan",
-    href: "/tentang/visi-misi",
+    href: "/tentang#visi-misi",
     icon: Target,
   },
   {
     title: "Sejarah Pesantren",
     desc: "Dedikasi sejak tahun 2005",
-    href: "/tentang/sejarah",
+    href: "/tentang#sejarah",
     icon: History,
   },
 ];
