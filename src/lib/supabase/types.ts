@@ -56,13 +56,29 @@ export interface Prestasi {
   created_at: string;
 }
 
+export interface PsbContact {
+  nama: string;
+  peran: string;
+  nomor: string;
+  waUrl?: string;
+}
+
 export interface PsbSettings {
   id: string;
   tahun_ajaran: string | null;
   status: PsbOpenStatus;
+  judul?: string | null;
   biaya_formulir: string | null;
   deskripsi: string | null;
   brosur_url: string | null;
+  google_form_url?: string | null;
+  periode_label?: string | null;
+  tanggal_mulai?: string | null;
+  tanggal_selesai?: string | null;
+  rekening_bank?: string | null;
+  rekening_nomor?: string | null;
+  rekening_nama?: string | null;
+  kontak_panitia?: PsbContact[] | null;
   updated_at: string;
 }
 

@@ -3,15 +3,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Newspaper, Images, Megaphone, Users, TrendingUp,
-  ArrowUpRight, Clock, FileText, ImagePlus, UserPlus,
+  Newspaper, Images, Users, TrendingUp,
+  ArrowUpRight, Clock, FileText, ImagePlus, Settings,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface DashboardStats {
   totalBerita: number;
   totalGaleri: number;
-  totalPengumuman: number;
   statusPsb: string;
 }
 
@@ -38,7 +37,6 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalBerita: 0,
     totalGaleri: 0,
-    totalPengumuman: 0,
     statusPsb: "Dibuka",
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
@@ -48,11 +46,10 @@ export default function AdminDashboard() {
     async function fetchStats() {
       const supabase = createClient();
 
-      const [beritaRes, galeriRes, pengumumanRes, psbRes, activityRes] =
+      const [beritaRes, galeriRes, psbRes, activityRes] =
         await Promise.all([
           supabase.from("berita").select("id", { count: "exact", head: true }),
           supabase.from("galeri_foto").select("id", { count: "exact", head: true }),
-          supabase.from("pengumuman").select("id", { count: "exact", head: true }).eq("status", "Aktif"),
           supabase.from("psb_settings").select("status").limit(1).maybeSingle(),
           supabase.from("berita").select("judul, created_at").order("created_at", { ascending: false }).limit(3),
         ]);
@@ -60,7 +57,6 @@ export default function AdminDashboard() {
       setStats({
         totalBerita: beritaRes.count ?? 0,
         totalGaleri: galeriRes.count ?? 0,
-        totalPengumuman: pengumumanRes.count ?? 0,
         statusPsb: psbRes.data?.status ?? "Dibuka",
       });
 
@@ -86,14 +82,13 @@ export default function AdminDashboard() {
   const statCards = [
     { label: "Total Berita", value: stats.totalBerita.toString(), change: "artikel", icon: Newspaper, color: "from-brand-primary to-emerald-700", bgLight: "bg-brand-primary/5", textColor: "text-brand-primary" },
     { label: "Total Foto Galeri", value: stats.totalGaleri.toString(), change: "foto", icon: Images, color: "from-brand-secondary to-emerald-500", bgLight: "bg-brand-secondary/10", textColor: "text-brand-secondary" },
-    { label: "Pengumuman Aktif", value: stats.totalPengumuman.toString(), change: "aktif", icon: Megaphone, color: "from-amber-500 to-orange-500", bgLight: "bg-amber-50", textColor: "text-amber-600" },
     { label: "Status PSB", value: stats.statusPsb, change: "gelombang aktif", icon: Users, color: "from-brand-lime to-brand-accent", bgLight: "bg-brand-lime/10", textColor: "text-brand-primary" },
   ];
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
         {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -177,10 +172,10 @@ export default function AdminDashboard() {
           </div>
           <div className="p-4 space-y-2">
             {[
-              { label: "Tambah Berita", href: "/admin/berita", icon: FileText },
+              { label: "Tambah Berita", href: "/admin/berita/new", icon: FileText },
               { label: "Upload Galeri", href: "/admin/galeri", icon: ImagePlus },
-              { label: "Buat Pengumuman", href: "/admin/pengumuman", icon: Megaphone },
               { label: "Pengaturan PSB", href: "/admin/psb", icon: Users },
+              { label: "Pengaturan Website", href: "/admin/pengaturan", icon: Settings },
             ].map((action) => {
               const Icon = action.icon;
               return (

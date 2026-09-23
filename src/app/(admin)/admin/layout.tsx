@@ -10,8 +10,6 @@ const pageTitles: Record<string, { title: string; subtitle: string }> = {
   "/admin/berita": { title: "Kelola Berita", subtitle: "Manajemen artikel dan berita" },
   "/admin/galeri": { title: "Kelola Galeri", subtitle: "Manajemen foto dan album" },
   "/admin/psb": { title: "Informasi PSB", subtitle: "Penerimaan Santri Baru" },
-  "/admin/pengumuman": { title: "Pengumuman", subtitle: "Manajemen pengumuman" },
-  "/admin/media": { title: "Media & Prestasi", subtitle: "Prestasi dan kegiatan" },
   "/admin/pengaturan": { title: "Pengaturan Website", subtitle: "Konfigurasi umum website" },
 };
 

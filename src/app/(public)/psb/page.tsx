@@ -15,16 +15,43 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from "lucide-react";
-import { DUMMY_PSB_DATA } from "@/lib/constants/psbData";
+import { DUMMY_PSB_DATA, PsbAnnouncementData } from "@/lib/constants/psbData";
+import { createClient } from "@/lib/supabase/client";
+import {
+  parsePsbSettings,
+  configToAnnouncementData,
+} from "@/lib/utils/psbHelper";
 
 export default function PsbInformationPage() {
-  const data = DUMMY_PSB_DATA;
+  const [data, setData] = useState<PsbAnnouncementData>(DUMMY_PSB_DATA);
 
   // Interaction states
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+
+  // Fetch dynamic settings from Supabase
+  useEffect(() => {
+    async function loadPsbSettings() {
+      try {
+        const supabase = createClient();
+        const { data: dbData } = await supabase
+          .from("psb_settings")
+          .select("*")
+          .limit(1)
+          .maybeSingle();
+
+        if (dbData) {
+          const config = parsePsbSettings(dbData);
+          setData(configToAnnouncementData(config));
+        }
+      } catch (err) {
+        console.warn("Could not fetch real-time PSB settings, using baseline:", err);
+      }
+    }
+    loadPsbSettings();
+  }, []);
 
   // Close lightbox on Escape key
   useEffect(() => {
@@ -58,6 +85,8 @@ export default function PsbInformationPage() {
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
+
+  const isClosed = data.status === "Ditutup";
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#F2F7F4] via-white to-[#F2F7F4] pt-28 sm:pt-32 pb-20 text-zinc-800">
@@ -99,7 +128,7 @@ export default function PsbInformationPage() {
                 <div className="relative w-full aspect-[326/456]">
                   <Image
                     src={data.flyerUrl}
-                    alt="Poster Pengumuman Pendaftaran Santri Baru Al-Rahmah"
+                    alt={`Poster Pengumuman Pendaftaran Santri Baru Al-Rahmah ${data.tahunAjaran}`}
                     fill
                     priority
                     sizes="(max-width: 640px) 280px, 310px"
@@ -121,6 +150,21 @@ export default function PsbInformationPage() {
             {/* Informasi & Tombol Pendaftaran (7 Kolom) */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
               
+              {/* Status Badge (Dipindahkan ke Card) */}
+              <div>
+                {isClosed ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    <AlertTriangle size={13} className="text-amber-600" />
+                    <span>Pendaftaran Periode Ini Sedang Ditutup</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs">
+                    <CheckCircle2 size={13} className="text-emerald-600" />
+                    <span>Pendaftaran Sedang Dibuka</span>
+                  </span>
+                )}
+              </div>
+
               {/* Highlight Jadwal Pendaftaran */}
               <div className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#396E5F]/10 border border-[#396E5F]/20 text-[#1E3F35]">
                 <div className="w-9 h-9 rounded-xl bg-[#396E5F] text-white flex items-center justify-center shrink-0">
@@ -146,41 +190,55 @@ export default function PsbInformationPage() {
                 </p>
               </div>
 
-              {/* Aksi Utama: Tombol Google Form */}
+              {/* Aksi Utama: Tombol Google Form / Status Ditutup */}
               <div className="pt-1 space-y-2.5">
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                  <a
-                    href={data.googleFormUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 py-3 px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
-                  >
-                    <span>Isi Formulir (Google Form)</span>
-                    <ExternalLink size={15} />
-                  </a>
+                {isClosed ? (
+                  <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-900 space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-amber-900">
+                      <AlertTriangle size={16} className="text-amber-600 shrink-0" />
+                      <span>Pendaftaran Sementara Ditutup</span>
+                    </div>
+                    <p className="text-xs text-amber-800 leading-relaxed">
+                      Penerimaan santri baru untuk periode ini telah ditutup atau belum dibuka kembali. Calon wali santri dapat menghubungi narahubung panitia di bagian bawah halaman ini untuk informasi gelombang selanjutnya.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                      <a
+                        href={data.googleFormUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-3 px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
+                      >
+                        <span>Isi Formulir (Google Form)</span>
+                        <ExternalLink size={15} />
+                      </a>
 
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="py-3 px-4 rounded-xl bg-white hover:bg-[#F2F7F4] text-[#396E5F] border border-[#ABD8B1] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    {copiedLink ? (
-                      <>
-                        <Check size={14} className="text-[#396E5F]" />
-                        <span className="font-bold">Tersalin!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy size={14} />
-                        <span>Salin Link</span>
-                      </>
-                    )}
-                  </button>
-                </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className="py-3 px-4 rounded-xl bg-white hover:bg-[#F2F7F4] text-[#396E5F] border border-[#ABD8B1] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        {copiedLink ? (
+                          <>
+                            <Check size={14} className="text-[#396E5F]" />
+                            <span className="font-bold">Tersalin!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={14} />
+                            <span>Salin Link</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
 
-                <p className="text-[11px] text-zinc-500 font-mono break-all">
-                  Tautan resmi: {data.googleFormUrl}
-                </p>
+                    <p className="text-[11px] text-zinc-500 font-mono break-all">
+                      Tautan resmi: {data.googleFormUrl}
+                    </p>
+                  </>
+                )}
               </div>
 
             </div>
@@ -249,7 +307,7 @@ export default function PsbInformationPage() {
                 Ditransfer ke rekening resmi pondok sebelum mengisi formulir:
               </p>
 
-              {/* Box Rekening BSI */}
+              {/* Box Rekening Bank */}
               <div className="p-3.5 rounded-xl bg-[#F0F8F3] border border-[#ABD8B1]/70 space-y-1 text-xs">
                 <div className="flex justify-between text-zinc-600">
                   <span>Bank:</span>
@@ -280,7 +338,7 @@ export default function PsbInformationPage() {
                 ) : (
                   <>
                     <Copy size={13} />
-                    <span>Salin Nomor Rekening BSI (7777365546)</span>
+                    <span>Salin Nomor Rekening ({data.biayaFormulir.rekening.bank})</span>
                   </>
                 )}
               </button>
@@ -360,6 +418,9 @@ export default function PsbInformationPage() {
                     <h3 className="font-semibold text-white text-xs sm:text-sm">
                       {kontak.nama}
                     </h3>
+                    <p className="text-[11px] text-[#AED69F]/80">
+                      {kontak.peran}
+                    </p>
                     <p className="font-mono text-[11px] text-[#AED69F] mt-0.5">
                       {kontak.nomor}
                     </p>
@@ -425,7 +486,7 @@ export default function PsbInformationPage() {
         <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
           <AlertTriangle size={15} className="text-amber-600 shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            <strong>Waspada Penipuan:</strong> Pembayaran biaya formulir resmi hanya melalui rekening <strong>BSI 7777365546</strong> a.n. <strong>Pondok Pesantren Al Rahmah</strong>. Panitia tidak pernah meminta transfer ke rekening pribadi.
+            <strong>Waspada Penipuan:</strong> Pembayaran biaya formulir resmi hanya melalui rekening <strong>{data.biayaFormulir.rekening.bank} {data.biayaFormulir.rekening.nomor}</strong> a.n. <strong>{data.biayaFormulir.rekening.atasNama}</strong>. Panitia tidak pernah meminta transfer ke rekening pribadi.
           </p>
         </div>
       </section>
@@ -447,39 +508,42 @@ export default function PsbInformationPage() {
             {/* Header Modal */}
             <div className="w-full flex items-center justify-between pb-2 px-1 border-b border-zinc-100 mb-2">
               <h3 className="font-heading font-bold text-xs sm:text-sm text-[#1E3F35]">
-                Poster Resmi PSB 2026/2027
+                Poster Resmi PSB {data.tahunAjaran}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsLightboxOpen(false)}
-                className="w-7 h-7 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center transition-colors cursor-pointer"
-                aria-label="Tutup"
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
+                aria-label="Tutup preview"
               >
-                <X size={15} />
+                <X size={18} />
               </button>
             </div>
 
-            {/* Poster Image */}
-            <div className="relative w-full max-h-[75vh] overflow-y-auto flex items-center justify-center bg-zinc-50 rounded-xl p-2">
+            {/* Gambar Poster Full */}
+            <div className="relative w-full aspect-[326/456] max-h-[70vh]">
               <Image
                 src={data.flyerUrl}
-                alt="Poster Resmi PSB Al-Rahmah"
-                width={500}
-                height={700}
-                className="object-contain w-auto h-auto max-h-[70vh] rounded-lg"
+                alt={`Poster Resmi PSB Al-Rahmah ${data.tahunAjaran}`}
+                fill
+                sizes="(max-width: 640px) 90vw, 420px"
+                className="object-contain"
               />
             </div>
 
             {/* Footer Modal Action */}
-            <div className="w-full pt-2.5 flex items-center justify-between gap-2 text-xs">
-              <span className="text-zinc-500 text-[11px]">Pondok Pesantren Al-Rahmah</span>
+            <div className="w-full pt-3 px-1 border-t border-zinc-100 flex items-center justify-between gap-2">
+              <span className="text-[11px] text-zinc-500">
+                Pondok Pesantren Al-Rahmah Walantaka
+              </span>
               <a
-                href={data.googleFormUrl}
+                href={data.flyerUrl}
+                download
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3.5 py-1.5 rounded-lg bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-medium flex items-center gap-1.5 transition-colors"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#396E5F] hover:underline"
               >
-                <span>Buka Form</span>
+                <span>Unduh Gambar</span>
                 <ExternalLink size={12} />
               </a>
             </div>

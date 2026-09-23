@@ -4,9 +4,16 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
@@ -25,10 +32,15 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session agar tidak expired
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const { data, error } = await supabase.auth.getUser();
+    if (!error && data?.user) {
+      user = data.user;
+    }
+  } catch (err) {
+    console.error("Middleware Supabase auth check failed:", err);
+  }
 
   // Protect admin routes (except /admin/login)
   if (
