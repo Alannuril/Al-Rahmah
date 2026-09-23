@@ -1,9 +1,6 @@
 import Image from "next/image";
-import {
-  MapPin,
-  Calendar,
-  HeartHandshake,
-} from "lucide-react";
+import Link from "next/link";
+import { MapPin, ArrowLeft, ArrowRight } from "lucide-react";
 
 export const metadata = {
   title: "Sejarah Al-Rahmah - Al-Rahmah",
@@ -11,48 +8,9 @@ export const metadata = {
     "Jejak perjuangan dan pengabdian Al-Rahmah Walantaka dari pengajian salafiyah hingga madrasah unggulan berakreditasi A.",
 };
 
-const TIMELINE_EVENTS = [
-  {
-    fase: "Fase Awal",
-    tahun: "Awal Pengabdian",
-    judul: "Pengajian Tradisional di Link. Lebak",
-    lokasi: "Link. Lebak, Kel. Lebakwangi, Walantaka",
-    deskripsi:
-      "Bermula dari kepedulian mendalam terhadap pendidikan moral generasi muda, K.H. Abdul Rasyid Muslim (Alm.) bersama Umi Hj. Enung Nurhayati menginisiasi pengajian tradisional (salafiyah) di tengah masyarakat sekitar guna melayani kebutuhan bekal agama bagi anak-anak usia sekolah di sekitar koridor jalan Ciruas-Petir.",
-    tag: "Akar Salafiyah",
-  },
-  {
-    fase: "Transformasi 2008",
-    tahun: "Tahun 2008",
-    judul: "Formalisasi & Pendirian MAS Al-Rahmah",
-    lokasi: "Kampus Al-Rahmah Walantaka",
-    deskripsi:
-      "Menyadari pentingnya ijazah formal dan integrasi kurikulum bagi masa depan santri di era modern, K.H. Abdul Rasyid Muslim meresmikan Madrasah Aliyah Swasta (MAS) Al-Rahmah. Langkah ini menandai transformasi resmi dari pengajian salafiyah rintisan menuju lembaga pendidikan Islam terpadu.",
-    tag: "Formalisasi Pendidikan",
-  },
-  {
-    fase: "Ekspansi Sarana",
-    tahun: "Pengembangan Berkelanjutan",
-    judul: "Pembangunan Gedung & Asrama Permanen",
-    lokasi: "Kawasan Pesantren",
-    deskripsi:
-      "Menjawab lonjakan santri dari dalam maupun luar Kota Serang, pesantren membangun ruang kelas bertingkat dan asrama terpisah secara bertahap, berkembang pesat hingga mengelola 22 rombongan belajar (rombel) didukung 30 tenaga pendidik berdedikasi.",
-    tag: "22 Rombel & 30 Guru",
-  },
-  {
-    fase: "Estafet & Mutu",
-    tahun: "Masa Kini",
-    judul: "Estafet Kepemimpinan & Akreditasi A",
-    lokasi: "Walantaka, Serang, Banten",
-    deskripsi:
-      "Pasca wafatnya sang perintis K.H. Abdul Rasyid Muslim (Alm.), amanah pengelolaan dilanjutkan secara teguh oleh keluarga dan jajaran asatidz senior di bawah kepengasuhan Umi Hj. Enung Nurhayati, mengantarkan madrasah meraih predikat Akreditasi A unggul di Walantaka.",
-    tag: "Akreditasi A Unggul",
-  },
-];
-
 export default function SejarahPage() {
   return (
-    <div className="pt-28 sm:pt-32 pb-20 sm:pb-28 min-h-screen bg-surface/40">
+    <div className="pt-28 sm:pt-32 min-h-screen bg-surface/40">
       {/* ============================================================ */}
       {/* 1. HEADER HALAMAN: BERSIH & MINIMALIS                        */}
       {/* ============================================================ */}
@@ -150,7 +108,7 @@ export default function SejarahPage() {
       {/*    - Penjelasan berada di sisi kanan tanpa card pembungkus   */}
       {/*    - Gradient scrim halus memastikan teks terbaca jelas       */}
       {/* ============================================================ */}
-      <section className="w-full relative min-h-[580px] lg:min-h-[640px] flex items-center py-16 sm:py-24 lg:py-28 overflow-hidden mb-14 sm:mb-20 text-white">
+      <section className="w-full relative min-h-[580px] lg:min-h-[640px] flex items-center py-16 sm:py-24 lg:py-28 overflow-hidden text-white">
         {/* Background Image: Foto Asli Rintisan Pengajian Awal di Link. Lebak */}
         <Image
           src="/images/sejarah-titik-awal.jpg"
@@ -173,7 +131,7 @@ export default function SejarahPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             
             {/* Sisi Kiri: Terbuka untuk memperlihatkan keaslian foto bersejarah */}
-            <div className="hidden lg:flex flex-col justify-end h-full pt-44">
+            <div className="hidden lg:col-span-5 lg:flex flex-col justify-end h-full pt-44">
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-sm border border-white/15 text-white/90 text-xs w-fit shadow-xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse" />
                 <span className="font-medium tracking-wide">
@@ -238,104 +196,25 @@ export default function SejarahPage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 4. SECTION BERIKUTNYA: KONTEN DALAM CONTAINER STANDARD       */}
-      {/* ============================================================ */}
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl">
-
-        {/* ============================================================ */}
-        {/* 4. SECTION: TONGGAK SEJARAH & TRANSFORMASI (TIMELINE)         */}
-        {/* ============================================================ */}
-        <section className="mb-14 sm:mb-20">
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-1.5">
-            <h2 className="font-heading font-bold text-xl sm:text-2xl text-zinc-900 tracking-tight">
-              Tonggak Sejarah &amp; Transformasi
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-500">
-              Empat fase penting perjalanan Al-Rahmah dari masa ke masa.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-            {TIMELINE_EVENTS.map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-3xl p-6 sm:p-7 border border-zinc-200/80 shadow-xs hover:border-emerald-300/80 transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-brand-primary border border-emerald-200/60 font-mono text-xs font-semibold">
-                      <Calendar size={12} />
-                      <span>{item.tahun}</span>
-                    </span>
-                    <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-                      {item.fase}
-                    </span>
-                  </div>
-
-                  <h3 className="font-heading font-bold text-lg text-zinc-900 tracking-tight group-hover:text-brand-primary transition-colors">
-                    {item.judul}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                    {item.deskripsi}
-                  </p>
-                </div>
-
-                <div className="mt-5 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
-                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
-                    <MapPin size={12} />
-                    <span className="truncate max-w-[200px]">{item.lokasi}</span>
-                  </div>
-                  <span className="font-semibold text-brand-primary text-[11px] bg-zinc-50 px-2.5 py-1 rounded-lg border border-zinc-200/60">
-                    {item.tag}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ============================================================ */}
-        {/* 5. CARD PENUTUP: KHITAH & ESTAFET PERJUANGAN                */}
-        {/* ============================================================ */}
-        <section className="bg-gradient-to-br from-[#14362B] to-[#1E4338] rounded-3xl p-6 sm:p-8 md:p-10 text-white shadow-md relative overflow-hidden">
-          {/* Ambient Glow */}
-          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 max-w-3xl mx-auto text-center space-y-4">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-emerald-200 border border-white/15 text-xs font-semibold backdrop-blur-xs">
-              <HeartHandshake size={13} className="text-brand-lime" />
-              <span>Khitah &amp; Nilai Abadi</span>
-            </div>
-
-            <h2 className="font-heading font-bold text-xl sm:text-2xl md:text-3xl text-white tracking-tight">
-              Menjaga Amanah Perintis untuk Kemaslahatan Umat
-            </h2>
-
-            <p className="text-xs sm:text-sm md:text-base text-zinc-200/90 leading-relaxed">
-              Meski sang perintis K.H. Abdul Rasyid Muslim (Alm.) telah berpulang ke Rahmatullah, ruh
-              perjuangan dan cita-cita luhur beliau terus hidup di setiap jengkal tanah Al-Rahmah. Di bawah
-              pengawalan Umi Hj. Enung Nurhayati bersama jajaran asatidz, pesantren tetap teguh berdiri
-              di atas dan untuk semua golongan, berpedoman pada Al-Qur&apos;an dan Hadits, serta senantiasa
-              merangkul anak-anak yatim dan dhuafa demi meraih masa depan yang gemilang.
-            </p>
-
-            <div className="pt-2 flex flex-wrap justify-center gap-3 text-xs font-medium text-white/80">
-              <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
-                Berdiri untuk Semua Golongan
-              </span>
-              <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
-                Berpedoman Al-Qur&apos;an &amp; Hadits
-              </span>
-              <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/15">
-                Merangkul Santri Yatim &amp; Dhuafa
-              </span>
-            </div>
-          </div>
-        </section>
-
-      </div>
+      <nav aria-label="Halaman tentang pesantren" className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <Link
+          href="/tentang/visi-misi"
+          className="inline-flex min-h-11 items-center gap-3 text-sm font-medium text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
+        >
+          <ArrowLeft size={18} aria-hidden="true" />
+          Visi &amp; Misi
+        </Link>
+        <Link
+          href="/tentang/pimpinan"
+          className="inline-flex min-h-11 items-center gap-4 self-end text-brand-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
+        >
+          <span>
+            <span className="block text-xs text-zinc-500">Selanjutnya</span>
+            <span className="text-sm font-semibold">Nakhoda Al-Rahmah</span>
+          </span>
+          <ArrowRight size={18} aria-hidden="true" />
+        </Link>
+      </nav>
     </div>
   );
 }

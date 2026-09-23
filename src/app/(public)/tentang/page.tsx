@@ -9,18 +9,6 @@ export const metadata = {
 
 const cards = [
   {
-    title: "Nakhoda Al-Rahmah",
-    desc: "Mengenal figur teladan dan sosok pimpinan di balik amanah Pondok Pesantren Al-Rahmah.",
-    href: "/tentang/pimpinan",
-    icon: Users,
-  },
-  {
-    title: "Panca Jiwa",
-    desc: "Fondasi falsafah dan pembentukan karakter kepondokmodernan santri Al-Rahmah.",
-    href: "/tentang/pimpinan#panca-jiwa",
-    icon: Sparkles,
-  },
-  {
     title: "Visi & Misi",
     desc: "Generasi cerdas berkarakter rahmatan lil 'alamin serta merangkul anak yatim & dhuafa.",
     href: "/tentang/visi-misi",
@@ -31,6 +19,18 @@ const cards = [
     desc: "Perjalanan dedikasi dan jejak langkah berdirinya Al-Rahmah sejak tahun 2005.",
     href: "/tentang/sejarah",
     icon: History,
+  },
+  {
+    title: "Nakhoda Al-Rahmah",
+    desc: "Mengenal figur teladan dan sosok pimpinan di balik amanah Pondok Pesantren Al-Rahmah.",
+    href: "/tentang/pimpinan",
+    icon: Users,
+  },
+  {
+    title: "Panca Jiwa",
+    desc: "Fondasi falsafah dan pembentukan karakter kepondokmodernan santri Al-Rahmah.",
+    href: "/tentang/pimpinan#panca-jiwa",
+    icon: Sparkles,
   },
 ];
 
