@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Quote, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
+import { ArrowRight } from "lucide-react";
 import {
   NakhodaDetailModal,
   NakhodaData,
@@ -21,7 +19,7 @@ const NAKHODA_LIST: NakhodaData[] = [
     quote:
       "Membina generasi santri berakhlak mulia, cerdas, dan berkarakter kepondokmodernan yang kokoh.",
     ringkasan:
-      "Sosok penanggung jawab operasional harian pesantren sekaligus arsitek karakter kepondokmodernan santri Al-Rahmah.",
+      "Memimpin kegiatan harian pesantren dan pembinaan karakter kepondokmodernan santri.",
     biografiLengkap: [
       "KH. Mahfud Romli bertindak sebagai pimpinan sekaligus penanggung jawab utama operasional harian di Pondok Pesantren Al-Rahmah Walantaka. Dalam mengelola roda pendidikan pesantren, beliau bekerja sama secara sinergis dengan Umi Hj. Enung Nurhayati, S.Ag. selaku pengasuh/pendiri yayasan, serta Ustaz Wahono, M.Pd yang menjabat sebagai Direktur KMI.",
       "Sebagai pondok yang mengadopsi sistem modern, beliau merupakan sosok di balik penguatan ideologi kepesantrenan santri. Beliau menyusun buku panduan internal bertajuk 'Kepondokmodernan Al-Rahmah' yang menjadi landasan wajib bagi disiplin dan mentalitas para santri.",
@@ -55,7 +53,7 @@ const NAKHODA_LIST: NakhodaData[] = [
     quote:
       "Anak-anak... jadi santri itu harus sabar, ikhlas, dan tawakal.",
     ringkasan:
-      "Sosok sentral peletak batu pertama Al-Rahmah yang menghadirkan sentuhan keibuan, bimbingan moral, dan pengawal khitah pesantren.",
+      "Merintis Al-Rahmah bersama K.H. Abdul Rasyid Muslim serta mendampingi pembinaan akhlak dan kehidupan santri.",
     biografiLengkap: [
       "Umi Hj. Enung Nurhayati, S.Ag. adalah sosok sentral di balik berdirinya Pondok Pesantren Al-Rahmah Walantaka. Mendampingi almarhum suami tercinta, K.H. Abdul Rasyid Muslim (Abi Rasyid), beliau ikut berjuang meletakkan batu pertama pembangunan pesantren. Beliau mendedikasikan hidupnya untuk mentransfer nilai-nilai karakter kepondokmodernan berbasis Panca Jiwa Pondok kepada ribuan santri yang menimba ilmu di Al-Rahmah.",
       "Peran beliau melampaui posisi struktural formal; beliau adalah figur ibu (Umi) bagi seluruh santriwan dan santriwati. Beliau hadir mendengarkan keluh kesah santri baru yang mengalami adaptasi lingkungan, menanamkan keikhlasan dan ketabahan, serta memberikan ketenangan spiritual.",
@@ -89,7 +87,7 @@ const NAKHODA_LIST: NakhodaData[] = [
     quote:
       "Santri menyerap ilmu dari berbagai sumber, lalu menyaringnya dengan analisis kuat berlandaskan nilai Islam.",
     ringkasan:
-      "Penggerak mutu akademis pesantren yang mengawal kurikulum terpadu KMI, standar pedagogi guru, dan nalar kritis santri.",
+      "Mengelola kurikulum KMI, pembinaan guru, dan kegiatan pembelajaran di pesantren.",
     biografiLengkap: [
       "Ustaz Wahono, M.Pd. memegang peranan krusial sebagai Direktur KMI (Kulliyatul Mu'allimin Al-Islamiyyah), satuan pendidikan formal kepesantrenan yang menjadi jantung pembelajaran akademis dan pembentukan guru di Al-Rahmah.",
       "Dengan latar belakang Magister Pendidikan (M.Pd.), beliau merancang standarisasi kurikulum terpadu yang memadukan khazanah keilmuan Islam, bahasa internasional (Arab & Inggris), serta sains dan teknologi modern.",
@@ -158,208 +156,93 @@ export function NakhodaClient() {
 
   return (
     <>
-      <section id="nakhoda" aria-labelledby="nakhoda-heading" className="relative scroll-mt-24 pt-12 sm:pt-16 pb-20 sm:pb-28 lg:pb-32 bg-brand-paper overflow-hidden">
-        {/* Subtle Ambient Emerald Glow */}
-        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[600px] h-[280px] bg-gradient-to-b from-emerald-100/40 via-brand-secondary/10 to-transparent rounded-full blur-3xl pointer-events-none -z-0" />
-
-        {/* Gradasi Hijau Halus Meluncur dari Section Bawah (Panca Jiwa) ke Atas - Merata Kiri, Tengah, Kanan */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-48 sm:h-64 lg:h-80 pointer-events-none z-0"
-          style={{
-            background:
-              "linear-gradient(to top, #1c483a 0%, rgba(28, 72, 58, 0.85) 25%, rgba(28, 72, 58, 0.3) 65%, transparent 100%)",
-          }}
-        />
-
-        <div className="container relative z-10 mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-          
-          {/* ============================================================ */}
-          {/* SECTION HEADER: ENTRANCE ANIMATION                           */}
-          {/* ============================================================ */}
-          <div className="text-center max-w-2xl mx-auto space-y-2 mb-10 sm:mb-14">
-            <motion.h2
-              id="nakhoda-heading"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="font-heading text-2xl sm:text-3xl lg:text-[36px] font-bold text-zinc-900 tracking-tight"
-            >
+      <section id="nakhoda" aria-labelledby="nakhoda-heading" className="scroll-mt-24 bg-white py-14 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <header className="mb-8 max-w-2xl">
+            <h2 id="nakhoda-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
               Nakhoda Al-Rahmah
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="text-xs sm:text-sm text-zinc-600 leading-relaxed"
-            >
-              Mengenal profil dan kepemimpinan di balik Pondok Pesantren Al-Rahmah Walantaka.
-            </motion.p>
-          </div>
+            </h2>
+            <p className="mt-3 text-base leading-7 text-zinc-600">
+              Pimpinan dan pengasuh yang mendampingi pendidikan serta kehidupan santri.
+            </p>
+          </header>
 
-          {/* ============================================================ */}
-          {/* TIGA CARD SEJAJAR: STAGGERED ENTRANCE & HOVER LIFT          */}
-          {/* ============================================================ */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-            {NAKHODA_LIST.map((nakhoda, idx) => (
-              <motion.article
-                key={nakhoda.id}
-                initial={{ opacity: 0, y: 40, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{
-                  duration: 0.7,
-                  delay: 0.28 + idx * 0.15,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                whileHover={{ y: -6, transition: { duration: 0.25 } }}
-                className="bg-white rounded-2xl overflow-hidden border border-zinc-200/80 shadow-xs hover:shadow-xl hover:border-emerald-300/80 transition-shadow duration-300 flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Foto Potret Responsif: Minimalis di Mobile (aspect-[4/3]) & Proporsional di Desktop (md:aspect-[3/4]) */}
-                  <div className="relative w-full aspect-[4/3] md:aspect-[3/4] overflow-hidden bg-zinc-100">
-                    <Image
-                      src={nakhoda.foto}
-                      alt={`Foto profil ${nakhoda.nama}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className={`object-cover ${nakhoda.fotoPosition || "object-top"} group-hover:scale-105 transition-transform duration-700`}
-                    />
-
-                    {/* Badge Peran Melayang di Sudut Kiri Atas */}
-                    <div className="absolute top-3 left-3 md:top-3.5 md:left-3.5 z-10">
-                      <span className="text-[10px] sm:text-[11px] font-semibold bg-white/90 backdrop-blur-md text-brand-primary px-2.5 py-0.5 md:px-3 md:py-1 rounded-full shadow-xs border border-white/50">
-                        {nakhoda.peranTag}
-                      </span>
-                    </div>
-
-                    {/* Gradasi Hijau Modern di Bagian Bawah Foto dengan Kutipan Kata-Kata */}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#14362B] via-[#14362B]/85 to-transparent pt-10 md:pt-16 pb-3.5 md:pb-4 px-4 md:px-5 flex flex-col justify-end">
-                      <div className="flex items-start gap-2 text-white">
-                        <Quote size={12} className="text-brand-lime shrink-0 mt-0.5 opacity-90 md:w-[13px] md:h-[13px]" />
-                        <p className="font-heading italic text-[10.5px] sm:text-xs text-white/95 leading-relaxed drop-shadow-xs line-clamp-2 md:line-clamp-3">
-                          &ldquo;{nakhoda.quote}&rdquo;
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Informasi Singkat & Ringkas */}
-                  <div className="p-5 sm:p-6 space-y-2.5">
-                    <div>
-                      <h3 className="font-heading font-bold text-lg sm:text-xl text-zinc-900 tracking-tight leading-snug">
-                        {nakhoda.nama}
-                      </h3>
-                      <p className="text-xs font-semibold text-brand-primary mt-1">
-                        {nakhoda.jabatan}
-                      </p>
-                    </div>
-
-                    <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                      {nakhoda.ringkasan}
-                    </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {NAKHODA_LIST.map((nakhoda) => (
+              <article key={nakhoda.id} className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200">
+                <div className="relative aspect-[4/3] bg-zinc-100 md:aspect-[4/5]">
+                  <Image
+                    src={nakhoda.foto}
+                    alt={"Foto profil " + nakhoda.nama}
+                    fill
+                    sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1152px) 30vw, 347px"
+                    className={"object-cover " + (nakhoda.fotoPosition || "object-top")}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="font-heading text-xl font-semibold leading-snug">
+                    {nakhoda.nama}
+                  </h3>
+                  <p className="mt-2 text-sm font-medium leading-6 text-brand-primary">
+                    {nakhoda.jabatan}
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-zinc-600">
+                    {nakhoda.ringkasan}
+                  </p>
+                  <div className="mt-auto pt-5">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedNakhoda(nakhoda)}
+                      aria-label={"Baca profil " + nakhoda.nama}
+                      aria-haspopup="dialog"
+                      className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-sm text-sm font-semibold text-brand-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
+                    >
+                      Baca profil
+                      <ArrowRight size={16} aria-hidden="true" />
+                    </button>
                   </div>
                 </div>
-
-                {/* Tombol Lihat Selengkapnya (Membuka Modal Detail) */}
-                <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedNakhoda(nakhoda)}
-                    className="w-full inline-flex items-center justify-between px-4 py-2.5 rounded-xl bg-zinc-50 hover:bg-emerald-50 text-zinc-800 hover:text-brand-primary border border-zinc-200/80 hover:border-emerald-300 font-medium text-xs sm:text-sm transition-all duration-200 group/btn cursor-pointer shadow-2xs"
-                  >
-                    <span>Lihat Selengkapnya</span>
-                    <ArrowRight
-                      size={14}
-                      className="text-zinc-400 group-hover/btn:text-brand-primary group-hover/btn:translate-x-0.5 transition-all"
-                    />
-                  </button>
-                </div>
-              </motion.article>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* SECTION: PANCA JIWA AL-RAHMAH (FULL WIDTH MODERN & SOFT)     */}
-      {/* ============================================================ */}
-      <section id="panca-jiwa" className="relative w-full overflow-hidden bg-[#1c483a] py-20 sm:py-28 md:py-32 lg:py-36 scroll-mt-24">
-        {/* Background Image: Santri Berbaris Rapi - Percerah & Lebih Hidup */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/panca-jiwa-bg.jpg"
-            alt="Suasana Santri Pondok Pesantren Al-Rahmah"
-            fill
-            priority={false}
-            sizes="100vw"
-            className="object-cover object-[center_35%]"
-          />
-          {/* Modern Soft Gradient Overlay: Nuansa emerald/forest green kaya & seimbang, tidak terlalu gelap */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1c483a]/92 via-[#265e4b]/78 to-[#184033]/92" />
-          
-          {/* Halus: Fade Lembut di Batas Atas Seam ke #1c483a */}
-          <div
-            className="absolute inset-x-0 top-0 h-32 sm:h-48 pointer-events-none"
-            style={{
-              background: "linear-gradient(to bottom, #1c483a 0%, rgba(28, 72, 58, 0.8) 40%, transparent 100%)",
-            }}
-          />
-
-          {/* Hairline Divider Halus di Batas Bawah */}
-          <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
-        </div>
-
-        {/* Content Container: Centered & Balanced within standard 7xl */}
-        <div className="container relative z-10 mx-auto px-4 md:px-6 lg:px-8 max-w-7xl text-white">
-          {/* Header with ScrollReveal */}
-          <ScrollReveal variant="fade-up" duration={0.6}>
-            <div className="text-center max-w-2xl mx-auto space-y-3 mb-12 sm:mb-16 lg:mb-20">
-              <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white drop-shadow-sm">
-                Panca Jiwa Al-Rahmah
-              </h2>
-              <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal max-w-xl mx-auto drop-shadow-xs">
-                Pilar pembentukan karakter kepondokmodernan yang mengakar kuat pada diri santri serta menjadi ruh keteladanan para pendidik di Al-Rahmah.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          {/* 4 Pilar Grid with Staggered Scroll Animation */}
-          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <section id="panca-jiwa" aria-labelledby="panca-jiwa-heading" className="scroll-mt-24 border-t border-zinc-200 bg-zinc-50 py-14 sm:py-20">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
+          <header className="lg:col-span-4">
+            <h2 id="panca-jiwa-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
+              Panca Jiwa Al-Rahmah
+            </h2>
+            <p className="mt-3 max-w-lg text-base leading-7 text-zinc-600">
+              Nilai-nilai yang mendasari pembentukan karakter santri dan keteladanan pendidik.
+            </p>
+          </header>
+          <ol className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:col-span-8">
             {PANCA_JIWA_LIST.map((pilar) => (
-              <StaggerItem key={pilar.nomor} variant="zoom-in" className="h-full">
-                <div className="group bg-[#102d23]/60 hover:bg-[#102d23]/80 border border-white/15 hover:border-emerald-300/50 rounded-xl p-5 sm:p-6 backdrop-blur-md shadow-lg hover:shadow-emerald-950/25 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full">
-                  <div>
-                    {/* Header Kartu: Nomor & Teks Arab */}
-                    <div className="flex items-center justify-between gap-2 pb-3.5 mb-3.5 border-b border-white/10">
-                      <span className="text-xs font-mono font-bold text-emerald-300 tracking-wider">
-                        {pilar.nomor}
-                      </span>
-                      <span className="text-sm font-serif text-white/90 tracking-wide">
-                        {pilar.arab}
-                      </span>
-                    </div>
-
-                    {/* Judul Pilar */}
-                    <h3 className="font-heading text-base sm:text-lg font-bold text-white tracking-tight mb-2 group-hover:text-emerald-200 transition-colors">
-                      {pilar.judul}
-                    </h3>
-
-                    {/* Deskripsi */}
-                    <p className="text-xs sm:text-[13px] text-zinc-100/90 leading-relaxed font-normal">
-                      {pilar.deskripsi}
-                    </p>
-                  </div>
+              <li key={pilar.nomor} className="min-w-0 border-t border-zinc-300 pt-5">
+                <div className="flex flex-wrap items-start justify-between gap-3 text-brand-primary">
+                  <span aria-hidden="true" className="font-mono text-sm">{pilar.nomor}</span>
+                  <span lang="ar" dir="rtl" className="font-serif text-lg leading-6">{pilar.arab}</span>
                 </div>
-              </StaggerItem>
+                <h3 className="mt-4 font-heading text-xl font-semibold leading-snug">
+                  {pilar.judul}
+                </h3>
+                <p className="mt-2 text-sm leading-7 text-zinc-600">
+                  {pilar.deskripsi}
+                </p>
+              </li>
             ))}
-          </StaggerContainer>
+          </ol>
         </div>
       </section>
 
-      {/* Interactive Modal Profile */}
-      <NakhodaDetailModal
-        nakhoda={selectedNakhoda}
-        onClose={() => setSelectedNakhoda(null)}
-      />
+      {selectedNakhoda && (
+        <NakhodaDetailModal
+          nakhoda={selectedNakhoda}
+          onClose={() => setSelectedNakhoda(null)}
+        />
+      )}
     </>
   );
 }

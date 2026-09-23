@@ -3,81 +3,84 @@ import Image from "next/image";
 const MISI_LIST = [
   {
     nomor: "01",
-    title: "Generasi Cerdas & Rahmatan Lil 'Alamin",
+    title: "Membentuk generasi cerdas dan berakhlak",
     desc: "Membentuk generasi Islami yang berilmu, cerdas, berakhlak mulia, dan berkarakter rahmatan lil 'alamin.",
   },
   {
     nomor: "02",
-    title: "Merangkul Yatim & Kaum Dhuafa",
+    title: "Merangkul anak yatim dan kaum dhuafa",
     desc: "Menjadi lembaga pendidikan yang merangkul, membina, dan memberi akses pendidikan bermutu bagi anak yatim dan kaum dhuafa.",
   },
   {
     nomor: "03",
-    title: "Perekat Umat & Semua Golongan",
+    title: "Menjadi perekat umat",
     desc: "Berdiri di atas dan untuk semua golongan, berpedoman teguh pada Al-Qur'an dan Hadits sebagai pemersatu umat.",
   },
 ];
 
 export function VisiMisiSection() {
   return (
-    <section id="visi-misi" aria-labelledby="visi-misi-heading" className="scroll-mt-24 bg-white text-zinc-900">
-      <header className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 sm:pb-12 lg:px-8">
-        <h2 id="visi-misi-heading" className="font-heading text-2xl font-bold leading-tight sm:text-3xl">
-          Visi &amp; Misi
-        </h2>
-      </header>
+    <section id="visi-misi" aria-labelledby="visi-misi-heading" className="scroll-mt-24 pb-14 sm:pb-20">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <header className="border-t border-zinc-200 pt-8">
+          <h2 id="visi-misi-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
+            Visi &amp; Misi
+          </h2>
+        </header>
 
-      <section aria-labelledby="visi-heading" className="border-y border-zinc-200 bg-zinc-50">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-12 lg:items-center lg:gap-12 lg:px-8">
-          <div className="lg:col-span-7">
-            <h3 id="visi-heading" className="mb-5 text-sm font-semibold text-brand-primary">
+        <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12">
+          <div>
+            <h3 id="visi-heading" className="mb-4 text-sm font-semibold text-brand-primary">
               Visi Pesantren
             </h3>
-            <p className="font-heading text-2xl font-medium leading-relaxed sm:text-3xl sm:leading-relaxed">
-              Membentuk Generasi Islami yang Cerdas dan Berkarakter Rahmatan
-              Lil &apos;Alamin, dan Menjadi Lembaga Pendidikan yang Merangkul
-              Para Anak Yatim dan Kaum Dhuafa
+            <p className="max-w-xl font-heading text-2xl font-medium leading-relaxed">
+              Membentuk generasi Islami yang cerdas dan berkarakter rahmatan
+              lil &apos;alamin.
+            </p>
+            <p className="mt-4 max-w-lg text-base leading-7 text-zinc-600">
+              Menjadi lembaga pendidikan yang merangkul anak yatim dan kaum dhuafa.
             </p>
           </div>
-          <figure className="lg:col-span-5">
-            <div className="relative aspect-[3/2] w-full overflow-hidden lg:aspect-[4/3]">
+          <figure>
+            <div className="relative aspect-[1024/682] overflow-hidden rounded-sm bg-zinc-100">
               <Image
-                src="/images/panca-jiwa-bg.jpg"
-                alt="Para santri berseragam putih dan berpeci mengikuti kegiatan bersama di aula"
+                src="/images/pendidikan-mts.jpg"
+                alt="Guru menjelaskan pelajaran di depan kelas dan para santri menyimak dari bangku belajar"
                 fill
-                sizes="(max-width: 1024px) 100vw, 440px"
-                className="object-cover object-center"
+                loading="eager"
+                sizes="(max-width: 1023px) calc(100vw - 32px), (max-width: 1152px) calc((100vw - 112px) / 2), 520px"
+                className="object-contain"
               />
             </div>
+            <figcaption className="mt-3 text-xs leading-5 text-zinc-600">
+              Kegiatan belajar di MTs Al-Rahmah.
+            </figcaption>
           </figure>
         </div>
-      </section>
 
-      <section aria-labelledby="misi-heading" className="mx-auto grid max-w-6xl gap-6 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-12 lg:gap-12 lg:px-8">
-        <div className="lg:col-span-3">
-          <h3 id="misi-heading" className="font-heading text-2xl font-semibold">
+        <section aria-labelledby="misi-heading" className="mt-10 grid gap-6 border-t border-zinc-200 pt-8 sm:mt-12 lg:grid-cols-12 lg:gap-12">
+          <h3 id="misi-heading" className="font-heading text-xl font-semibold lg:col-span-4">
             Misi Lembaga
           </h3>
-        </div>
-        <ol className="divide-y divide-zinc-200 border-y border-zinc-200 lg:col-span-9">
-          {MISI_LIST.map((misi) => (
-            <li key={misi.nomor} className="grid grid-cols-[2rem_minmax(0,1fr)] gap-3 py-6 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-5 sm:py-8">
-              <span aria-hidden="true" className="pt-1 font-mono text-sm text-brand-primary">
-                {misi.nomor}
-              </span>
-              <div>
-                <h4 className="font-heading text-lg font-semibold leading-snug sm:text-xl">
-                  {misi.title}
-                </h4>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
-                  {misi.desc}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
+          <ol className="divide-y divide-zinc-200 lg:col-span-8">
+            {MISI_LIST.map((misi) => (
+              <li key={misi.nomor} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-4 py-5 first:pt-0 last:pb-0 sm:gap-5">
+                <span aria-hidden="true" className="pt-1 font-mono text-sm text-brand-primary">
+                  {misi.nomor}
+                </span>
+                <div>
+                  <h4 className="font-heading text-lg font-semibold leading-snug">
+                    {misi.title}
+                  </h4>
+                  <p className="mt-2 text-sm leading-7 text-zinc-600 sm:text-base">
+                    {misi.desc}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </div>
     </section>
   );
 }

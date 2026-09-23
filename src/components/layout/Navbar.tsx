@@ -30,15 +30,7 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Beranda", href: "/" },
-    { 
-      name: "Tentang Al-Rahmah", 
-      href: "/tentang",
-      subLinks: [
-        { name: "Visi Misi", href: "/tentang#visi-misi" },
-        { name: "Sejarah Al-Rahmah", href: "/tentang#sejarah" },
-        { name: "Nakhoda Al-Rahmah", href: "/tentang#nakhoda" }
-      ]
-    },
+    { name: "Tentang Al-Rahmah", href: "/tentang" },
     { name: "Pendidikan", href: "/pendidikan" },
     { 
       name: "Media & Prestasi", 
