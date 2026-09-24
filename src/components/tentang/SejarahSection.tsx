@@ -6,7 +6,7 @@ export function SejarahSection() {
     <section id="sejarah" aria-labelledby="sejarah-heading" className="scroll-mt-24 border-y border-zinc-200 bg-zinc-50 py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <header className="max-w-2xl">
-          <h2 id="sejarah-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
+          <h2 id="sejarah-heading" className="font-heading text-2xl font-semibold leading-tight text-brand-primary sm:text-3xl">
             Sejarah Al-Rahmah
           </h2>
           <p className="mt-3 text-base leading-7 text-zinc-600">
@@ -17,7 +17,7 @@ export function SejarahSection() {
 
         <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
           <div className="lg:col-span-4">
-            <div className="relative mx-auto aspect-[534/721] w-full max-w-56">
+            <div className="relative mx-auto aspect-[534/721] w-full max-w-56 border-b-4 border-brand-primary bg-brand-primary/10">
               <Image
                 src="/images/rasyid-muslim.png"
                 alt="K.H. Abdul Rasyid Muslim, pendiri Pondok Pesantren Al-Rahmah"

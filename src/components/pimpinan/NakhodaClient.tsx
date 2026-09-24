@@ -156,10 +156,10 @@ export function NakhodaClient() {
 
   return (
     <>
-      <section id="nakhoda" aria-labelledby="nakhoda-heading" className="scroll-mt-24 bg-white py-14 sm:py-20">
+      <section id="nakhoda" aria-labelledby="nakhoda-heading" className="scroll-mt-24 bg-[#eef5f0] py-14 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <header className="mb-8 max-w-2xl">
-            <h2 id="nakhoda-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
+            <h2 id="nakhoda-heading" className="font-heading text-2xl font-semibold leading-tight text-brand-primary sm:text-3xl">
               Nakhoda Al-Rahmah
             </h2>
             <p className="mt-3 text-base leading-7 text-zinc-600">
@@ -169,7 +169,7 @@ export function NakhodaClient() {
 
           <div className="grid gap-6 md:grid-cols-3">
             {NAKHODA_LIST.map((nakhoda) => (
-              <article key={nakhoda.id} className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-zinc-200">
+              <article key={nakhoda.id} className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-brand-primary/20 bg-white">
                 <div className="relative aspect-[4/3] bg-zinc-100 md:aspect-[4/5]">
                   <Image
                     src={nakhoda.foto}
@@ -208,27 +208,27 @@ export function NakhodaClient() {
         </div>
       </section>
 
-      <section id="panca-jiwa" aria-labelledby="panca-jiwa-heading" className="scroll-mt-24 border-t border-zinc-200 bg-zinc-50 py-14 sm:py-20">
+      <section id="panca-jiwa" aria-labelledby="panca-jiwa-heading" className="scroll-mt-24 border-b border-white/15 bg-[#244f43] py-14 text-white sm:py-20">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
           <header className="lg:col-span-4">
             <h2 id="panca-jiwa-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
               Panca Jiwa Al-Rahmah
             </h2>
-            <p className="mt-3 max-w-lg text-base leading-7 text-zinc-600">
+            <p className="mt-3 max-w-lg text-base leading-7 text-white/85">
               Nilai-nilai yang mendasari pembentukan karakter santri dan keteladanan pendidik.
             </p>
           </header>
           <ol className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:col-span-8">
             {PANCA_JIWA_LIST.map((pilar) => (
-              <li key={pilar.nomor} className="min-w-0 border-t border-zinc-300 pt-5">
-                <div className="flex flex-wrap items-start justify-between gap-3 text-brand-primary">
+              <li key={pilar.nomor} className="min-w-0 border-t border-white/25 pt-5">
+                <div className="flex flex-wrap items-start justify-between gap-3 text-brand-lime">
                   <span aria-hidden="true" className="font-mono text-sm">{pilar.nomor}</span>
                   <span lang="ar" dir="rtl" className="font-serif text-lg leading-6">{pilar.arab}</span>
                 </div>
                 <h3 className="mt-4 font-heading text-xl font-semibold leading-snug">
                   {pilar.judul}
                 </h3>
-                <p className="mt-2 text-sm leading-7 text-zinc-600">
+                <p className="mt-2 text-sm leading-7 text-white/85">
                   {pilar.deskripsi}
                 </p>
               </li>
