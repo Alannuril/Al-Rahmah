@@ -79,45 +79,44 @@ create table if not exists psb_settings (
   id uuid primary key default gen_random_uuid(),
   tahun_ajaran text,
   status text not null default 'Dibuka' check (status in ('Dibuka', 'Ditutup')),
+  judul text default 'Pendaftaran Santri Baru Pondok Pesantren Al-Rahmah Melalui Online',
   biaya_formulir text,
   deskripsi text,
   brosur_url text,
+  google_form_url text default 'https://forms.gle/9VfDxfNaJ9Qdo5JTA',
+  periode_label text default 'Senin, 16 Maret s/d Kamis, 2 April 2026 M',
+  tanggal_mulai date default '2026-03-16',
+  tanggal_selesai date default '2026-04-02',
+  rekening_bank text default 'BSI (Bank Syariah Indonesia)',
+  rekening_nomor text default '7777365546',
+  rekening_nama text default 'Pondok Pesantren Al Rahmah',
+  kontak_panitia jsonb default '[
+    {"nama": "Akh. Hidayatullah", "peran": "Panitia PSB", "nomor": "0895-4019-53841"},
+    {"nama": "Ust. Muhammad Azis", "peran": "Panitia PSB", "nomor": "0895-0941-4409"},
+    {"nama": "Ustz. Layli Fauziyah", "peran": "Panitia PSB", "nomor": "0896-1895-2845"}
+  ]'::jsonb,
   updated_at timestamptz not null default now()
 );
 
 -- Insert default PSB settings
-insert into psb_settings (tahun_ajaran, status, biaya_formulir, deskripsi)
-values (
+insert into psb_settings (
+  tahun_ajaran, status, judul, biaya_formulir, deskripsi, brosur_url, google_form_url, periode_label, tanggal_mulai, tanggal_selesai, rekening_bank, rekening_nomor, rekening_nama
+) values (
   '2026/2027',
   'Dibuka',
-  'Rp 500.000',
-  'Pondok Pesantren Al-Rahmah Walantaka membuka pendaftaran santri baru untuk tahun ajaran 2026/2027.'
+  'Pendaftaran Santri Baru Pondok Pesantren Al-Rahmah Melalui Online',
+  'Rp 150.000,-',
+  'Pondok Pesantren Al-Rahmah Walantaka membuka pendaftaran santri baru Tahun Ajaran 2026/2027 jenjang MTs & MA secara online melalui Google Form resmi.',
+  '/images/psb/brosur-psb-flyer.png',
+  'https://forms.gle/9VfDxfNaJ9Qdo5JTA',
+  'Senin, 16 Maret s/d Kamis, 2 April 2026 M',
+  '2026-03-16',
+  '2026-04-02',
+  'BSI (Bank Syariah Indonesia)',
+  '7777365546',
+  'Pondok Pesantren Al Rahmah'
 ) on conflict do nothing;
 
--- ============================================================
--- TABEL PENDAFTAR PSB
--- ============================================================
-create table if not exists pendaftar_psb (
-  id uuid primary key default gen_random_uuid(),
-  nama_lengkap text not null,
-  tempat_lahir text,
-  tanggal_lahir date,
-  jenis_kelamin text check (jenis_kelamin in ('Laki-laki', 'Perempuan')),
-  program text check (program in ('Tahfidz', 'Reguler', 'Tahfidz & Reguler')),
-  nama_ayah text,
-  nama_ibu text,
-  no_hp text,
-  alamat text,
-  asal_sekolah text,
-  nisn text,
-  status text not null default 'Menunggu' check (status in ('Menunggu', 'Lulus', 'Tidak Lulus')),
-  tahun_ajaran text,
-  kk_url text,
-  akta_url text,
-  rapor_url text,
-  foto_url text,
-  created_at timestamptz not null default now()
-);
 
 -- ============================================================
 -- TABEL PENGATURAN WEBSITE
@@ -156,7 +155,6 @@ alter table galeri_foto enable row level security;
 alter table pengumuman enable row level security;
 alter table prestasi enable row level security;
 alter table psb_settings enable row level security;
-alter table pendaftar_psb enable row level security;
 alter table pengaturan_website enable row level security;
 
 -- PUBLIC: boleh baca berita yang sudah terbit
@@ -225,11 +223,6 @@ create policy "Authenticated full access psb settings"
   using (auth.role() = 'authenticated')
   with check (auth.role() = 'authenticated');
 
-create policy "Authenticated full access pendaftar"
-  on pendaftar_psb for all
-  using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
-
 create policy "Authenticated full access pengaturan"
   on pengaturan_website for all
   using (auth.role() = 'authenticated')
@@ -242,5 +235,4 @@ create policy "Authenticated full access pengaturan"
 -- 2. "berita-thumbnails" (Public)
 -- 3. "prestasi"          (Public)
 -- 4. "psb-brosur"        (Public)
--- 5. "psb-dokumen"       (Private / authenticated only)
 -- ============================================================

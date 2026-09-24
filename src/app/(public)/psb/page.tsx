@@ -1,449 +1,556 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
-  CheckCircle2,
-  AlertCircle,
-  Phone,
-  ArrowRight,
-  ShieldCheck,
-  UserCheck,
-  FileEdit,
-  LogOut,
-  CreditCard,
-  Lock,
+  Calendar,
+  ExternalLink,
   Copy,
   Check,
-  MessageCircle,
-  ArrowUpRight,
+  Phone,
+  Maximize2,
+  X,
+  CreditCard,
+  ChevronDown,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
+import { DUMMY_PSB_DATA, PsbAnnouncementData } from "@/lib/constants/psbData";
 import { createClient } from "@/lib/supabase/client";
-import type { PsbSettings } from "@/lib/supabase/types";
-import { useAuth } from "@/components/providers/AuthProvider";
+import {
+  parsePsbSettings,
+  configToAnnouncementData,
+} from "@/lib/utils/psbHelper";
 
-const TAHAPAN_PSB = [
-  {
-    step: "01",
-    title: "Pengisian Formulir Data Diri",
-    desc: "Pengisian formulir data diri calon santri atau siswa secara online melalui portal PSB.",
-  },
-  {
-    step: "02",
-    title: "Penyerahan Berkas Persyaratan",
-    desc: "Penyerahan berkas persyaratan administratif (seperti ijazah, rapor, dan pasfoto).",
-  },
-  {
-    step: "03",
-    title: "Tes / Seleksi Masuk",
-    desc: "Tes atau seleksi masuk (uji kompetensi dasar atau keagamaan).",
-  },
-  {
-    step: "04",
-    title: "Pengumuman & Daftar Ulang",
-    desc: "Pengumuman kelulusan dan proses daftar ulang santri baru.",
-  },
-];
+export default function PsbInformationPage() {
+  const [data, setData] = useState<PsbAnnouncementData>(DUMMY_PSB_DATA);
 
-const KONTAK_PANITIA = [
-  {
-    nama: "Ust. Hidayatullah",
-    peran: "Panitia PPSB",
-    nomor: "+62 895-4019-53841",
-    waUrl: "https://wa.me/62895401953841?text=Assalamu%27alaikum%20Ust.%20Hidayatullah,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20PSB%20Al-Rahmah.",
-  },
-  {
-    nama: "Ust. Muhammad Azis",
-    peran: "Panitia PPSB",
-    nomor: "+62 895-0941-4409",
-    waUrl: "https://wa.me/6289509414409?text=Assalamu%27alaikum%20Ust.%20Muhammad%20Azis,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20PSB%20Al-Rahmah.",
-  },
-  {
-    nama: "Ustz. Laily Fauziyah",
-    peran: "Panitia PPSB",
-    nomor: "+62 896-1895-2845",
-    waUrl: "https://wa.me/6289618952845?text=Assalamu%27alaikum%20Ustz.%20Laily%20Fauziyah,%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20PSB%20Al-Rahmah.",
-  },
-];
-
-export default function PsbPage() {
-  const { user, loading: authLoading, signOut } = useAuth();
-
-  const [settings, setSettings] = useState<Partial<PsbSettings>>({
-    tahun_ajaran: "2026/2027",
-    status: "Dibuka",
-    biaya_formulir: "Rp 150.000 (Non-Yatim) / Gratis (Yatim)",
-    deskripsi: "Pondok Pesantren Al-Rahmah Walantaka membuka pendaftaran santri baru.",
-  });
+  // Interaction states
+  const [copiedLink, setCopiedLink] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
+  // Fetch dynamic settings from Supabase
   useEffect(() => {
-    async function loadSettings() {
+    async function loadPsbSettings() {
       try {
         const supabase = createClient();
-        const { data } = await supabase
+        const { data: dbData } = await supabase
           .from("psb_settings")
           .select("*")
           .limit(1)
           .maybeSingle();
-        if (data) setSettings(data);
+
+        if (dbData) {
+          const config = parsePsbSettings(dbData);
+          setData(configToAnnouncementData(config));
+        }
       } catch (err) {
-        console.error("Error loading PSB settings:", err);
+        console.warn("Could not fetch real-time PSB settings, using baseline:", err);
       }
     }
-    loadSettings();
+    loadPsbSettings();
   }, []);
 
-  const isBuka = settings.status === "Dibuka";
+  // Close lightbox on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsLightboxOpen(false);
+    };
+    if (isLightboxOpen) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isLightboxOpen]);
 
-  const handleCopyAccount = () => {
-    navigator.clipboard.writeText("7777365546");
-    setCopiedAccount(true);
-    setTimeout(() => setCopiedAccount(false), 2000);
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(data.googleFormUrl);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2200);
   };
 
+  const handleCopyAccount = () => {
+    navigator.clipboard.writeText(data.biayaFormulir.rekening.nomor);
+    setCopiedAccount(true);
+    setTimeout(() => setCopiedAccount(false), 2200);
+  };
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  };
+
+  const isClosed = data.status === "Ditutup";
+
   return (
-    <div className="pt-28 sm:pt-32 pb-20 sm:pb-28 min-h-screen bg-surface/40">
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-        
-        {/* ============================================================ */}
-        {/* HEADER: CLEAN & SOFT                                         */}
-        {/* ============================================================ */}
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <h1 className="font-heading text-2xl sm:text-3xl lg:text-[32px] font-bold text-zinc-900 tracking-tight">
-            Penerimaan Santri Baru (PSB)
-          </h1>
-          <p className="text-xs sm:text-sm text-zinc-600">
-            Pondok Pesantren Al-Rahmah Walantaka — Islamic Boarding School
-          </p>
-        </div>
+    <main className="min-h-screen bg-gradient-to-b from-[#F2F7F4] via-white to-[#F2F7F4] pt-28 sm:pt-32 pb-20 text-zinc-800">
+      
+      {/* ============================================================ */}
+      {/* 1. HEADER UTAMA (FONT STANDAR KONSISTEN)                     */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center mb-8">
+        <h1 className="font-heading text-2xl sm:text-3xl lg:text-[32px] font-bold text-zinc-900 tracking-tight">
+          Penerimaan Santri Baru (PSB)
+        </h1>
+        <p className="text-xs sm:text-sm text-zinc-600 mt-1.5">
+          Tahun Ajaran {data.tahunAjaran} — Pondok Pesantren Al-Rahmah Walantaka
+        </p>
+      </section>
 
-        {/* ============================================================ */}
-        {/* HERO STATUS BANNER: SOFT & TO THE POINT                      */}
-        {/* ============================================================ */}
-        <div className="mt-8 sm:mt-10 bg-white rounded-3xl p-6 md:p-8 shadow-xs border border-zinc-200/80">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div className="flex items-start gap-4">
+      {/* ============================================================ */}
+      {/* 2. HERO SECTION: POSTER & LINK FORMULIR (SEAMLESS SOFT)      */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+        <div className="bg-gradient-to-br from-[#EBF5EE] via-white to-[#F0F8F3] rounded-3xl p-5 sm:p-7 lg:p-8 border border-[#ABD8B1]/60 shadow-xs">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            
+            {/* Poster Flyer Interaktif (5 Kolom) */}
+            <div className="lg:col-span-5 flex flex-col items-center">
               <div
-                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-2xs ${
-                  isBuka
-                    ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                    : "bg-amber-50 text-amber-600 border border-amber-100"
-                }`}
+                onClick={() => setIsLightboxOpen(true)}
+                className="group relative w-full max-w-[280px] sm:max-w-[310px] rounded-2xl overflow-hidden bg-white border border-[#ABD8B1]/70 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-[#396E5F]/50"
               >
-                {isBuka ? <CheckCircle2 size={28} /> : <AlertCircle size={28} />}
-              </div>
-
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="font-heading font-bold text-zinc-900 text-lg sm:text-xl">
-                    PSB Tahun Ajaran {settings.tahun_ajaran || "2026/2027"}
-                  </h2>
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                      isBuka
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
-                  >
-                    GELOMBANG II · {settings.status || "Dibuka"}
-                  </span>
+                {/* Overlay Zoom */}
+                <div className="absolute inset-0 z-10 bg-[#1E3F35]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-[1px]">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-3 py-1.5 rounded-full">
+                    <Maximize2 size={14} />
+                    <span>Perbesar Poster</span>
+                  </div>
                 </div>
 
-                <p className="text-xs sm:text-sm text-zinc-600 mt-1 leading-relaxed">
-                  Pendaftaran terbuka untuk jenjang{" "}
-                  <strong>Madrasah Tsanawiyah (MTs)</strong> dan{" "}
-                  <strong>Madrasah Aliyah (MA)</strong> bagi anak yatim, dhuafa, dan seluruh kalangan masyarakat.
-                </p>
-
-                <div className="mt-2 text-xs text-zinc-500">
-                  <span>
-                    Biaya Formulir:{" "}
-                    <strong className="text-brand-primary font-bold">
-                      Rp 150.000 (Non-Yatim) / Gratis (Yatim)
-                    </strong>
-                  </span>
+                {/* Poster Gambar */}
+                <div className="relative w-full aspect-[326/456]">
+                  <Image
+                    src={data.flyerUrl}
+                    alt={`Poster Pengumuman Pendaftaran Santri Baru Al-Rahmah ${data.tahunAjaran}`}
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 280px, 310px"
+                    className="object-contain p-2"
+                  />
                 </div>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(true)}
+                className="mt-2 inline-flex items-center gap-1 text-[11px] sm:text-xs font-medium text-[#396E5F] hover:text-[#1E3F35] transition-colors cursor-pointer"
+              >
+                <Maximize2 size={12} />
+                <span>Klik poster untuk memperbesar</span>
+              </button>
             </div>
 
-            {/* CTA Dynamic based on Auth State */}
-            {isBuka && (
-              <div className="w-full lg:w-auto shrink-0 flex flex-col sm:flex-row lg:flex-col gap-2.5">
-                {!authLoading && user ? (
-                  /* --- SUDAH LOGIN --- */
-                  <div className="space-y-2 w-full min-w-[220px]">
-                    <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
-                      <div className="flex items-center gap-1.5 text-emerald-800 font-bold mb-0.5">
-                        <UserCheck size={14} />
-                        <span>Sesi Masuk Aktif</span>
-                      </div>
-                      <p className="text-emerald-700 truncate max-w-[220px]">
-                        {user.email}
-                      </p>
-                    </div>
-
-                    <Link
-                      href="/psb/daftar"
-                      className="w-full px-5 py-3 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center justify-center gap-2"
-                    >
-                      <FileEdit size={15} />
-                      <span>Buka Formulir Pendaftaran</span>
-                    </Link>
-
-                    <button
-                      onClick={() => signOut()}
-                      className="w-full text-center text-xs font-medium text-zinc-400 hover:text-red-600 transition-colors py-1 flex items-center justify-center gap-1"
-                    >
-                      <LogOut size={12} />
-                      <span>Keluar Akun</span>
-                    </button>
-                  </div>
+            {/* Informasi & Tombol Pendaftaran (7 Kolom) */}
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+              
+              {/* Status Badge (Dipindahkan ke Card) */}
+              <div>
+                {isClosed ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    <AlertTriangle size={13} className="text-amber-600" />
+                    <span>Pendaftaran Periode Ini Sedang Ditutup</span>
+                  </span>
                 ) : (
-                  /* --- BELUM LOGIN --- */
-                  <div className="space-y-2 w-full min-w-[220px]">
-                    <Link
-                      href="/psb/login?redirect=/psb/daftar"
-                      className="w-full px-6 py-3.5 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center justify-center gap-2"
-                    >
-                      <Lock size={15} />
-                      <span>Masuk untuk Mendaftar</span>
-                      <ArrowRight size={15} />
-                    </Link>
-                    <p className="text-[11px] text-zinc-500 text-center">
-                      Belum punya akun?{" "}
-                      <Link
-                        href="/psb/register?redirect=/psb/daftar"
-                        className="font-bold text-brand-primary hover:underline"
-                      >
-                        Daftar Akun Baru
-                      </Link>
-                    </p>
-                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs">
+                    <CheckCircle2 size={13} className="text-emerald-600" />
+                    <span>Pendaftaran Sedang Dibuka</span>
+                  </span>
                 )}
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* ============================================================ */}
-        {/* ALUR PSB: MINIMALIST & SOFT DESIGN LINE TAHAPAN              */}
-        {/* ============================================================ */}
-        <section className="mt-10 sm:mt-12">
-          {/* DESKTOP VIEW: HORIZONTAL DESIGN LINE TAHAPAN (lg and up) */}
-          <div className="hidden lg:block relative">
-            {/* Subtle Horizontal Connecting Line */}
-            <div
-              className="absolute top-6 left-[12%] right-[12%] h-[2px] bg-emerald-100 -z-0"
-              aria-hidden="true"
-            />
-
-            <div className="grid grid-cols-4 gap-6 relative z-10">
-              {TAHAPAN_PSB.map((item) => (
-                <div key={item.step} className="flex flex-col">
-                  {/* Step Node Circle */}
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-white border-2 border-emerald-200 text-brand-primary font-bold text-sm flex items-center justify-center shadow-2xs">
-                      {item.step}
-                    </div>
-                  </div>
-
-                  {/* Soft Step Card */}
-                  <div className="bg-white rounded-2xl p-5 border border-zinc-200/80 shadow-xs flex-1 flex flex-col justify-start">
-                    <h3 className="font-heading font-bold text-sm text-zinc-900 leading-snug">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-zinc-600 leading-relaxed mt-2">
-                      {item.desc}
-                    </p>
-                  </div>
+              {/* Highlight Jadwal Pendaftaran */}
+              <div className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#396E5F]/10 border border-[#396E5F]/20 text-[#1E3F35]">
+                <div className="w-9 h-9 rounded-xl bg-[#396E5F] text-white flex items-center justify-center shrink-0">
+                  <Calendar size={18} />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* MOBILE & TABLET VIEW: VERTICAL DESIGN LINE TAHAPAN (< lg) */}
-          <div className="lg:hidden relative pl-10 sm:pl-12 before:absolute before:left-4 sm:before:left-5 before:top-4 before:bottom-4 before:w-[2px] before:bg-emerald-100 space-y-4">
-            {TAHAPAN_PSB.map((item) => (
-              <div key={item.step} className="relative">
-                {/* Vertical Node Indicator */}
-                <div className="absolute -left-10 sm:-left-12 top-2 w-8 h-8 rounded-full bg-white border-2 border-brand-primary flex items-center justify-center text-xs font-bold text-brand-primary shadow-2xs z-10">
-                  {item.step}
-                </div>
-
-                {/* Soft Step Card */}
-                <div className="bg-white rounded-2xl p-5 border border-zinc-200/80 shadow-xs space-y-1.5">
-                  <h3 className="font-heading font-bold text-zinc-900 text-sm leading-snug">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-zinc-600 leading-relaxed">
-                    {item.desc}
+                <div>
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#396E5F]">
+                    Batas Waktu Pendaftaran
+                  </span>
+                  <p className="font-heading text-sm sm:text-base font-bold text-zinc-900 mt-0.5">
+                    {data.periodeLabel}
                   </p>
                 </div>
               </div>
+
+              {/* Judul & Jenjang */}
+              <div className="space-y-1">
+                <h2 className="font-heading text-base sm:text-lg lg:text-xl font-bold text-zinc-900 leading-snug">
+                  {data.judul}
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                  Pendaftaran terbuka untuk jenjang <strong>Madrasah Tsanawiyah (MTs)</strong> dan <strong>Madrasah Aliyah (MA)</strong> melalui formulir online resmi.
+                </p>
+              </div>
+
+              {/* Aksi Utama: Tombol Google Form / Status Ditutup */}
+              <div className="pt-1 space-y-2.5">
+                {isClosed ? (
+                  <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-900 space-y-2">
+                    <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-amber-900">
+                      <AlertTriangle size={16} className="text-amber-600 shrink-0" />
+                      <span>Pendaftaran Sementara Ditutup</span>
+                    </div>
+                    <p className="text-xs text-amber-800 leading-relaxed">
+                      Penerimaan santri baru untuk periode ini telah ditutup atau belum dibuka kembali. Calon wali santri dapat menghubungi narahubung panitia di bagian bawah halaman ini untuk informasi gelombang selanjutnya.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                      <a
+                        href={data.googleFormUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-3 px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
+                      >
+                        <span>Isi Formulir (Google Form)</span>
+                        <ExternalLink size={15} />
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className="py-3 px-4 rounded-xl bg-white hover:bg-[#F2F7F4] text-[#396E5F] border border-[#ABD8B1] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        {copiedLink ? (
+                          <>
+                            <Check size={14} className="text-[#396E5F]" />
+                            <span className="font-bold">Tersalin!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={14} />
+                            <span>Salin Link</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <p className="text-[11px] text-zinc-500 font-mono break-all">
+                      Tautan resmi: {data.googleFormUrl}
+                    </p>
+                  </>
+                )}
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 3. ALUR PENDAFTARAN 3 LANGKAH (LANGSUNG PADA INTINYA)         */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+        <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
+          
+          <h2 className="font-heading text-lg sm:text-xl font-bold text-center text-zinc-900 mb-6 sm:mb-8">
+            Alur Pendaftaran
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            {data.tahapan.map((item) => (
+              <div
+                key={item.step}
+                className="relative flex flex-col p-5 rounded-2xl bg-white border border-[#ABD8B1]/50 shadow-2xs hover:border-[#396E5F]/40 transition-colors"
+              >
+                <div className="w-9 h-9 rounded-lg bg-[#396E5F]/10 text-[#396E5F] font-heading font-bold text-sm flex items-center justify-center mb-3">
+                  {item.step}
+                </div>
+                <h3 className="font-heading font-bold text-xs sm:text-sm text-zinc-900 mb-1.5">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
             ))}
           </div>
-        </section>
 
-        {/* ============================================================ */}
-        {/* KETENTUAN BIAYA & REKENING RESMI PENDAFTARAN                 */}
-        {/* ============================================================ */}
-        <section className="mt-12 sm:mt-14">
-          <div className="mb-5">
-            <h3 className="font-heading font-bold text-lg sm:text-xl text-zinc-900">
-              Ketentuan Biaya &amp; Rekening Resmi Pendaftaran
-            </h3>
-          </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs sm:text-sm">
-            {/* NON-YATIM */}
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200/80 shadow-xs flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                  <span className="font-bold text-zinc-900 flex items-center gap-2 text-brand-primary text-sm sm:text-base">
-                    <CreditCard size={18} />
-                    <span>Kategori Non-Yatim</span>
-                  </span>
-                  <span className="text-xs sm:text-sm font-bold text-brand-primary bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
-                    Rp 150.000,-
-                  </span>
+      {/* ============================================================ */}
+      {/* 4. BIAYA PENDAFTARAN & REKENING RESMI (UNIFIED SOFT GREEN)   */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+        <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
+          
+          <h2 className="font-heading text-lg sm:text-xl font-bold text-center text-zinc-900 mb-6 sm:mb-8">
+            Ketentuan Biaya &amp; Rekening Resmi
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            
+            {/* Non Yatim */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#ABD8B1]/60 shadow-2xs space-y-3.5">
+              <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100">
+                <span className="font-heading font-bold text-xs sm:text-sm text-zinc-900 flex items-center gap-2">
+                  <CreditCard size={17} className="text-[#396E5F]" />
+                  <span>Kategori Non-Yatim</span>
+                </span>
+                <span className="font-bold text-[#396E5F] text-xs sm:text-sm bg-[#396E5F]/10 px-2.5 py-0.5 rounded-full">
+                  {data.biayaFormulir.nonYatim}
+                </span>
+              </div>
+
+              <p className="text-xs text-zinc-600">
+                Ditransfer ke rekening resmi pondok sebelum mengisi formulir:
+              </p>
+
+              {/* Box Rekening Bank */}
+              <div className="p-3.5 rounded-xl bg-[#F0F8F3] border border-[#ABD8B1]/70 space-y-1 text-xs">
+                <div className="flex justify-between text-zinc-600">
+                  <span>Bank:</span>
+                  <strong className="text-zinc-900">{data.biayaFormulir.rekening.bank}</strong>
                 </div>
-
-                <p className="text-zinc-600 text-xs mt-3 leading-relaxed">
-                  Biaya formulir ditransfer ke rekening resmi Pondok Pesantren Al-Rahmah:
-                </p>
-
-                <div className="mt-3 p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/70 text-xs text-zinc-800 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-500">Bank:</span>
-                    <strong className="text-zinc-800 font-semibold">BSI (Bank Syariah Indonesia)</strong>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-500">No. Rekening:</span>
-                    <strong className="font-mono text-sm text-brand-primary">7777365546</strong>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-zinc-500">Atas Nama:</span>
-                    <strong className="text-zinc-800 font-semibold">Pondok Pesantren Al Rahmah</strong>
-                  </div>
+                <div className="flex justify-between text-zinc-600 items-center">
+                  <span>No. Rekening:</span>
+                  <strong className="font-mono text-sm sm:text-base font-bold text-[#396E5F]">
+                    {data.biayaFormulir.rekening.nomor}
+                  </strong>
+                </div>
+                <div className="flex justify-between text-zinc-600">
+                  <span>Atas Nama:</span>
+                  <strong className="text-zinc-900">{data.biayaFormulir.rekening.atasNama}</strong>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={handleCopyAccount}
-                className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-emerald-50 text-brand-primary border border-zinc-200 text-xs font-medium flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+                className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-[#F2F7F4] text-[#396E5F] border border-[#ABD8B1] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 {copiedAccount ? (
                   <>
-                    <Check size={14} className="text-emerald-600" />
-                    <span className="text-emerald-700 font-bold">Nomor Rekening Tersalin!</span>
+                    <Check size={13} className="text-[#396E5F]" />
+                    <span className="font-bold">Nomor Rekening Tersalin!</span>
                   </>
                 ) : (
                   <>
-                    <Copy size={14} />
-                    <span>Salin Nomor Rekening BSI</span>
+                    <Copy size={13} />
+                    <span>Salin Nomor Rekening ({data.biayaFormulir.rekening.bank})</span>
                   </>
                 )}
               </button>
             </div>
 
-            {/* YATIM */}
-            <div className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200/80 shadow-xs flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
-                  <span className="font-bold text-zinc-900 flex items-center gap-2 text-brand-primary text-sm sm:text-base">
-                    <ShieldCheck size={18} />
-                    <span>Kategori Yatim</span>
+            {/* Yatim */}
+            <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#F0F8F3] to-white border border-[#ABD8B1]/60 shadow-2xs space-y-3.5 flex flex-col justify-between">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-2.5 border-b border-[#ABD8B1]/40">
+                  <span className="font-heading font-bold text-xs sm:text-sm text-zinc-900">
+                    Kategori Yatim
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
-                    Bebas Biaya (Gratis)
+                  <span className="font-bold text-[#1E3F35] text-xs sm:text-sm bg-[#8AC77F]/30 px-2.5 py-0.5 rounded-full">
+                    {data.biayaFormulir.yatim}
                   </span>
                 </div>
 
-                <p className="text-zinc-600 text-xs mt-3 leading-relaxed">
-                  Bagi calon santri yatim, pendaftaran digratiskan dengan melampirkan berkas:
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  {data.biayaFormulir.catatanYatim}
                 </p>
-
-                <div className="mt-3 p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/70 text-xs text-zinc-700 space-y-0.5">
-                  <p className="font-semibold text-zinc-900">• Akta Kematian Ayah</p>
-                  <p className="text-[11px] text-zinc-500 leading-relaxed">
-                    Dikeluarkan resmi oleh Dinas Kependudukan dan Catatan Sipil (Dukcapil) setempat.
-                  </p>
-                </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200/60 text-[11px] text-emerald-800">
-                Pondok Pesantren Al-Rahmah berkomitmen mendukung pendidikan santri yatim.
+              <div className="p-3 rounded-xl bg-white border border-[#ABD8B1]/50 text-xs text-[#396E5F] font-medium">
+                Pondok Pesantren Al-Rahmah membebaskan biaya formulir &amp; pendaftaran 100% untuk santri yatim.
               </div>
             </div>
+
           </div>
-        </section>
 
-        {/* ============================================================ */}
-        {/* LAYANAN INFORMASI & NARAHUBUNG (MODERN GREEN GRADIENT)       */}
-        {/* ============================================================ */}
-        <section className="mt-12 sm:mt-16">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E4338] via-[#2A5C4E] to-[#387664] text-white p-6 sm:p-8 md:p-10 shadow-xs border border-emerald-700/30">
-            {/* Subtle Modern Ambient Light Glow */}
-            <div
-              className="absolute -top-24 -right-24 w-80 h-80 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -bottom-24 -left-24 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"
-              aria-hidden="true"
-            />
+          {/* Checklist Berkas yang Perlu Disiapkan */}
+          <div className="mt-5 p-5 sm:p-6 rounded-2xl bg-white border border-[#ABD8B1]/50 shadow-2xs">
+            <h3 className="font-heading font-bold text-xs sm:text-sm text-zinc-900 mb-2.5">
+              Berkas yang Perlu Disiapkan (Foto/Scan):
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-700">
+              {data.persyaratanUmum.map((item, idx) => (
+                <div key={idx} className="flex items-start gap-2">
+                  <CheckCircle2 size={14} className="text-[#396E5F] shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-            <div className="relative z-10">
-              <div className="max-w-2xl mb-7">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-emerald-200 border border-white/15 mb-2.5">
-                  <MessageCircle size={13} />
-                  <span>Layanan Informasi &amp; Bantuan</span>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 5. NARAHUBUNG RESMI WHATSAPP                                 */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+        <div className="rounded-3xl bg-[#1E3F35] text-white p-5 sm:p-7 lg:p-8 shadow-xs border border-[#396E5F]">
+          
+          <div className="max-w-2xl mb-5">
+            <h2 className="font-heading text-lg sm:text-xl font-bold text-white">
+              Narahubung Panitia PSB
+            </h2>
+            <p className="text-xs text-[#AED69F] mt-1">
+              Hubungi panitia via WhatsApp jika ada pertanyaan atau kendala seputar pendaftaran:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {data.kontakPanitia.map((kontak, idx) => (
+              <a
+                key={idx}
+                href={kontak.waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between p-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 hover:border-[#8AC77F] transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-lg bg-[#8AC77F]/20 text-[#AED69F] group-hover:bg-[#8AC77F] group-hover:text-[#1E3F35] flex items-center justify-center transition-colors shrink-0">
+                    <Phone size={15} />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white text-xs sm:text-sm">
+                      {kontak.nama}
+                    </h3>
+                    <p className="text-[11px] text-[#AED69F]/80">
+                      {kontak.peran}
+                    </p>
+                    <p className="font-mono text-[11px] text-[#AED69F] mt-0.5">
+                      {kontak.nomor}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xs text-[#AED69F] group-hover:text-white group-hover:translate-x-0.5 transition-all">
+                  Chat &rarr;
                 </span>
-                <h3 className="font-heading font-bold text-xl sm:text-2xl lg:text-3xl text-white tracking-tight">
-                  Narahubung Panitia PPSB 2026-2027
-                </h3>
-                <p className="text-xs sm:text-sm text-emerald-100/80 mt-1.5 leading-relaxed">
-                  Ada pertanyaan seputar persyaratan atau pendaftaran? Panitia kami siap membantu via WhatsApp.
-                </p>
-              </div>
+              </a>
+            ))}
+          </div>
 
-              {/* 3 Sleek Minimalist Contact Tiles */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
-                {KONTAK_PANITIA.map((kontak, idx) => (
-                  <a
-                    key={idx}
-                    href={kontak.waUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center justify-between p-4 rounded-2xl bg-white/[0.08] hover:bg-white/[0.16] border border-white/10 hover:border-emerald-300/40 transition-all duration-300 backdrop-blur-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/10 group-hover:bg-emerald-400 group-hover:text-emerald-950 text-emerald-300 flex items-center justify-center transition-all duration-300 shrink-0">
-                        <Phone size={16} />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-white text-sm group-hover:text-emerald-200 transition-colors">
-                          {kontak.nama}
-                        </h4>
-                        <p className="font-mono text-xs text-emerald-100/70 mt-0.5">
-                          {kontak.nomor}
-                        </p>
-                      </div>
-                    </div>
+        </div>
+      </section>
 
-                    <div className="w-8 h-8 rounded-full bg-white/10 group-hover:bg-white group-hover:text-emerald-900 text-white/70 flex items-center justify-center transition-all shrink-0 ml-2">
-                      <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                    </div>
-                  </a>
-                ))}
+      {/* ============================================================ */}
+      {/* 6. FAQ (TANYA JAWAB SINGKAT)                                 */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl mb-10">
+        <h2 className="font-heading text-lg sm:text-xl font-bold text-center text-zinc-900 mb-5">
+          Pertanyaan Umum (FAQ)
+        </h2>
+
+        <div className="space-y-2">
+          {data.faqs.map((faq, idx) => {
+            const isOpen = openFaqIndex === idx;
+            return (
+              <div
+                key={idx}
+                className="rounded-xl bg-white border border-[#ABD8B1]/50 overflow-hidden"
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleFaq(idx)}
+                  className="w-full text-left p-3.5 sm:p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-[#F2F7F4]/60 transition-colors"
+                >
+                  <span className="font-semibold text-xs sm:text-sm text-zinc-900">
+                    {faq.question}
+                  </span>
+                  <ChevronDown
+                    size={15}
+                    className={`text-[#396E5F] transition-transform duration-200 shrink-0 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {isOpen && (
+                  <div className="px-3.5 pb-3.5 pt-1 text-xs text-zinc-600 leading-relaxed border-t border-zinc-100">
+                    {faq.answer}
+                  </div>
+                )}
               </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 7. HIMBAUAN KEAMANAN SINGKAT                                 */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+          <AlertTriangle size={15} className="text-amber-600 shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong>Waspada Penipuan:</strong> Pembayaran biaya formulir resmi hanya melalui rekening <strong>{data.biayaFormulir.rekening.bank} {data.biayaFormulir.rekening.nomor}</strong> a.n. <strong>{data.biayaFormulir.rekening.atasNama}</strong>. Panitia tidak pernah meminta transfer ke rekening pribadi.
+          </p>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 8. MODAL LIGHTBOX FLYER                                      */}
+      {/* ============================================================ */}
+      {isLightboxOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setIsLightboxOpen(false)}
+        >
+          <div
+            className="relative max-w-sm sm:max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-2xl p-3 flex flex-col items-center max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Modal */}
+            <div className="w-full flex items-center justify-between pb-2 px-1 border-b border-zinc-100 mb-2">
+              <h3 className="font-heading font-bold text-xs sm:text-sm text-[#1E3F35]">
+                Poster Resmi PSB {data.tahunAjaran}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(false)}
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
+                aria-label="Tutup preview"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Gambar Poster Full */}
+            <div className="relative w-full aspect-[326/456] max-h-[70vh]">
+              <Image
+                src={data.flyerUrl}
+                alt={`Poster Resmi PSB Al-Rahmah ${data.tahunAjaran}`}
+                fill
+                sizes="(max-width: 640px) 90vw, 420px"
+                className="object-contain"
+              />
+            </div>
+
+            {/* Footer Modal Action */}
+            <div className="w-full pt-3 px-1 border-t border-zinc-100 flex items-center justify-between gap-2">
+              <span className="text-[11px] text-zinc-500">
+                Pondok Pesantren Al-Rahmah Walantaka
+              </span>
+              <a
+                href={data.flyerUrl}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#396E5F] hover:underline"
+              >
+                <span>Unduh Gambar</span>
+                <ExternalLink size={12} />
+              </a>
             </div>
           </div>
-        </section>
+        </div>
+      )}
 
-      </div>
-    </div>
+    </main>
   );
 }

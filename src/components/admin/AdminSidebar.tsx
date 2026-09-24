@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,21 +9,19 @@ import {
   Newspaper,
   Images,
   GraduationCap,
-  Megaphone,
-  Trophy,
   Settings,
   LogOut,
   X,
   ChevronRight,
 } from "lucide-react";
 
+import { createClient } from "@/lib/supabase/client";
+
 const menuItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Kelola Berita", href: "/admin/berita", icon: Newspaper },
   { name: "Kelola Galeri", href: "/admin/galeri", icon: Images },
   { name: "Informasi PSB", href: "/admin/psb", icon: GraduationCap },
-  { name: "Pengumuman", href: "/admin/pengumuman", icon: Megaphone },
-  { name: "Media & Prestasi", href: "/admin/media", icon: Trophy },
   { name: "Pengaturan Website", href: "/admin/pengaturan", icon: Settings },
 ];
 
@@ -42,7 +39,13 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     return pathname.startsWith(href);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.error("SignOut error:", e);
+    }
     localStorage.removeItem("alrahmah_admin_logged_in");
     router.push("/admin/login");
   };

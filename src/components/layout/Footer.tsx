@@ -51,6 +51,7 @@ export async function Footer() {
                 src="/images/logoAl-rahmah.jpeg"
                 alt="Logo Al-Rahmah"
                 fill
+                sizes="36px"
                 className="object-contain"
               />
             </div>
@@ -175,6 +176,7 @@ export async function Footer() {
                     src="/images/logoAl-rahmah.jpeg"
                     alt="Logo Al-Rahmah"
                     fill
+                    sizes="36px"
                     className="object-contain"
                   />
                 </div>

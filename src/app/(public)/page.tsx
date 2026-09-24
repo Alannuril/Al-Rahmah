@@ -1,6 +1,5 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { AnnouncementBanner } from "@/components/sections/AnnouncementBanner";
-import { AlRahmahStats } from "@/components/sections/AlRahmahStats";
 import { PancaJiwaSection } from "@/components/sections/PancaJiwaSection";
 import { NewsSection } from "@/components/sections/NewsSection";
 import { HighlightSection } from "@/components/sections/HighlightSection";
@@ -12,7 +11,6 @@ export default function Home() {
     <div className="flex flex-col w-full overflow-hidden">
       <HeroSection />
       <AnnouncementBanner />
-      <AlRahmahStats />
       <PancaJiwaSection />
       <NewsSection />
       <HighlightSection />

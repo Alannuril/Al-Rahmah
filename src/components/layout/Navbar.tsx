@@ -17,8 +17,9 @@ export function Navbar() {
   const pathname = usePathname();
 
   const isHomePage = pathname === "/";
+  const isPsbPage = pathname.startsWith("/psb");
   const isNavSolid = isScrolled || !isHomePage;
-  const showCta = isScrolled || !isHomePage;
+  const showCta = (isScrolled || !isHomePage) && !isPsbPage;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,6 +59,7 @@ export function Navbar() {
               src="/images/logoAl-rahmah.jpeg"
               alt="Logo Pondok Pesantren Al-Rahmah"
               fill
+              sizes="48px"
               className="object-contain"
             />
           </div>
@@ -145,12 +147,12 @@ export function Navbar() {
                   </div>
                   <div className="py-1">
                     <Link
-                      href="/psb/daftar"
+                      href="/psb"
                       onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-2 px-3 py-2 rounded-xl text-zinc-700 hover:bg-brand-primary/5 hover:text-brand-primary font-medium transition-colors"
                     >
                       <FileText size={14} />
-                      <span>Formulir E-PSB</span>
+                      <span>Info PSB</span>
                     </Link>
                   </div>
                   <div className="pt-1 border-t border-zinc-100">
@@ -168,7 +170,7 @@ export function Navbar() {
                 </div>
               )}
             </div>
-          ) : (
+          ) : !isPsbPage ? (
             <div className={clsx(
               "transition-all duration-300",
               showCta
@@ -182,7 +184,7 @@ export function Navbar() {
                 Daftar Sekarang
               </Link>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -276,11 +278,11 @@ export function Navbar() {
                 </div>
               </div>
               <Link
-                href="/psb/daftar"
+                href="/psb"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block text-center bg-brand-primary text-white hover:bg-brand-secondary font-semibold px-4 py-3 rounded-xl text-sm transition-colors shadow-xs"
               >
-                Buka Formulir E-PSB
+                Info & Pendaftaran PSB
               </Link>
               <button
                 onClick={async () => {
@@ -294,13 +296,15 @@ export function Navbar() {
             </div>
           ) : (
             <div className="mt-4 space-y-2">
-              <Link 
-                href="/psb" 
-                className="block text-center bg-brand-primary text-white hover:bg-brand-secondary transition-colors font-semibold px-6 py-3.5 rounded-xl text-base shadow-md"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Daftar Sekarang
-              </Link>
+              {!isPsbPage && (
+                <Link 
+                  href="/psb" 
+                  className="block text-center bg-brand-primary text-white hover:bg-brand-secondary transition-colors font-semibold px-6 py-3.5 rounded-xl text-base shadow-md"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Daftar Sekarang
+                </Link>
+              )}
               <Link
                 href="/psb/login"
                 className="block text-center text-xs font-bold text-brand-primary hover:underline py-1.5"

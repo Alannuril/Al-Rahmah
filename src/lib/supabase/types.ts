@@ -2,7 +2,6 @@
 
 export type BeritaStatus = "Draft" | "Terbit";
 export type PengumumanStatus = "Aktif" | "Arsip";
-export type PsbStatus = "Menunggu" | "Lulus" | "Tidak Lulus";
 export type PsbOpenStatus = "Dibuka" | "Ditutup";
 
 export interface Berita {
@@ -57,43 +56,32 @@ export interface Prestasi {
   created_at: string;
 }
 
+export interface PsbContact {
+  nama: string;
+  peran: string;
+  nomor: string;
+  waUrl?: string;
+}
+
 export interface PsbSettings {
   id: string;
   tahun_ajaran: string | null;
   status: PsbOpenStatus;
+  judul?: string | null;
   biaya_formulir: string | null;
   deskripsi: string | null;
   brosur_url: string | null;
+  google_form_url?: string | null;
+  periode_label?: string | null;
+  tanggal_mulai?: string | null;
+  tanggal_selesai?: string | null;
+  rekening_bank?: string | null;
+  rekening_nomor?: string | null;
+  rekening_nama?: string | null;
+  kontak_panitia?: PsbContact[] | null;
   updated_at: string;
 }
 
-export interface PendaftarPsb {
-  id: string;
-  user_id?: string | null;
-  nama_lengkap: string;
-  keterangan?: "Yatim" | "Non Yatim" | string | null;
-  tingkat?: "Madrasah Tsanawiyah (MTs)" | "Madrasah Aliyah (MA)" | string | null;
-  tempat_lahir: string | null;
-  tanggal_lahir: string | null;
-  jenis_kelamin: string | null;
-  program: string | null;
-  nama_ayah: string | null;
-  nama_ibu: string | null;
-  nama_wali?: string | null;
-  no_hp: string | null;
-  email?: string | null;
-  alamat: string | null;
-  asal_sekolah: string | null;
-  nisn: string | null;
-  status: PsbStatus;
-  tahun_ajaran: string | null;
-  bukti_pembayaran_url?: string | null;
-  kk_url?: string | null;
-  akta_url?: string | null;
-  rapor_url?: string | null;
-  foto_url?: string | null;
-  created_at: string;
-}
 
 export interface PengaturanWebsite {
   id: string;
