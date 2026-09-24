@@ -16,6 +16,47 @@ ALTER TABLE psb_settings
     {"nama": "Akh. Hidayatullah", "peran": "Panitia PSB", "nomor": "0895-4019-53841"},
     {"nama": "Ust. Muhammad Azis", "peran": "Panitia PSB", "nomor": "0895-0941-4409"},
     {"nama": "Ustz. Layli Fauziyah", "peran": "Panitia PSB", "nomor": "0896-1895-2845"}
+  ]'::jsonb,
+  ADD COLUMN IF NOT EXISTS gelombang jsonb DEFAULT '[
+    {
+      "id": "gel-1",
+      "nama": "Gelombang 1",
+      "tanggal_mulai": "2026-01-05",
+      "tanggal_selesai": "2026-02-28",
+      "tanggal_tes": "1 Maret 2026",
+      "tanggal_pengumuman": "5 Maret 2026",
+      "tanggal_daftar_ulang": "6 - 15 Maret 2026",
+      "status": "Ditutup",
+      "kuota": "60 Santri",
+      "catatan": "Jalur Peminatan Khusus & Prestasi Tahfidz",
+      "is_active": false
+    },
+    {
+      "id": "gel-2",
+      "nama": "Gelombang 2",
+      "tanggal_mulai": "2026-03-16",
+      "tanggal_selesai": "2026-04-02",
+      "tanggal_tes": "5 April 2026",
+      "tanggal_pengumuman": "9 April 2026",
+      "tanggal_daftar_ulang": "10 - 20 April 2026",
+      "status": "Dibuka",
+      "kuota": "80 Santri",
+      "catatan": "Jalur Reguler Terbuka (MTs & MA)",
+      "is_active": true
+    },
+    {
+      "id": "gel-3",
+      "nama": "Gelombang 3",
+      "tanggal_mulai": "2026-05-01",
+      "tanggal_selesai": "2026-06-15",
+      "tanggal_tes": "20 Juni 2026",
+      "tanggal_pengumuman": "25 Juni 2026",
+      "tanggal_daftar_ulang": "26 Juni - 5 Juli 2026",
+      "status": "Akan Datang",
+      "kuota": "Sisa Kuota",
+      "catatan": "Dibuka jika kuota santri baru belum terpenuhi",
+      "is_active": false
+    }
   ]'::jsonb;
 
 -- Pastikan RLS mengizinkan publik membaca psb_settings

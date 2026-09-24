@@ -14,12 +14,23 @@ import {
   ChevronDown,
   CheckCircle2,
   AlertTriangle,
+  Layers,
+  Clock,
+  ClipboardList,
+  GraduationCap,
+  Sparkles,
+  Users,
+  Award,
+  ArrowRight,
 } from "lucide-react";
 import { DUMMY_PSB_DATA, PsbAnnouncementData } from "@/lib/constants/psbData";
 import { createClient } from "@/lib/supabase/client";
 import {
   parsePsbSettings,
   configToAnnouncementData,
+  findActiveGelombang,
+  formatDateRangeDisplay,
+  formatIndoDate,
 } from "@/lib/utils/psbHelper";
 
 export default function PsbInformationPage() {
@@ -87,6 +98,12 @@ export default function PsbInformationPage() {
   };
 
   const isClosed = data.status === "Ditutup";
+  const activeWave = findActiveGelombang(data.gelombang);
+  const heroPeriodLabel =
+    activeWave && "tanggalMulai" in activeWave && activeWave.tanggalMulai && activeWave.tanggalSelesai
+      ? `${formatDateRangeDisplay(activeWave.tanggalMulai, activeWave.tanggalSelesai)} M`
+      : data.periodeLabel;
+  const activeWaveName = activeWave && "nama" in activeWave ? activeWave.nama : "";
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#F2F7F4] via-white to-[#F2F7F4] pt-28 sm:pt-32 pb-20 text-zinc-800">
@@ -150,8 +167,8 @@ export default function PsbInformationPage() {
             {/* Informasi & Tombol Pendaftaran (7 Kolom) */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-5">
               
-              {/* Status Badge (Dipindahkan ke Card) */}
-              <div>
+              {/* Status Badge & Active Wave Indicator */}
+              <div className="flex flex-wrap items-center gap-2">
                 {isClosed ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
                     <AlertTriangle size={13} className="text-amber-600" />
@@ -163,6 +180,13 @@ export default function PsbInformationPage() {
                     <span>Pendaftaran Sedang Dibuka</span>
                   </span>
                 )}
+
+                {activeWaveName && !isClosed && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#396E5F]/10 text-[#1E3F35] border border-[#396E5F]/30">
+                    <Layers size={13} className="text-[#396E5F]" />
+                    <span>Fokus: <strong>{activeWaveName}</strong></span>
+                  </span>
+                )}
               </div>
 
               {/* Highlight Jadwal Pendaftaran */}
@@ -172,10 +196,12 @@ export default function PsbInformationPage() {
                 </div>
                 <div>
                   <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#396E5F]">
-                    Batas Waktu Pendaftaran
+                    {activeWaveName && !isClosed
+                      ? `Batas Waktu Pendaftaran (${activeWaveName})`
+                      : "Batas Waktu Pendaftaran"}
                   </span>
                   <p className="font-heading text-sm sm:text-base font-bold text-zinc-900 mt-0.5">
-                    {data.periodeLabel}
+                    {heroPeriodLabel}
                   </p>
                 </div>
               </div>
@@ -248,7 +274,128 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 3. ALUR PENDAFTARAN 3 LANGKAH (LANGSUNG PADA INTINYA)         */}
+      {/* 3. JADWAL & SKEMA GELOMBANG PENDAFTARAN (CENTERED LINE)      */}
+      {/* ============================================================ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl mb-12 sm:mb-14">
+        <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
+          
+          {/* Header Section */}
+          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#396E5F]/10 text-[#396E5F] mb-2.5">
+              <Layers size={13} />
+              <span>Tahapan Seleksi Santri Baru</span>
+            </div>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-zinc-900">
+              Skema &amp; Jadwal Gelombang Pendaftaran
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-600 mt-2 leading-relaxed">
+              Pondok Pesantren Al-Rahmah Walantaka membuka seleksi calon santri baru Tahun Ajaran {data.tahunAjaran} dalam beberapa tahapan gelombang.
+            </p>
+          </div>
+
+          {/* Centered Line Process (No Cards, Minimalist, Centered) */}
+          <div className="relative max-w-4xl mx-auto">
+            <div className="flex flex-col md:grid md:grid-cols-3">
+              {data.gelombang.map((wave, idx) => {
+                const isOpen = wave.status === "Dibuka";
+                const isUpcoming = wave.status === "Akan Datang";
+                const isClosed = wave.status === "Ditutup";
+                const isLast = idx === data.gelombang.length - 1;
+
+                return (
+                  <div key={wave.id || idx} className="contents md:block">
+                    <div className="relative flex flex-col items-center text-center px-4">
+                      {/* Node Indicator Row with Desktop Connecting Line */}
+                      <div className="relative flex items-center justify-center w-full mb-3">
+                        {/* Desktop connecting line to next wave */}
+                        {!isLast && (
+                          <div
+                            className={`hidden md:block absolute top-1/2 left-1/2 w-full h-[2px] -translate-y-1/2 -z-0 transition-colors ${
+                              isClosed ? "bg-[#396E5F]" : "bg-zinc-200"
+                            }`}
+                          />
+                        )}
+
+                        {/* Node circle */}
+                        <div
+                          className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 transition-all ${
+                            isOpen
+                              ? "bg-[#396E5F] text-white ring-4 ring-[#396E5F]/20 shadow-xs"
+                              : isClosed
+                              ? "bg-emerald-50 text-[#396E5F] border border-[#ABD8B1]"
+                              : "bg-white text-zinc-400 border-2 border-zinc-200"
+                          }`}
+                        >
+                          {isClosed ? (
+                            <Check size={16} strokeWidth={2.5} />
+                          ) : (
+                            `0${idx + 1}`
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Wave Name */}
+                      <h3 className="font-heading font-bold text-base text-zinc-900 mb-1">
+                        {wave.nama}
+                      </h3>
+
+                      {/* Registration Period Range */}
+                      <p className="text-xs sm:text-sm font-semibold text-[#1E3F35] mb-1">
+                        {formatDateRangeDisplay(wave.tanggalMulai, wave.tanggalSelesai)}
+                      </p>
+
+                      {/* Test Date Only */}
+                      {wave.tanggalTes && (
+                        <p className="text-xs text-zinc-600 font-medium">
+                          Tes: <span className="font-semibold text-zinc-800">{wave.tanggalTes}</span>
+                        </p>
+                      )}
+
+                      {/* CTA Button / Subtle Status */}
+                      <div className="mt-3">
+                        {isOpen ? (
+                          <a
+                            href={data.googleFormUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs transition-colors shadow-xs cursor-pointer"
+                          >
+                            <span>Daftar Sekarang</span>
+                            <ArrowRight size={13} />
+                          </a>
+                        ) : isUpcoming ? (
+                          <span className="text-[11px] text-zinc-400 font-medium">
+                            Belum Dibuka
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-zinc-400 font-medium">
+                            Pendaftaran Ditutup
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Mobile connecting vertical line */}
+                    {!isLast && (
+                      <div className="md:hidden flex justify-center py-2.5">
+                        <div
+                          className={`w-[2px] h-7 transition-colors ${
+                            isClosed ? "bg-[#396E5F]" : "bg-zinc-200"
+                          }`}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 4. ALUR PENDAFTARAN 3 LANGKAH (LANGSUNG PADA INTINYA)         */}
       {/* ============================================================ */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
         <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
@@ -280,7 +427,7 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 4. BIAYA PENDAFTARAN & REKENING RESMI (UNIFIED SOFT GREEN)   */}
+      {/* 5. BIAYA PENDAFTARAN & REKENING RESMI (UNIFIED SOFT GREEN)   */}
       {/* ============================================================ */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
         <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
@@ -387,7 +534,7 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 5. NARAHUBUNG RESMI WHATSAPP                                 */}
+      {/* 6. NARAHUBUNG RESMI WHATSAPP                                 */}
       {/* ============================================================ */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
         <div className="rounded-3xl bg-[#1E3F35] text-white p-5 sm:p-7 lg:p-8 shadow-xs border border-[#396E5F]">
@@ -437,7 +584,7 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 6. FAQ (TANYA JAWAB SINGKAT)                                 */}
+      {/* 7. FAQ (TANYA JAWAB SINGKAT)                                 */}
       {/* ============================================================ */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl mb-10">
         <h2 className="font-heading text-lg sm:text-xl font-bold text-center text-zinc-900 mb-5">
@@ -470,7 +617,9 @@ export default function PsbInformationPage() {
 
                 {isOpen && (
                   <div className="px-3.5 pb-3.5 pt-1 text-xs text-zinc-600 leading-relaxed border-t border-zinc-100">
-                    {faq.answer}
+                    {idx === 0 && activeWaveName
+                      ? `Pendaftaran santri baru dibuka dalam beberapa tahapan gelombang (Gelombang 1 - 3). Saat ini dibuka untuk ${activeWaveName} dengan periode ${heroPeriodLabel}. Kami menyarankan calon wali santri menyelesaikan pendaftaran sebelum kuota gelombang terpenuhi.`
+                      : faq.answer}
                   </div>
                 )}
               </div>
@@ -480,7 +629,7 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 7. HIMBAUAN KEAMANAN SINGKAT                                 */}
+      {/* 8. HIMBAUAN KEAMANAN SINGKAT                                 */}
       {/* ============================================================ */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
@@ -492,7 +641,7 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 8. MODAL LIGHTBOX FLYER                                      */}
+      {/* 9. MODAL LIGHTBOX FLYER                                      */}
       {/* ============================================================ */}
       {isLightboxOpen && (
         <div

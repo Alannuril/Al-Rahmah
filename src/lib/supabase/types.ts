@@ -63,6 +63,20 @@ export interface PsbContact {
   waUrl?: string;
 }
 
+export interface PsbGelombangDb {
+  id: string;
+  nama: string;
+  tanggal_mulai: string;
+  tanggal_selesai: string;
+  tanggal_tes?: string;
+  tanggal_pengumuman?: string;
+  tanggal_daftar_ulang?: string;
+  status: "Dibuka" | "Akan Datang" | "Ditutup";
+  kuota?: string;
+  catatan?: string;
+  is_active?: boolean;
+}
+
 export interface PsbSettings {
   id: string;
   tahun_ajaran: string | null;
@@ -79,6 +93,7 @@ export interface PsbSettings {
   rekening_nomor?: string | null;
   rekening_nama?: string | null;
   kontak_panitia?: PsbContact[] | null;
+  gelombang?: PsbGelombangDb[] | null;
   updated_at: string;
 }
 

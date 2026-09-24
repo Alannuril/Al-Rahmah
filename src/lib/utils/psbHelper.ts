@@ -1,8 +1,27 @@
-import { DUMMY_PSB_DATA, PsbAnnouncementData, PsbContact } from "@/lib/constants/psbData";
-import type { PsbSettings } from "@/lib/supabase/types";
+import {
+  DUMMY_PSB_DATA,
+  PsbAnnouncementData,
+  PsbContact,
+  PsbGelombang,
+} from "@/lib/constants/psbData";
+import type { PsbSettings, PsbGelombangDb } from "@/lib/supabase/types";
 
 const CONFIG_PREFIX = "<!-- PSB_CONFIG:";
 const CONFIG_SUFFIX = "-->";
+
+export interface PsbGelombangConfig {
+  id: string;
+  nama: string;
+  tanggal_mulai: string;
+  tanggal_selesai: string;
+  tanggal_tes?: string;
+  tanggal_pengumuman?: string;
+  tanggal_daftar_ulang?: string;
+  status: "Dibuka" | "Akan Datang" | "Ditutup";
+  kuota?: string;
+  catatan?: string;
+  is_active?: boolean;
+}
 
 export interface PsbFullConfig {
   tahun_ajaran: string;
@@ -19,7 +38,50 @@ export interface PsbFullConfig {
   rekening_nomor: string;
   rekening_nama: string;
   kontak_panitia: PsbContact[];
+  gelombang: PsbGelombangConfig[];
 }
+
+export const DEFAULT_GELOMBANG_CONFIGS: PsbGelombangConfig[] = [
+  {
+    id: "gel-1",
+    nama: "Gelombang 1",
+    tanggal_mulai: "2026-01-05",
+    tanggal_selesai: "2026-02-28",
+    tanggal_tes: "1 Maret 2026",
+    tanggal_pengumuman: "5 Maret 2026",
+    tanggal_daftar_ulang: "6 - 15 Maret 2026",
+    status: "Ditutup",
+    kuota: "60 Santri",
+    catatan: "Jalur Peminatan Khusus & Prestasi Tahfidz",
+    is_active: false,
+  },
+  {
+    id: "gel-2",
+    nama: "Gelombang 2",
+    tanggal_mulai: "2026-03-16",
+    tanggal_selesai: "2026-04-02",
+    tanggal_tes: "5 April 2026",
+    tanggal_pengumuman: "9 April 2026",
+    tanggal_daftar_ulang: "10 - 20 April 2026",
+    status: "Dibuka",
+    kuota: "80 Santri",
+    catatan: "Jalur Reguler Terbuka (MTs & MA)",
+    is_active: true,
+  },
+  {
+    id: "gel-3",
+    nama: "Gelombang 3",
+    tanggal_mulai: "2026-05-01",
+    tanggal_selesai: "2026-06-15",
+    tanggal_tes: "20 Juni 2026",
+    tanggal_pengumuman: "25 Juni 2026",
+    tanggal_daftar_ulang: "26 Juni - 5 Juli 2026",
+    status: "Akan Datang",
+    kuota: "Sisa Kuota",
+    catatan: "Dibuka jika kuota santri baru belum terpenuhi",
+    is_active: false,
+  },
+];
 
 /**
  * Mengubah data DB psb_settings menjadi PsbFullConfig dengan fallback aman
@@ -41,6 +103,7 @@ export function parsePsbSettings(data?: Partial<PsbSettings> | null): PsbFullCon
       rekening_nomor: DUMMY_PSB_DATA.biayaFormulir.rekening.nomor,
       rekening_nama: DUMMY_PSB_DATA.biayaFormulir.rekening.atasNama,
       kontak_panitia: DUMMY_PSB_DATA.kontakPanitia,
+      gelombang: DEFAULT_GELOMBANG_CONFIGS,
     };
   }
 
@@ -58,6 +121,13 @@ export function parsePsbSettings(data?: Partial<PsbSettings> | null): PsbFullCon
       // Ignore JSON parse error
     }
   }
+
+  const rawGelombang =
+    (data.gelombang && data.gelombang.length > 0)
+      ? data.gelombang
+      : (embeddedConfig.gelombang && embeddedConfig.gelombang.length > 0)
+      ? embeddedConfig.gelombang
+      : DEFAULT_GELOMBANG_CONFIGS;
 
   return {
     tahun_ajaran: data.tahun_ajaran || embeddedConfig.tahun_ajaran || DUMMY_PSB_DATA.tahunAjaran,
@@ -85,6 +155,7 @@ export function parsePsbSettings(data?: Partial<PsbSettings> | null): PsbFullCon
             waUrl?: string;
           }>
     ),
+    gelombang: ensureGelombang(rawGelombang as (PsbGelombangConfig | PsbGelombangDb)[]),
   };
 }
 
@@ -104,6 +175,25 @@ function ensureContacts(
   }));
 }
 
+export function ensureGelombang(
+  list?: Array<Partial<PsbGelombangConfig | PsbGelombangDb>>
+): PsbGelombangConfig[] {
+  if (!list || list.length === 0) return DEFAULT_GELOMBANG_CONFIGS;
+  return list.map((g, idx) => ({
+    id: g.id || `gel-${idx + 1}`,
+    nama: g.nama || `Gelombang ${idx + 1}`,
+    tanggal_mulai: g.tanggal_mulai || "",
+    tanggal_selesai: g.tanggal_selesai || "",
+    tanggal_tes: g.tanggal_tes || "",
+    tanggal_pengumuman: g.tanggal_pengumuman || "",
+    tanggal_daftar_ulang: g.tanggal_daftar_ulang || "",
+    status: (g.status || "Akan Datang") as "Dibuka" | "Akan Datang" | "Ditutup",
+    kuota: g.kuota || "",
+    catatan: g.catatan || "",
+    is_active: g.is_active ?? idx === 0,
+  }));
+}
+
 /**
  * Mengemas config menjadi payload DB dan string deskripsi dengan metadata fallback
  */
@@ -119,6 +209,7 @@ export function encodePsbPayload(config: PsbFullConfig) {
     rekening_nomor: config.rekening_nomor,
     rekening_nama: config.rekening_nama,
     kontak_panitia: config.kontak_panitia,
+    gelombang: config.gelombang,
   });
 
   const fullDeskripsi = config.deskripsi
@@ -141,6 +232,7 @@ export function encodePsbPayload(config: PsbFullConfig) {
     rekening_nomor: config.rekening_nomor,
     rekening_nama: config.rekening_nama,
     kontak_panitia: config.kontak_panitia,
+    gelombang: config.gelombang,
     updated_at: new Date().toISOString(),
   };
 
@@ -172,6 +264,19 @@ export function configToAnnouncementData(config: PsbFullConfig): PsbAnnouncement
     deskripsi: config.deskripsi,
     flyerUrl: config.brosur_url,
     googleFormUrl: config.google_form_url,
+    gelombang: config.gelombang.map((g) => ({
+      id: g.id,
+      nama: g.nama,
+      tanggalMulai: g.tanggal_mulai,
+      tanggalSelesai: g.tanggal_selesai,
+      tanggalTes: g.tanggal_tes,
+      tanggalPengumuman: g.tanggal_pengumuman,
+      tanggalDaftarUlang: g.tanggal_daftar_ulang,
+      status: g.status,
+      kuota: g.kuota,
+      catatan: g.catatan,
+      isActive: g.is_active,
+    })),
     biayaFormulir: {
       ...DUMMY_PSB_DATA.biayaFormulir,
       nonYatim: config.biaya_formulir,
@@ -190,4 +295,88 @@ export function configToAnnouncementData(config: PsbFullConfig): PsbAnnouncement
         )},%20saya%20ingin%20bertanya%20seputar%20pendaftaran%20PSB%20Al-Rahmah.`,
     })),
   };
+}
+
+/**
+ * Helper untuk memformat tanggal YYYY-MM-DD ke Bahasa Indonesia
+ * Contoh: "2026-03-16" -> "16 Maret 2026"
+ */
+export function formatIndoDate(dateStr?: string | null): string {
+  if (!dateStr) return "";
+  // Jika formatnya sudah teks bebas, kembalikan langsung
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr.trim())) {
+    return dateStr;
+  }
+  try {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const date = new Date(y, m - 1, d);
+    return date.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+/**
+ * Helper format rentang tanggal (Contoh: "16 Maret s/d 2 April 2026")
+ */
+export function formatDateRangeDisplay(startStr?: string, endStr?: string): string {
+  if (!startStr && !endStr) return "Jadwal belum ditentukan";
+  if (startStr && !endStr) return `Mulai ${formatIndoDate(startStr)}`;
+  if (!startStr && endStr) return `Sampai ${formatIndoDate(endStr)}`;
+
+  const formattedStart = formatIndoDate(startStr);
+  const formattedEnd = formatIndoDate(endStr);
+  return `${formattedStart} s/d ${formattedEnd}`;
+}
+
+/**
+ * Menghitung status gelombang otomatis berdasarkan tanggal hari ini
+ */
+export function calculateAutoGelombangStatus(
+  startStr?: string,
+  endStr?: string
+): "Dibuka" | "Akan Datang" | "Ditutup" {
+  if (!startStr || !endStr) return "Akan Datang";
+  try {
+    const now = new Date();
+    // Normalize to date only (00:00:00)
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    const [sy, sm, sd] = startStr.split("-").map(Number);
+    const startDate = new Date(sy, sm - 1, sd).getTime();
+
+    const [ey, em, ed] = endStr.split("-").map(Number);
+    const endDate = new Date(ey, em - 1, ed, 23, 59, 59).getTime();
+
+    if (today < startDate) return "Akan Datang";
+    if (today > endDate) return "Ditutup";
+    return "Dibuka";
+  } catch {
+    return "Dibuka";
+  }
+}
+
+/**
+ * Mencari gelombang yang sedang aktif atau dibuka
+ */
+export function findActiveGelombang(
+  list?: PsbGelombangConfig[] | PsbGelombang[]
+): (PsbGelombangConfig | PsbGelombang) | null {
+  if (!list || list.length === 0) return null;
+  // 1. Prioritaskan yang secara eksplisit is_active / isActive = true
+  const explicitlyActive = list.find((g) =>
+    "is_active" in g ? g.is_active : (g as PsbGelombang).isActive
+  );
+  if (explicitlyActive) return explicitlyActive;
+
+  // 2. Cari yang statusnya "Dibuka"
+  const openWave = list.find((g) => g.status === "Dibuka");
+  if (openWave) return openWave;
+
+  // 3. Fallback ke elemen pertama
+  return list[0];
 }
