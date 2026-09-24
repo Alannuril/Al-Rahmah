@@ -156,31 +156,31 @@ export function NakhodaClient() {
 
   return (
     <>
-      <section id="nakhoda" aria-labelledby="nakhoda-heading" className="scroll-mt-24 bg-[#eef5f0] py-14 sm:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <header className="mb-8 max-w-2xl">
-            <h2 id="nakhoda-heading" className="font-heading text-2xl font-semibold leading-tight text-brand-primary sm:text-3xl">
+      <section id="nakhoda" aria-labelledby="nakhoda-heading" className="scroll-mt-24 bg-[#e3ece3] py-14 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+          <header className="mb-10 grid gap-4 border-b border-brand-primary/25 pb-8 sm:mb-12 lg:grid-cols-12 lg:items-start lg:gap-16">
+            <h2 id="nakhoda-heading" className="font-heading text-2xl font-semibold leading-tight text-[#244f43] sm:text-[32px] lg:col-span-5">
               Nakhoda Al-Rahmah
             </h2>
-            <p className="mt-3 text-base leading-7 text-zinc-600">
+            <p className="max-w-xl text-base leading-7 text-zinc-600 lg:col-span-7">
               Pimpinan dan pengasuh yang mendampingi pendidikan serta kehidupan santri.
             </p>
           </header>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-10 md:grid-cols-3 md:gap-8 lg:gap-12">
             {NAKHODA_LIST.map((nakhoda) => (
-              <article key={nakhoda.id} className="flex min-w-0 flex-col overflow-hidden rounded-lg border border-brand-primary/20 bg-white">
-                <div className="relative aspect-[4/3] bg-zinc-100 md:aspect-[4/5]">
+              <article key={nakhoda.id} className="flex min-w-0 flex-col">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm border-b-4 border-brand-primary bg-[#d5e2d4] md:aspect-[4/5]">
                   <Image
                     src={nakhoda.foto}
                     alt={"Foto profil " + nakhoda.nama}
                     fill
-                    sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1152px) 30vw, 347px"
+                    sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1280px) 30vw, 374px"
                     className={"object-cover " + (nakhoda.fotoPosition || "object-top")}
                   />
                 </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <h3 className="font-heading text-xl font-semibold leading-snug">
+                <div className="flex flex-1 flex-col pt-5">
+                  <h3 className="font-heading text-xl font-semibold leading-snug text-[#244f43]">
                     {nakhoda.nama}
                   </h3>
                   <p className="mt-2 text-sm font-medium leading-6 text-brand-primary">
@@ -195,10 +195,10 @@ export function NakhodaClient() {
                       onClick={() => setSelectedNakhoda(nakhoda)}
                       aria-label={"Baca profil " + nakhoda.nama}
                       aria-haspopup="dialog"
-                      className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-sm text-sm font-semibold text-brand-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
+                      className="group inline-flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 border-t border-brand-primary/25 pt-3 text-sm font-semibold text-brand-primary underline-offset-4 hover:text-[#244f43] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
                     >
                       Baca profil
-                      <ArrowRight size={16} aria-hidden="true" />
+                      <ArrowRight size={16} aria-hidden="true" className="shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none" />
                     </button>
                   </div>
                 </div>
@@ -208,22 +208,22 @@ export function NakhodaClient() {
         </div>
       </section>
 
-      <section id="panca-jiwa" aria-labelledby="panca-jiwa-heading" className="scroll-mt-24 border-b border-white/15 bg-[#244f43] py-14 text-white sm:py-20">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
+      <section id="panca-jiwa" aria-labelledby="panca-jiwa-heading" className="scroll-mt-24 border-b border-white/15 border-t-4 border-t-brand-lime bg-[#244f43] py-14 text-white sm:py-20 lg:py-24">
+        <div className="mx-auto grid max-w-[1280px] gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:gap-16 lg:px-8">
           <header className="lg:col-span-4">
-            <h2 id="panca-jiwa-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
+            <h2 id="panca-jiwa-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-[32px]">
               Panca Jiwa Al-Rahmah
             </h2>
             <p className="mt-3 max-w-lg text-base leading-7 text-white/85">
               Nilai-nilai yang mendasari pembentukan karakter santri dan keteladanan pendidik.
             </p>
           </header>
-          <ol className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:col-span-8">
+          <ol className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:col-span-8">
             {PANCA_JIWA_LIST.map((pilar) => (
               <li key={pilar.nomor} className="min-w-0 border-t border-white/25 pt-5">
                 <div className="flex flex-wrap items-start justify-between gap-3 text-brand-lime">
-                  <span aria-hidden="true" className="font-mono text-sm">{pilar.nomor}</span>
-                  <span lang="ar" dir="rtl" className="font-serif text-lg leading-6">{pilar.arab}</span>
+                  <span aria-hidden="true" className="font-heading text-2xl leading-8">{pilar.nomor}</span>
+                  <span lang="ar" dir="rtl" className="font-serif text-2xl leading-8">{pilar.arab}</span>
                 </div>
                 <h3 className="mt-4 font-heading text-xl font-semibold leading-snug">
                   {pilar.judul}
