@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowRight, BookOpen, UsersRound } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   NakhodaDetailModal,
   NakhodaData,
@@ -159,9 +159,8 @@ export function NakhodaClient() {
       <section id="nakhoda" aria-labelledby="nakhoda-heading" className="scroll-mt-24 bg-[#edf4ed] py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <header className="mb-7 max-w-2xl sm:mb-8">
-            <h2 id="nakhoda-heading" className="flex items-start gap-3 font-heading text-2xl font-bold leading-tight text-brand-primary sm:text-3xl lg:text-[32px]">
-              <UsersRound size={24} strokeWidth={1.75} aria-hidden="true" className="mt-1 shrink-0" />
-              <span>Nakhoda Al-Rahmah</span>
+            <h2 id="nakhoda-heading" className="font-heading text-2xl font-bold leading-tight text-brand-primary sm:text-3xl lg:text-[32px]">
+              Nakhoda Al-Rahmah
             </h2>
             <p className="mt-2.5 text-sm leading-7 text-zinc-600 sm:text-base">
               Pimpinan dan pengasuh yang mendampingi pendidikan serta kehidupan santri.
@@ -229,9 +228,8 @@ export function NakhodaClient() {
         </div>
         <div className="relative z-10 mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
           <header className="lg:col-span-4">
-            <h2 id="panca-jiwa-heading" className="flex items-start gap-3 font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-[32px]">
-              <BookOpen size={24} strokeWidth={1.75} aria-hidden="true" className="mt-1 shrink-0 text-brand-lime" />
-              <span>Panca Jiwa Al-Rahmah</span>
+            <h2 id="panca-jiwa-heading" className="font-heading text-2xl font-bold leading-tight sm:text-3xl lg:text-[32px]">
+              Panca Jiwa Al-Rahmah
             </h2>
             <p className="mt-2.5 max-w-lg text-sm leading-7 text-white/85 sm:text-base">
               Nilai-nilai yang mendasari pembentukan karakter santri dan keteladanan pendidik.

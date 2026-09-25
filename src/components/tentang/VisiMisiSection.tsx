@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Compass } from "lucide-react";
 
 const MISI_LIST = [
   {
@@ -34,9 +33,8 @@ export function VisiMisiSection() {
       <div aria-hidden="true" className="absolute inset-0 bg-[#163c30]/85" />
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <header>
-          <h2 id="visi-misi-heading" className="flex items-start gap-3 font-heading text-2xl font-semibold leading-tight sm:text-3xl">
-            <Compass size={24} strokeWidth={1.75} aria-hidden="true" className="mt-1 shrink-0 text-brand-lime" />
-            <span>Visi &amp; Misi</span>
+          <h2 id="visi-misi-heading" className="font-heading text-2xl font-semibold leading-tight sm:text-3xl">
+            Visi &amp; Misi
           </h2>
         </header>
 

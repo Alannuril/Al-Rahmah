@@ -1,14 +1,13 @@
 import Image from "next/image";
-import { History, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 export function SejarahSection() {
   return (
     <section id="sejarah" aria-labelledby="sejarah-heading" className="scroll-mt-24 border-y border-zinc-200 bg-white py-12 sm:py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <header className="max-w-2xl">
-          <h2 id="sejarah-heading" className="flex items-start gap-3 font-heading text-2xl font-bold leading-tight text-brand-primary sm:text-3xl lg:text-[32px]">
-            <History size={24} strokeWidth={1.75} aria-hidden="true" className="mt-1 shrink-0" />
-            <span>Sejarah Al-Rahmah</span>
+          <h2 id="sejarah-heading" className="font-heading text-2xl font-bold leading-tight text-brand-primary sm:text-3xl lg:text-[32px]">
+            Sejarah Al-Rahmah
           </h2>
           <p className="mt-2.5 text-sm leading-7 text-zinc-600 sm:text-base">
             Berawal dari pengajian salafiyah di Link. Lebak, Walantaka,
