@@ -75,6 +75,7 @@ export interface PsbGelombangDb {
   kuota?: string;
   catatan?: string;
   is_active?: boolean;
+  link_formulir?: string;
 }
 
 export interface PsbSettings {

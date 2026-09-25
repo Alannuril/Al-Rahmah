@@ -19,6 +19,7 @@ export interface PsbGelombang {
   kuota?: string;
   catatan?: string;
   isActive?: boolean;
+  linkFormulir?: string;
 }
 
 export interface PsbTahapan {
@@ -173,8 +174,8 @@ export const DUMMY_PSB_DATA: PsbAnnouncementData = {
     },
     {
       step: "03",
-      title: "Observasi & Seleksi Santri",
-      desc: "Mengikuti tahapan tes/observasi pemetaan kemampuan dasar keagamaan santri hingga pengumuman kelulusan resmi dari pondok.",
+      title: "Tes Lisan & Tertulis",
+      desc: "Mengikuti tahap tes lisan dan tertulis.",
     },
   ],
   faqs: [

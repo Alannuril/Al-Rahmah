@@ -21,6 +21,7 @@ export interface PsbGelombangConfig {
   kuota?: string;
   catatan?: string;
   is_active?: boolean;
+  link_formulir?: string;
 }
 
 export interface PsbFullConfig {
@@ -191,6 +192,7 @@ export function ensureGelombang(
     kuota: g.kuota || "",
     catatan: g.catatan || "",
     is_active: g.is_active ?? idx === 0,
+    link_formulir: g.link_formulir || "",
   }));
 }
 
@@ -276,6 +278,7 @@ export function configToAnnouncementData(config: PsbFullConfig): PsbAnnouncement
       kuota: g.kuota,
       catatan: g.catatan,
       isActive: g.is_active,
+      linkFormulir: g.link_formulir || config.google_form_url,
     })),
     biayaFormulir: {
       ...DUMMY_PSB_DATA.biayaFormulir,

@@ -81,8 +81,19 @@ export default function PsbInformationPage() {
     };
   }, [isLightboxOpen]);
 
+  const isClosed = data.status === "Ditutup";
+  const activeWave = findActiveGelombang(data.gelombang);
+  const activeWaveUrl =
+    (activeWave && "linkFormulir" in activeWave && activeWave.linkFormulir) ||
+    data.googleFormUrl;
+  const heroPeriodLabel =
+    activeWave && "tanggalMulai" in activeWave && activeWave.tanggalMulai && activeWave.tanggalSelesai
+      ? `${formatDateRangeDisplay(activeWave.tanggalMulai, activeWave.tanggalSelesai)} M`
+      : data.periodeLabel;
+  const activeWaveName = activeWave && "nama" in activeWave ? activeWave.nama : "";
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(data.googleFormUrl);
+    navigator.clipboard.writeText(activeWaveUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2200);
   };
@@ -96,14 +107,6 @@ export default function PsbInformationPage() {
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
-
-  const isClosed = data.status === "Ditutup";
-  const activeWave = findActiveGelombang(data.gelombang);
-  const heroPeriodLabel =
-    activeWave && "tanggalMulai" in activeWave && activeWave.tanggalMulai && activeWave.tanggalSelesai
-      ? `${formatDateRangeDisplay(activeWave.tanggalMulai, activeWave.tanggalSelesai)} M`
-      : data.periodeLabel;
-  const activeWaveName = activeWave && "nama" in activeWave ? activeWave.nama : "";
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#F2F7F4] via-white to-[#F2F7F4] pt-28 sm:pt-32 pb-20 text-zinc-800">
@@ -166,48 +169,40 @@ export default function PsbInformationPage() {
           {/* Informasi & Tombol Pendaftaran (7 Kolom) */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-5">
             
-            {/* Status Badge & Active Wave Indicator */}
-            <div className="flex flex-wrap items-center gap-2">
+            {/* Status Badge Tunggal & Rapi */}
+            <div className="flex items-center">
               {isClosed ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
                   <AlertTriangle size={13} className="text-amber-600" />
-                  <span>Pendaftaran Periode Ini Sedang Ditutup</span>
+                  <span>Pendaftaran Sedang Ditutup</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  <CheckCircle2 size={13} className="text-emerald-600" />
-                  <span>Pendaftaran Sedang Dibuka</span>
-                </span>
-              )}
-
-              {activeWaveName && !isClosed && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#396E5F]/10 text-[#1E3F35] border border-[#396E5F]/20">
-                  <Layers size={13} className="text-[#396E5F]" />
-                  <span>Fokus: <strong>{activeWaveName}</strong></span>
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>{activeWaveName ? `${activeWaveName} Sedang Dibuka` : "Pendaftaran Sedang Dibuka"}</span>
                 </span>
               )}
             </div>
 
-            {/* Judul & Jenjang */}
-            <div className="space-y-1.5">
-              <h2 className="font-heading text-xl sm:text-2xl font-bold text-zinc-900 leading-snug">
-                {data.judul}
+            {/* Judul & Deskripsi Ringkas & Bersih */}
+            <div className="space-y-2">
+              <h2 className="font-heading text-2xl sm:text-3xl lg:text-[28px] font-bold text-zinc-900 tracking-tight leading-tight">
+                Pendaftaran Santri Baru (MTs & MA)
               </h2>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                Pendaftaran santri baru terbuka untuk jenjang <strong>Madrasah Tsanawiyah (MTs)</strong> dan <strong>Madrasah Aliyah (MA)</strong> melalui formulir online resmi.
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-xl">
+                Terbuka untuk calon santri jenjang MTs & MA. Silakan lengkapi formulir pendaftaran online resmi di bawah ini.
               </p>
             </div>
 
-            {/* Batas Waktu Pendaftaran (Clean Inline, Tanpa Card) */}
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-zinc-700">
-              <Calendar size={16} className="text-[#396E5F] shrink-0" />
-              <span>
-                {activeWaveName && !isClosed
-                  ? `Batas Waktu (${activeWaveName}): `
-                  : "Batas Waktu: "}
-                <strong className="text-zinc-900 font-semibold">{heroPeriodLabel}</strong>
-              </span>
-            </div>
+            {/* Batas Waktu Ringkas */}
+            {!isClosed && heroPeriodLabel && (
+              <div className="inline-flex items-center gap-2 text-xs sm:text-sm text-zinc-600 font-medium">
+                <Calendar size={15} className="text-[#396E5F] shrink-0" />
+                <span>
+                  Batas Pendaftaran: <strong className="text-zinc-900 font-semibold">{heroPeriodLabel}</strong>
+                </span>
+              </div>
+            )}
 
             {/* Aksi Utama: Tombol Google Form / Status Ditutup */}
             <div className="pt-2 space-y-2.5">
@@ -225,7 +220,7 @@ export default function PsbInformationPage() {
                 <>
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                     <a
-                      href={data.googleFormUrl}
+                      href={activeWaveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 py-3 px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
@@ -254,7 +249,7 @@ export default function PsbInformationPage() {
                   </div>
 
                   <p className="text-[11px] text-zinc-500 font-mono break-all">
-                    Tautan resmi: {data.googleFormUrl}
+                    Tautan resmi: {activeWaveUrl}
                   </p>
                 </>
               )}
@@ -264,10 +259,15 @@ export default function PsbInformationPage() {
 
         </div>
 
-        {/* Line Process Gelombang (Langsung tergabung, Clean & Modern, Tanpa Card, Tanpa Subjudul) */}
-        <div className="border-t border-[#ABD8B1]/40 pt-10 sm:pt-12 mt-10 sm:mt-12">
+        {/* Line Process Gelombang (Langsung tergabung, Clean & Modern, Tanpa Garis Pembatas) */}
+        <div className="mt-8 sm:mt-10">
           <div className="relative max-w-4xl mx-auto">
-            <div className="flex flex-col md:grid md:grid-cols-3">
+            <div
+              className="flex flex-col md:grid gap-6 md:gap-4"
+              style={{
+                gridTemplateColumns: `repeat(${Math.max(1, data.gelombang.length)}, minmax(0, 1fr))`,
+              }}
+            >
               {data.gelombang.map((wave, idx) => {
                 const isOpen = wave.status === "Dibuka";
                 const isUpcoming = wave.status === "Akan Datang";
@@ -327,7 +327,7 @@ export default function PsbInformationPage() {
                       <div className="mt-3">
                         {isOpen ? (
                           <a
-                            href={data.googleFormUrl}
+                            href={wave.linkFormulir || data.googleFormUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs transition-colors shadow-xs cursor-pointer"
@@ -366,30 +366,37 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 3. ALUR PENDAFTARAN 3 LANGKAH (LANGSUNG PADA INTINYA)         */}
+      {/* 3. ALUR PENDAFTARAN (SESUAI SISTEM & GAYA REFERENSI)          */}
       {/* ============================================================ */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-14 sm:mb-16">
         <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
           
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-center text-zinc-900 mb-6 sm:mb-8">
+          {/* Judul Standar Sistem - Rata Kiri */}
+          <h2 className="font-heading text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight text-left mb-6 sm:mb-8">
             Alur Pendaftaran
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {/* Daftar Baris Minimalis Rata Kiri Sesuai Skala Sistem */}
+          <div>
             {data.tahapan.map((item) => (
               <div
                 key={item.step}
-                className="relative flex flex-col p-5 rounded-2xl bg-white border border-[#ABD8B1]/50 shadow-2xs hover:border-[#396E5F]/40 transition-colors"
+                className="grid grid-cols-12 items-baseline py-4 sm:py-5 border-t border-zinc-200/80 first:border-t-0 transition-colors group hover:bg-zinc-50/40"
               >
-                <div className="w-9 h-9 rounded-lg bg-[#396E5F]/10 text-[#396E5F] font-heading font-bold text-sm flex items-center justify-center mb-3">
+                {/* Angka Elegan Sesuai Skala Sistem */}
+                <div className="col-span-3 sm:col-span-2 font-heading font-light text-xl sm:text-2xl text-zinc-700 tracking-wide">
                   {item.step}
                 </div>
-                <h3 className="font-heading font-bold text-xs sm:text-sm text-zinc-900 mb-1.5">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-zinc-600 leading-relaxed">
-                  {item.desc}
-                </p>
+
+                {/* Judul & Deskripsi Langkah */}
+                <div className="col-span-9 sm:col-span-10 space-y-1 pl-1 sm:pl-0">
+                  <h3 className="font-heading font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#396E5F] transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-2xl">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
