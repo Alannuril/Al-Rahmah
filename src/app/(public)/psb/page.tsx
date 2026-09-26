@@ -218,21 +218,21 @@ export default function PsbInformationPage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                  <div className="flex items-center gap-2 sm:gap-2.5">
                     <a
                       href={activeWaveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-3 px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
+                      className="flex-1 min-w-0 py-3 px-3.5 sm:px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
                     >
-                      <span>Isi Formulir (Google Form)</span>
-                      <ExternalLink size={15} />
+                      <span className="truncate">Isi Formulir (Google Form)</span>
+                      <ExternalLink size={15} className="shrink-0" />
                     </a>
 
                     <button
                       type="button"
                       onClick={handleCopyLink}
-                      className="py-3 px-4 rounded-xl bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 hover:border-zinc-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                      className="shrink-0 py-3 px-3 sm:px-4 rounded-xl bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 hover:border-zinc-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
                     >
                       {copiedLink ? (
                         <>
@@ -248,9 +248,6 @@ export default function PsbInformationPage() {
                     </button>
                   </div>
 
-                  <p className="text-[11px] text-zinc-500 font-mono break-all">
-                    Tautan resmi: {activeWaveUrl}
-                  </p>
                 </>
               )}
             </div>
