@@ -22,13 +22,22 @@ import {
   RefreshCw,
   Sparkles,
   Info,
+  Layers,
+  Star,
+  CalendarDays,
+  CheckCircle,
+  Tag,
+  ArrowRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { PsbSettings } from "@/lib/supabase/types";
 import {
   PsbFullConfig,
+  PsbGelombangConfig,
   parsePsbSettings,
   encodePsbPayload,
+  formatIndoDate,
+  formatDateRangeDisplay,
 } from "@/lib/utils/psbHelper";
 import { DUMMY_PSB_DATA, PsbContact } from "@/lib/constants/psbData";
 
@@ -136,25 +145,110 @@ export default function InformasiPSBPage() {
       alert("Harap isi Tanggal Mulai dan Tanggal Selesai terlebih dahulu.");
       return;
     }
-    try {
-      const options: Intl.DateTimeFormatOptions = {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
+    const label = formatDateRangeDisplay(config.tanggal_mulai, config.tanggal_selesai);
+    updateField("periode_label", `${label} M`);
+  };
+
+  // Gelombang Handlers
+  const handleGelombangChange = (
+    index: number,
+    field: keyof PsbGelombangConfig,
+    value: unknown
+  ) => {
+    setConfig((prev) => {
+      const updated = [...prev.gelombang];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, gelombang: updated };
+    });
+    setSaveSuccess(false);
+  };
+
+  const handleSetActiveGelombang = (index: number) => {
+    setConfig((prev) => {
+      const targetWave = prev.gelombang[index];
+      const updated = prev.gelombang.map((g, i) => ({
+        ...g,
+        is_active: i === index,
+        // Jika statusnya Akan Datang, otomatis ubah ke Dibuka
+        status: i === index && g.status === "Akan Datang" ? "Dibuka" : g.status,
+      }));
+
+      // Sinkronkan periode banner utama jika ada tanggalnya
+      let newLabel = prev.periode_label;
+      if (targetWave.tanggal_mulai && targetWave.tanggal_selesai) {
+        newLabel = `${formatDateRangeDisplay(targetWave.tanggal_mulai, targetWave.tanggal_selesai)} M`;
+      }
+
+      return {
+        ...prev,
+        gelombang: updated,
+        tanggal_mulai: targetWave.tanggal_mulai || prev.tanggal_mulai,
+        tanggal_selesai: targetWave.tanggal_selesai || prev.tanggal_selesai,
+        periode_label: newLabel,
       };
-      const dStart = new Date(config.tanggal_mulai).toLocaleDateString(
-        "id-ID",
-        options
-      );
-      const dEnd = new Date(config.tanggal_selesai).toLocaleDateString(
-        "id-ID",
-        options
-      );
-      updateField("periode_label", `${dStart} s/d ${dEnd} M`);
-    } catch {
-      // Fallback
+    });
+    setSaveSuccess(false);
+  };
+
+  const handleAddGelombang = () => {
+    setConfig((prev) => {
+      const nextNum = prev.gelombang.length + 1;
+      const newWave: PsbGelombangConfig = {
+        id: `gel-${Date.now()}`,
+        nama: `Gelombang ${nextNum}`,
+        tanggal_mulai: "",
+        tanggal_selesai: "",
+        tanggal_tes: "",
+        status: "Akan Datang",
+        catatan: "",
+        is_active: false,
+        link_formulir: "",
+      };
+      return {
+        ...prev,
+        gelombang: [...prev.gelombang, newWave],
+      };
+    });
+    setSaveSuccess(false);
+  };
+
+  const handleRemoveGelombang = (index: number) => {
+    if (config.gelombang.length <= 1) {
+      alert("Harap pertahankan minimal satu skema gelombang pendaftaran.");
+      return;
     }
+    if (!confirm(`Hapus Gelombang ${index + 1}?`)) return;
+
+    setConfig((prev) => {
+      const remaining = prev.gelombang.filter((_, i) => i !== index);
+      // Otomatis sinkronkan penamaan gelombang secara berurutan: Gelombang 1, Gelombang 2, dst.
+      const updated = remaining.map((g, i) => ({
+        ...g,
+        nama: `Gelombang ${i + 1}`,
+      }));
+      if (prev.gelombang[index].is_active && updated.length > 0) {
+        updated[0].is_active = true;
+      }
+      return { ...prev, gelombang: updated };
+    });
+    setSaveSuccess(false);
+  };
+
+  const handleSyncBannerFromActiveWave = () => {
+    const active = config.gelombang.find((g) => g.is_active) || config.gelombang[0];
+    if (!active) return;
+    if (!active.tanggal_mulai || !active.tanggal_selesai) {
+      alert("Gelombang aktif belum memiliki tanggal mulai dan selesai.");
+      return;
+    }
+    const label = `${formatDateRangeDisplay(active.tanggal_mulai, active.tanggal_selesai)} M`;
+    setConfig((prev) => ({
+      ...prev,
+      tanggal_mulai: active.tanggal_mulai,
+      tanggal_selesai: active.tanggal_selesai,
+      periode_label: label,
+    }));
+    alert(`Periode utama berhasil disinkronkan dengan ${active.nama}!`);
   };
 
   // Handle Upload Image File
@@ -295,13 +389,13 @@ export default function InformasiPSBPage() {
       transition={{ staggerChildren: 0.05 }}
       className="max-w-5xl space-y-6 pb-16"
     >
-      {/* Header Halaman (Clean & Minimalist - Tanpa Tombol Simpan di Atas) */}
-      <div className="border-b border-zinc-200/80 pb-5">
-        <h1 className="text-2xl font-heading font-bold text-zinc-900 tracking-tight">
+      {/* Header Halaman (Clean & Minimalist) */}
+      <div className="border-b border-zinc-200/80 pb-4 sm:pb-5">
+        <h1 className="text-xl sm:text-2xl font-heading font-bold text-zinc-900 tracking-tight">
           Penerimaan Santri Baru (PSB)
         </h1>
-        <p className="text-xs sm:text-sm text-zinc-500 mt-1">
-          Kelola status penerimaan santri, jadwal gelombang, brosur poster, link formulir, dan kontak panitia secara dinamis.
+        <p className="text-xs sm:text-sm text-zinc-500 mt-1 leading-relaxed">
+          Kelola status pendaftaran, jadwal gelombang, brosur, formulir, dan kontak panitia.
         </p>
       </div>
 
@@ -409,16 +503,27 @@ export default function InformasiPSBPage() {
         {/* ============================================================ */}
         <div className="lg:col-span-7 space-y-6">
           
-          {/* KARTU 1: INFORMASI DASAR & JADWAL */}
+          {/* KARTU 1: INFORMASI DASAR & JADWAL UTAMA */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-2xs space-y-4"
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
           >
-            <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base border-b border-zinc-100 pb-3">
-              <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
-                <Calendar size={15} />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
+                <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center shrink-0">
+                  <Calendar size={15} />
+                </div>
+                <h2>1. Informasi Utama</h2>
               </div>
-              <h2>1. Periode &amp; Jadwal Gelombang</h2>
+              <button
+                type="button"
+                onClick={handleSyncBannerFromActiveWave}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-[#396E5F] bg-[#396E5F]/10 hover:bg-[#396E5F]/20 transition-colors cursor-pointer self-start sm:self-auto shrink-0"
+                title="Salin tanggal pendaftaran dari gelombang yang aktif saat ini"
+              >
+                <CalendarDays size={12} />
+                <span>Sinkron Gelombang Aktif</span>
+              </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -451,7 +556,7 @@ export default function InformasiPSBPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                  Tanggal Selesai (Batas Waktu)
+                  Tanggal Selesai
                 </label>
                 <input
                   type="date"
@@ -464,14 +569,14 @@ export default function InformasiPSBPage() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
                   <label className="block text-xs font-semibold text-zinc-700">
-                    Label Periode Pendaftaran
+                    Label Periode
                   </label>
                   <button
                     type="button"
                     onClick={handleAutoGenerateLabel}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold text-[#396E5F] bg-[#396E5F]/8 hover:bg-[#396E5F]/15 transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold text-[#396E5F] bg-[#396E5F]/8 hover:bg-[#396E5F]/15 transition-colors cursor-pointer shrink-0"
                   >
                     <Sparkles size={11} /> Auto Format
                   </button>
@@ -490,33 +595,244 @@ export default function InformasiPSBPage() {
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                Judul Banner / Pengumuman Pendaftaran
+                Judul Pengumuman
               </label>
               <input
                 type="text"
                 value={config.judul}
                 onChange={(e) => updateField("judul", e.target.value)}
-                placeholder="Contoh: Pendaftaran Santri Baru Pondok Pesantren Al-Rahmah Melalui Online"
+                placeholder="Contoh: Pendaftaran Santri Baru Al-Rahmah"
                 className={inputClass}
               />
             </div>
           </motion.div>
 
-          {/* KARTU 2: LINK GOOGLE FORM (SATU PINTU) */}
+          {/* KARTU 2: SKEMA & JADWAL GELOMBANG PENDAFTARAN (DINAMIS) */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-2xs space-y-4"
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
+                <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center shrink-0">
+                  <Layers size={15} />
+                </div>
+                <h2>2. Jadwal Gelombang</h2>
+              </div>
+
+              {/* Quick action: Tambah Gelombang */}
+              <button
+                type="button"
+                onClick={handleAddGelombang}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs self-start sm:self-auto shrink-0"
+              >
+                <Plus size={14} />
+                <span>Tambah Gelombang</span>
+              </button>
+            </div>
+
+            {/* List Kartu Gelombang */}
+            <div className="space-y-4 pt-1">
+              {config.gelombang.map((wave, idx) => {
+                const isActive = wave.is_active;
+                return (
+                  <div
+                    key={wave.id || idx}
+                    className={`rounded-2xl border transition-all duration-200 p-4 sm:p-5 space-y-3 ${
+                      isActive
+                        ? "border-[#396E5F] bg-gradient-to-br from-[#F2F7F4] via-white to-white shadow-xs ring-1 ring-[#396E5F]/30"
+                        : "border-zinc-200/90 bg-white hover:border-zinc-300"
+                    }`}
+                  >
+                    {/* Header Adaptif Mobile & Desktop */}
+                    <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-zinc-100">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="w-5 h-5 rounded-full bg-[#396E5F] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                          {idx + 1}
+                        </span>
+                        <span className="font-heading font-bold text-sm text-zinc-900">
+                          Gelombang {idx + 1}
+                        </span>
+                        {isActive ? (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            Aktif
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleSetActiveGelombang(idx)}
+                            className="text-[11px] text-zinc-500 hover:text-[#396E5F] hover:underline cursor-pointer"
+                          >
+                            Jadikan Aktif
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={wave.status}
+                          onChange={(e) =>
+                            handleGelombangChange(idx, "status", e.target.value)
+                          }
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold border outline-none cursor-pointer ${
+                            wave.status === "Dibuka"
+                              ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                              : wave.status === "Akan Datang"
+                              ? "bg-sky-50 text-sky-800 border-sky-300"
+                              : "bg-zinc-100 text-zinc-700 border-zinc-300"
+                          }`}
+                        >
+                          <option value="Dibuka">Dibuka</option>
+                          <option value="Akan Datang">Akan Datang</option>
+                          <option value="Ditutup">Ditutup</option>
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveGelombang(idx)}
+                          disabled={config.gelombang.length <= 1}
+                          title="Hapus gelombang"
+                          className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Inputs Grid */}
+                    <div className="space-y-3">
+                      {/* Row 1: Tanggal Mulai, Tanggal Selesai & Tanggal Tes */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-semibold text-zinc-600 mb-1">
+                            Tanggal Mulai
+                          </label>
+                          <input
+                            type="date"
+                            value={wave.tanggal_mulai}
+                            onChange={(e) =>
+                              handleGelombangChange(
+                                idx,
+                                "tanggal_mulai",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-800 outline-none focus:bg-white focus:border-[#396E5F]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-zinc-600 mb-1">
+                            Tanggal Selesai
+                          </label>
+                          <input
+                            type="date"
+                            value={wave.tanggal_selesai}
+                            onChange={(e) =>
+                              handleGelombangChange(
+                                idx,
+                                "tanggal_selesai",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-800 outline-none focus:bg-white focus:border-[#396E5F]"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-zinc-600 mb-1">
+                            Tanggal Tes (Opsional)
+                          </label>
+                          <input
+                            type="text"
+                            value={wave.tanggal_tes || ""}
+                            onChange={(e) =>
+                              handleGelombangChange(
+                                idx,
+                                "tanggal_tes",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Contoh: 5 April 2026"
+                            className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-800 outline-none focus:bg-white focus:border-[#396E5F]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Row 2: Link Google Form Khusus Gelombang Ini */}
+                      <div>
+                        <label className="block text-[11px] font-semibold text-zinc-600 mb-1">
+                          Link Formulir (Opsional)
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="url"
+                            value={wave.link_formulir || ""}
+                            onChange={(e) =>
+                              handleGelombangChange(
+                                idx,
+                                "link_formulir",
+                                e.target.value
+                              )
+                            }
+                            placeholder="https://forms.gle/..."
+                            className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-800 outline-none focus:bg-white focus:border-[#396E5F]"
+                          />
+                          {wave.link_formulir && (
+                            <a
+                              href={wave.link_formulir}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-semibold rounded-xl transition-colors shrink-0 cursor-pointer"
+                            >
+                              <span>Uji</span>
+                              <ExternalLink size={12} />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Row 3: Keterangan / Jalur (Opsional) */}
+                      <div>
+                        <label className="block text-[11px] font-semibold text-zinc-600 mb-1">
+                          Keterangan (Opsional)
+                        </label>
+                        <input
+                          type="text"
+                          value={wave.catatan || ""}
+                          onChange={(e) =>
+                            handleGelombangChange(
+                              idx,
+                              "catatan",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Contoh: Jalur Reguler MTs & MA"
+                          className="w-full px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-200 text-xs text-zinc-800 outline-none focus:bg-white focus:border-[#396E5F]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* KARTU 3: LINK GOOGLE FORM (SATU PINTU) */}
+          <motion.div
+            variants={anim}
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
           >
             <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base border-b border-zinc-100 pb-3">
               <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
                 <FileSpreadsheet size={15} />
               </div>
-              <h2>2. Link Formulir Online (Google Form Satu Pintu)</h2>
+              <h2>3. Link Formulir Utama</h2>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                URL Google Form Resmi <span className="text-red-500">*</span>
+                URL Google Form <span className="text-red-500">*</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -540,28 +856,26 @@ export default function InformasiPSBPage() {
                   </a>
                 )}
               </div>
-              <p className="text-[11px] text-zinc-400 mt-1.5">
-                Calon wali santri akan langsung diarahkan ke tautan formulir ini saat mengklik tombol &ldquo;Isi Formulir (Google Form)&rdquo;.
-              </p>
+
             </div>
           </motion.div>
 
           {/* KARTU 3: BIAYA FORMULIR & REKENING PEMBAYARAN */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-2xs space-y-4"
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
           >
             <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base border-b border-zinc-100 pb-3">
               <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
                 <CreditCard size={15} />
               </div>
-              <h2>3. Biaya Pendaftaran &amp; Rekening Bank</h2>
+              <h2>4. Biaya &amp; Rekening</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                  Biaya Formulir (Non-Yatim)
+                  Biaya Formulir
                 </label>
                 <input
                   type="text"
@@ -608,7 +922,7 @@ export default function InformasiPSBPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1.5">
-                  Atas Nama Rekening
+                  Atas Nama
                 </label>
                 <input
                   type="text"
@@ -631,22 +945,22 @@ export default function InformasiPSBPage() {
             </div>
           </motion.div>
 
-          {/* KARTU 4: KONTAK PANITIA PSB (WHATSAPP) */}
+          {/* KARTU 5: KONTAK PANITIA PSB (WHATSAPP) */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-2xs space-y-4"
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
           >
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
-                <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center shrink-0">
                   <Phone size={15} />
                 </div>
-                <h2>4. Narahubung Panitia (WhatsApp)</h2>
+                <h2>5. Kontak Panitia (WhatsApp)</h2>
               </div>
               <button
                 type="button"
                 onClick={handleAddContact}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#396E5F]/10 hover:bg-[#396E5F]/15 text-[#396E5F] text-xs font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#396E5F]/10 hover:bg-[#396E5F]/15 text-[#396E5F] text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto shrink-0"
               >
                 <Plus size={13} />
                 <span>Tambah Panitia</span>
@@ -704,14 +1018,15 @@ export default function InformasiPSBPage() {
                     />
                   </div>
 
-                  <div className="sm:col-span-1 flex justify-end sm:pt-4">
+                  <div className="sm:col-span-1 flex justify-end pt-1 sm:pt-4">
                     <button
                       type="button"
                       onClick={() => handleRemoveContact(idx)}
                       title="Hapus kontak"
-                      className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 px-2 py-1 sm:p-1.5 text-xs text-red-600 sm:text-zinc-400 sm:hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                     >
-                      <Trash2 size={15} />
+                      <Trash2 size={14} />
+                      <span className="sm:hidden font-medium">Hapus</span>
                     </button>
                   </div>
                 </div>
@@ -719,13 +1034,13 @@ export default function InformasiPSBPage() {
             </div>
           </motion.div>
 
-          {/* KARTU 5: CATATAN TAMBAHAN (OPSIONAL) */}
+          {/* KARTU 6: CATATAN TAMBAHAN (OPSIONAL) */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-2xs space-y-2.5"
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-2.5"
           >
             <label className="block text-xs font-semibold text-zinc-700">
-              Catatan atau Petunjuk Tambahan (Opsional)
+              6. Catatan Tambahan (Opsional)
             </label>
             <textarea
               rows={3}
@@ -743,13 +1058,13 @@ export default function InformasiPSBPage() {
         <div className="lg:col-span-5 space-y-6">
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-2xs space-y-4 sticky top-6"
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
           >
             <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base border-b border-zinc-100 pb-3">
               <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
                 <ImageIcon size={15} />
               </div>
-              <h2>Poster &amp; Brosur Resmi (Flyer)</h2>
+              <h2>Poster Brosur</h2>
             </div>
 
             {/* Live Preview Poster */}
@@ -806,12 +1121,12 @@ export default function InformasiPSBPage() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#396E5F]/10 hover:bg-[#396E5F]/15 text-[#396E5F] text-xs sm:text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
               >
                 <Upload size={15} />
-                <span>Unggah Foto Poster Baru</span>
+                <span>Unggah Poster</span>
               </button>
 
               <div>
                 <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
-                  Atau gunakan URL / path gambar langsung:
+                  Atau path gambar:
                 </label>
                 <input
                   type="text"
@@ -832,6 +1147,94 @@ export default function InformasiPSBPage() {
                   <RefreshCw size={11} /> Kembalikan ke poster bawaan
                 </button>
               )}
+            </div>
+          </motion.div>
+
+          {/* PRATINJAU SKEMA GELOMBANG PUBLIK */}
+          <motion.div
+            variants={anim}
+            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+          >
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
+                <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
+                  <CalendarDays size={15} />
+                </div>
+                <h2>Jadwal Publik</h2>
+              </div>
+              <span className="text-[11px] font-semibold text-[#396E5F] bg-[#396E5F]/10 px-2 py-0.5 rounded-full">
+                Live View
+              </span>
+            </div>
+
+
+
+            {/* Clean Line Process Stepper Live Preview (No Cards) */}
+            <div className="relative pl-6 space-y-6 pt-2">
+              {config.gelombang.map((g, i) => {
+                const isActive = g.is_active;
+                const isOpen = g.status === "Dibuka";
+                const isClosed = g.status === "Ditutup";
+                const isLast = i === config.gelombang.length - 1;
+
+                return (
+                  <div key={g.id || i} className="relative">
+                    {/* Connecting vertical line */}
+                    {!isLast && (
+                      <div
+                        className={`absolute -left-[18px] top-6 bottom-[-24px] w-[2px] ${
+                          isClosed ? "bg-[#396E5F]" : "bg-zinc-200"
+                        }`}
+                      />
+                    )}
+
+                    {/* Node circle on the line */}
+                    <div
+                      className={`absolute -left-[27px] top-0.5 w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] ${
+                        isOpen
+                          ? "bg-[#396E5F] text-white ring-2 ring-[#396E5F]/20"
+                          : isClosed
+                          ? "bg-emerald-100 text-[#396E5F]"
+                          : "bg-white text-zinc-400 border border-zinc-300"
+                      }`}
+                    >
+                      {isClosed ? <Check size={11} strokeWidth={2.5} /> : i + 1}
+                    </div>
+
+                    {/* Header info */}
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="font-heading font-bold text-zinc-900 text-xs">
+                        {g.nama}
+                      </span>
+                      {isOpen ? (
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                          Dibuka
+                        </span>
+                      ) : isClosed ? (
+                        <span className="text-[10px] text-zinc-400 font-medium">
+                          Ditutup
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-zinc-400 font-medium">
+                          Belum Dibuka
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Schedule dates (Only registration period and test date) */}
+                    <div className="text-[11px] text-zinc-600 space-y-0.5">
+                      <div className="font-semibold text-zinc-800">
+                        {formatDateRangeDisplay(g.tanggal_mulai, g.tanggal_selesai)}
+                      </div>
+                      {g.tanggal_tes && (
+                        <div className="text-zinc-500">
+                          Tes: <span className="text-zinc-700 font-medium">{g.tanggal_tes}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </div>

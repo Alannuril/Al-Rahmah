@@ -14,12 +14,23 @@ import {
   ChevronDown,
   CheckCircle2,
   AlertTriangle,
+  Layers,
+  Clock,
+  ClipboardList,
+  GraduationCap,
+  Sparkles,
+  Users,
+  Award,
+  ArrowRight,
 } from "lucide-react";
 import { DUMMY_PSB_DATA, PsbAnnouncementData } from "@/lib/constants/psbData";
 import { createClient } from "@/lib/supabase/client";
 import {
   parsePsbSettings,
   configToAnnouncementData,
+  findActiveGelombang,
+  formatDateRangeDisplay,
+  formatIndoDate,
 } from "@/lib/utils/psbHelper";
 
 export default function PsbInformationPage() {
@@ -70,8 +81,19 @@ export default function PsbInformationPage() {
     };
   }, [isLightboxOpen]);
 
+  const isClosed = data.status === "Ditutup";
+  const activeWave = findActiveGelombang(data.gelombang);
+  const activeWaveUrl =
+    (activeWave && "linkFormulir" in activeWave && activeWave.linkFormulir) ||
+    data.googleFormUrl;
+  const heroPeriodLabel =
+    activeWave && "tanggalMulai" in activeWave && activeWave.tanggalMulai && activeWave.tanggalSelesai
+      ? `${formatDateRangeDisplay(activeWave.tanggalMulai, activeWave.tanggalSelesai)} M`
+      : data.periodeLabel;
+  const activeWaveName = activeWave && "nama" in activeWave ? activeWave.nama : "";
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(data.googleFormUrl);
+    navigator.clipboard.writeText(activeWaveUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2200);
   };
@@ -85,8 +107,6 @@ export default function PsbInformationPage() {
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
-
-  const isClosed = data.status === "Ditutup";
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#F2F7F4] via-white to-[#F2F7F4] pt-28 sm:pt-32 pb-20 text-zinc-800">
@@ -104,174 +124,276 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 2. HERO SECTION: POSTER & LINK FORMULIR (SEAMLESS SOFT)      */}
+      {/* 2. PENERIMAAN SANTRI BARU & LINE PROCESS GELOMBANG           */}
       {/* ============================================================ */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
-        <div className="bg-gradient-to-br from-[#EBF5EE] via-white to-[#F0F8F3] rounded-3xl p-5 sm:p-7 lg:p-8 border border-[#ABD8B1]/60 shadow-xs">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-            
-            {/* Poster Flyer Interaktif (5 Kolom) */}
-            <div className="lg:col-span-5 flex flex-col items-center">
-              <div
-                onClick={() => setIsLightboxOpen(true)}
-                className="group relative w-full max-w-[280px] sm:max-w-[310px] rounded-2xl overflow-hidden bg-white border border-[#ABD8B1]/70 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-[#396E5F]/50"
-              >
-                {/* Overlay Zoom */}
-                <div className="absolute inset-0 z-10 bg-[#1E3F35]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-[1px]">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-3 py-1.5 rounded-full">
-                    <Maximize2 size={14} />
-                    <span>Perbesar Poster</span>
-                  </div>
-                </div>
-
-                {/* Poster Gambar */}
-                <div className="relative w-full aspect-[326/456]">
-                  <Image
-                    src={data.flyerUrl}
-                    alt={`Poster Pengumuman Pendaftaran Santri Baru Al-Rahmah ${data.tahunAjaran}`}
-                    fill
-                    priority
-                    sizes="(max-width: 640px) 280px, 310px"
-                    className="object-contain p-2"
-                  />
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-14 sm:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          {/* Poster Flyer Interaktif (5 Kolom) */}
+          <div className="lg:col-span-5 flex flex-col items-center">
+            <div
+              onClick={() => setIsLightboxOpen(true)}
+              className="group relative w-full max-w-[280px] sm:max-w-[320px] rounded-2xl overflow-hidden bg-white border border-zinc-200/90 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-[#396E5F]/50"
+            >
+              {/* Overlay Zoom */}
+              <div className="absolute inset-0 z-10 bg-[#1E3F35]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-[1px]">
+                <div className="flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-3 py-1.5 rounded-full">
+                  <Maximize2 size={14} />
+                  <span>Perbesar Poster</span>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsLightboxOpen(true)}
-                className="mt-2 inline-flex items-center gap-1 text-[11px] sm:text-xs font-medium text-[#396E5F] hover:text-[#1E3F35] transition-colors cursor-pointer"
-              >
-                <Maximize2 size={12} />
-                <span>Klik poster untuk memperbesar</span>
-              </button>
+              {/* Poster Gambar */}
+              <div className="relative w-full aspect-[326/456]">
+                <Image
+                  src={data.flyerUrl}
+                  alt={`Poster Pengumuman Pendaftaran Santri Baru Al-Rahmah ${data.tahunAjaran}`}
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 280px, 320px"
+                  className="object-contain p-2"
+                />
+              </div>
             </div>
 
-            {/* Informasi & Tombol Pendaftaran (7 Kolom) */}
-            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
-              
-              {/* Status Badge (Dipindahkan ke Card) */}
-              <div>
-                {isClosed ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                    <AlertTriangle size={13} className="text-amber-600" />
-                    <span>Pendaftaran Periode Ini Sedang Ditutup</span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs">
-                    <CheckCircle2 size={13} className="text-emerald-600" />
-                    <span>Pendaftaran Sedang Dibuka</span>
-                  </span>
-                )}
-              </div>
+            <button
+              type="button"
+              onClick={() => setIsLightboxOpen(true)}
+              className="mt-2.5 inline-flex items-center gap-1 text-[11px] sm:text-xs font-medium text-[#396E5F] hover:text-[#1E3F35] transition-colors cursor-pointer"
+            >
+              <Maximize2 size={12} />
+              <span>Klik poster untuk memperbesar</span>
+            </button>
+          </div>
 
-              {/* Highlight Jadwal Pendaftaran */}
-              <div className="flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#396E5F]/10 border border-[#396E5F]/20 text-[#1E3F35]">
-                <div className="w-9 h-9 rounded-xl bg-[#396E5F] text-white flex items-center justify-center shrink-0">
-                  <Calendar size={18} />
-                </div>
-                <div>
-                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#396E5F]">
-                    Batas Waktu Pendaftaran
-                  </span>
-                  <p className="font-heading text-sm sm:text-base font-bold text-zinc-900 mt-0.5">
-                    {data.periodeLabel}
+          {/* Informasi & Tombol Pendaftaran (7 Kolom) */}
+          <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+            
+            {/* Status Badge Tunggal & Rapi */}
+            <div className="flex items-center">
+              {isClosed ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                  <AlertTriangle size={13} className="text-amber-600" />
+                  <span>Pendaftaran Sedang Ditutup</span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>{activeWaveName ? `${activeWaveName} Sedang Dibuka` : "Pendaftaran Sedang Dibuka"}</span>
+                </span>
+              )}
+            </div>
+
+            {/* Judul & Deskripsi Ringkas & Bersih */}
+            <div className="space-y-2">
+              <h2 className="font-heading text-2xl sm:text-3xl lg:text-[28px] font-bold text-zinc-900 tracking-tight leading-tight">
+                Pendaftaran Santri Baru (MTs & MA)
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-xl">
+                Terbuka untuk calon santri jenjang MTs & MA. Silakan lengkapi formulir pendaftaran online resmi di bawah ini.
+              </p>
+            </div>
+
+            {/* Batas Waktu Ringkas */}
+            {!isClosed && heroPeriodLabel && (
+              <div className="inline-flex items-center gap-2 text-xs sm:text-sm text-zinc-600 font-medium">
+                <Calendar size={15} className="text-[#396E5F] shrink-0" />
+                <span>
+                  Batas Pendaftaran: <strong className="text-zinc-900 font-semibold">{heroPeriodLabel}</strong>
+                </span>
+              </div>
+            )}
+
+            {/* Aksi Utama: Tombol Google Form / Status Ditutup */}
+            <div className="pt-2 space-y-2.5">
+              {isClosed ? (
+                <div className="p-4 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 space-y-1.5">
+                  <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-amber-900">
+                    <AlertTriangle size={16} className="text-amber-600 shrink-0" />
+                    <span>Pendaftaran Sementara Ditutup</span>
+                  </div>
+                  <p className="text-xs text-amber-800 leading-relaxed">
+                    Penerimaan santri baru untuk periode ini telah ditutup atau belum dibuka kembali. Calon wali santri dapat menghubungi narahubung panitia di bagian bawah halaman ini untuk informasi gelombang selanjutnya.
                   </p>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 sm:gap-2.5">
+                    <a
+                      href={activeWaveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 min-w-0 py-3 px-3.5 sm:px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
+                    >
+                      <span className="truncate">Isi Formulir (Google Form)</span>
+                      <ExternalLink size={15} className="shrink-0" />
+                    </a>
 
-              {/* Judul & Jenjang */}
-              <div className="space-y-1">
-                <h2 className="font-heading text-base sm:text-lg lg:text-xl font-bold text-zinc-900 leading-snug">
-                  {data.judul}
-                </h2>
-                <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                  Pendaftaran terbuka untuk jenjang <strong>Madrasah Tsanawiyah (MTs)</strong> dan <strong>Madrasah Aliyah (MA)</strong> melalui formulir online resmi.
-                </p>
-              </div>
-
-              {/* Aksi Utama: Tombol Google Form / Status Ditutup */}
-              <div className="pt-1 space-y-2.5">
-                {isClosed ? (
-                  <div className="p-4 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-900 space-y-2">
-                    <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-amber-900">
-                      <AlertTriangle size={16} className="text-amber-600 shrink-0" />
-                      <span>Pendaftaran Sementara Ditutup</span>
-                    </div>
-                    <p className="text-xs text-amber-800 leading-relaxed">
-                      Penerimaan santri baru untuk periode ini telah ditutup atau belum dibuka kembali. Calon wali santri dapat menghubungi narahubung panitia di bagian bawah halaman ini untuk informasi gelombang selanjutnya.
-                    </p>
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="shrink-0 py-3 px-3 sm:px-4 rounded-xl bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 hover:border-zinc-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                    >
+                      {copiedLink ? (
+                        <>
+                          <Check size={14} className="text-[#396E5F]" />
+                          <span className="font-bold text-[#396E5F]">Tersalin!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy size={14} />
+                          <span>Salin Link</span>
+                        </>
+                      )}
+                    </button>
                   </div>
-                ) : (
-                  <>
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                      <a
-                        href={data.googleFormUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 py-3 px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
-                      >
-                        <span>Isi Formulir (Google Form)</span>
-                        <ExternalLink size={15} />
-                      </a>
 
-                      <button
-                        type="button"
-                        onClick={handleCopyLink}
-                        className="py-3 px-4 rounded-xl bg-white hover:bg-[#F2F7F4] text-[#396E5F] border border-[#ABD8B1] text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                      >
-                        {copiedLink ? (
-                          <>
-                            <Check size={14} className="text-[#396E5F]" />
-                            <span className="font-bold">Tersalin!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy size={14} />
-                            <span>Salin Link</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    <p className="text-[11px] text-zinc-500 font-mono break-all">
-                      Tautan resmi: {data.googleFormUrl}
-                    </p>
-                  </>
-                )}
-              </div>
-
+                </>
+              )}
             </div>
 
+          </div>
+
+        </div>
+
+        {/* Line Process Gelombang (Langsung tergabung, Clean & Modern, Tanpa Garis Pembatas) */}
+        <div className="mt-8 sm:mt-10">
+          <div className="relative max-w-4xl mx-auto">
+            <div
+              className="flex flex-col md:grid gap-6 md:gap-4"
+              style={{
+                gridTemplateColumns: `repeat(${Math.max(1, data.gelombang.length)}, minmax(0, 1fr))`,
+              }}
+            >
+              {data.gelombang.map((wave, idx) => {
+                const isOpen = wave.status === "Dibuka";
+                const isUpcoming = wave.status === "Akan Datang";
+                const isClosed = wave.status === "Ditutup";
+                const isLast = idx === data.gelombang.length - 1;
+
+                return (
+                  <div key={wave.id || idx} className="contents md:block">
+                    <div className="relative flex flex-col items-center text-center px-4">
+                      {/* Node Indicator Row with Desktop Connecting Line */}
+                      <div className="relative flex items-center justify-center w-full mb-3">
+                        {/* Desktop connecting line to next wave */}
+                        {!isLast && (
+                          <div
+                            className={`hidden md:block absolute top-1/2 left-1/2 w-full h-[2px] -translate-y-1/2 -z-0 transition-colors ${
+                              isClosed ? "bg-[#396E5F]" : "bg-zinc-200"
+                            }`}
+                          />
+                        )}
+
+                        {/* Node circle */}
+                        <div
+                          className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 transition-all ${
+                            isOpen
+                              ? "bg-[#396E5F] text-white ring-4 ring-[#396E5F]/20 shadow-xs"
+                              : isClosed
+                              ? "bg-emerald-50 text-[#396E5F] border border-[#ABD8B1]"
+                              : "bg-white text-zinc-400 border-2 border-zinc-200"
+                          }`}
+                        >
+                          {isClosed ? (
+                            <Check size={16} strokeWidth={2.5} />
+                          ) : (
+                            `0${idx + 1}`
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Wave Name */}
+                      <h3 className="font-heading font-bold text-base text-zinc-900 mb-1">
+                        {wave.nama}
+                      </h3>
+
+                      {/* Registration Period Range */}
+                      <p className="text-xs sm:text-sm font-semibold text-[#1E3F35] mb-1">
+                        {formatDateRangeDisplay(wave.tanggalMulai, wave.tanggalSelesai)}
+                      </p>
+
+                      {/* Test Date Only */}
+                      {wave.tanggalTes && (
+                        <p className="text-xs text-zinc-600 font-medium">
+                          Tes: <span className="font-semibold text-zinc-800">{wave.tanggalTes}</span>
+                        </p>
+                      )}
+
+                      {/* CTA Button / Subtle Status */}
+                      <div className="mt-3">
+                        {isOpen ? (
+                          <a
+                            href={wave.linkFormulir || data.googleFormUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs transition-colors shadow-xs cursor-pointer"
+                          >
+                            <span>Daftar Sekarang</span>
+                            <ArrowRight size={13} />
+                          </a>
+                        ) : isUpcoming ? (
+                          <span className="text-[11px] text-zinc-400 font-medium">
+                            Belum Dibuka
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-zinc-400 font-medium">
+                            Pendaftaran Ditutup
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Mobile connecting vertical line */}
+                    {!isLast && (
+                      <div className="md:hidden flex justify-center py-2.5">
+                        <div
+                          className={`w-[2px] h-7 transition-colors ${
+                            isClosed ? "bg-[#396E5F]" : "bg-zinc-200"
+                          }`}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* 3. ALUR PENDAFTARAN 3 LANGKAH (LANGSUNG PADA INTINYA)         */}
+      {/* 3. ALUR PENDAFTARAN (SESUAI SISTEM & GAYA REFERENSI)          */}
       {/* ============================================================ */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-14 sm:mb-16">
         <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
           
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-center text-zinc-900 mb-6 sm:mb-8">
+          {/* Judul Standar Sistem - Rata Kiri */}
+          <h2 className="font-heading text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight text-left mb-6 sm:mb-8">
             Alur Pendaftaran
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {/* Daftar Baris Minimalis Rata Kiri Sesuai Skala Sistem */}
+          <div>
             {data.tahapan.map((item) => (
               <div
                 key={item.step}
-                className="relative flex flex-col p-5 rounded-2xl bg-white border border-[#ABD8B1]/50 shadow-2xs hover:border-[#396E5F]/40 transition-colors"
+                className="grid grid-cols-12 items-baseline py-4 sm:py-5 border-t border-zinc-200/80 first:border-t-0 transition-colors group hover:bg-zinc-50/40"
               >
-                <div className="w-9 h-9 rounded-lg bg-[#396E5F]/10 text-[#396E5F] font-heading font-bold text-sm flex items-center justify-center mb-3">
+                {/* Angka Elegan Sesuai Skala Sistem */}
+                <div className="col-span-3 sm:col-span-2 font-heading font-light text-xl sm:text-2xl text-zinc-700 tracking-wide">
                   {item.step}
                 </div>
-                <h3 className="font-heading font-bold text-xs sm:text-sm text-zinc-900 mb-1.5">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-zinc-600 leading-relaxed">
-                  {item.desc}
-                </p>
+
+                {/* Judul & Deskripsi Langkah */}
+                <div className="col-span-9 sm:col-span-10 space-y-1 pl-1 sm:pl-0">
+                  <h3 className="font-heading font-bold text-sm sm:text-base text-zinc-900 group-hover:text-[#396E5F] transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-2xl">
+                    {item.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -470,7 +592,9 @@ export default function PsbInformationPage() {
 
                 {isOpen && (
                   <div className="px-3.5 pb-3.5 pt-1 text-xs text-zinc-600 leading-relaxed border-t border-zinc-100">
-                    {faq.answer}
+                    {idx === 0 && activeWaveName
+                      ? `Pendaftaran santri baru dibuka dalam beberapa tahapan gelombang (Gelombang 1 - 3). Saat ini dibuka untuk ${activeWaveName} dengan periode ${heroPeriodLabel}. Kami menyarankan calon wali santri menyelesaikan pendaftaran sebelum kuota gelombang terpenuhi.`
+                      : faq.answer}
                   </div>
                 )}
               </div>

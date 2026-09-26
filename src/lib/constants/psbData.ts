@@ -5,6 +5,23 @@ export interface PsbContact {
   waUrl: string;
 }
 
+export type GelombangStatus = "Dibuka" | "Akan Datang" | "Ditutup";
+
+export interface PsbGelombang {
+  id: string;
+  nama: string;
+  tanggalMulai: string;
+  tanggalSelesai: string;
+  tanggalTes?: string;
+  tanggalPengumuman?: string;
+  tanggalDaftarUlang?: string;
+  status: GelombangStatus;
+  kuota?: string;
+  catatan?: string;
+  isActive?: boolean;
+  linkFormulir?: string;
+}
+
 export interface PsbTahapan {
   step: string;
   title: string;
@@ -27,6 +44,7 @@ export interface PsbAnnouncementData {
   flyerUrl: string;
   googleFormUrl: string;
   jenjang: string[];
+  gelombang: PsbGelombang[];
   biayaFormulir: {
     nonYatim: string;
     yatim: string;
@@ -44,6 +62,48 @@ export interface PsbAnnouncementData {
   faqs: PsbFaq[];
 }
 
+export const DEFAULT_GELOMBANG_LIST: PsbGelombang[] = [
+  {
+    id: "gel-1",
+    nama: "Gelombang 1",
+    tanggalMulai: "2026-01-05",
+    tanggalSelesai: "2026-02-28",
+    tanggalTes: "1 Maret 2026",
+    tanggalPengumuman: "5 Maret 2026",
+    tanggalDaftarUlang: "6 - 15 Maret 2026",
+    status: "Ditutup",
+    kuota: "60 Santri",
+    catatan: "Jalur Peminatan Khusus & Prestasi Tahfidz",
+    isActive: false,
+  },
+  {
+    id: "gel-2",
+    nama: "Gelombang 2",
+    tanggalMulai: "2026-03-16",
+    tanggalSelesai: "2026-04-02",
+    tanggalTes: "5 April 2026",
+    tanggalPengumuman: "9 April 2026",
+    tanggalDaftarUlang: "10 - 20 April 2026",
+    status: "Dibuka",
+    kuota: "80 Santri",
+    catatan: "Jalur Reguler Terbuka (MTs & MA)",
+    isActive: true,
+  },
+  {
+    id: "gel-3",
+    nama: "Gelombang 3",
+    tanggalMulai: "2026-05-01",
+    tanggalSelesai: "2026-06-15",
+    tanggalTes: "20 Juni 2026",
+    tanggalPengumuman: "25 Juni 2026",
+    tanggalDaftarUlang: "26 Juni - 5 Juli 2026",
+    status: "Akan Datang",
+    kuota: "Sisa Kuota",
+    catatan: "Dibuka jika kuota santri baru belum terpenuhi",
+    isActive: false,
+  },
+];
+
 export const DUMMY_PSB_DATA: PsbAnnouncementData = {
   tahunAjaran: "2026/2027",
   status: "Dibuka",
@@ -56,6 +116,7 @@ export const DUMMY_PSB_DATA: PsbAnnouncementData = {
   flyerUrl: "/images/psb/brosur-psb-flyer.png",
   googleFormUrl: "https://forms.gle/9VfDxfNaJ9Qdo5JTA",
   jenjang: ["Madrasah Tsanawiyah (MTs)", "Madrasah Aliyah (MA)"],
+  gelombang: DEFAULT_GELOMBANG_LIST,
   biayaFormulir: {
     nonYatim: "Rp 150.000,-",
     yatim: "Gratis (100% Bebas Biaya)",
@@ -113,8 +174,8 @@ export const DUMMY_PSB_DATA: PsbAnnouncementData = {
     },
     {
       step: "03",
-      title: "Observasi & Seleksi Santri",
-      desc: "Mengikuti tahapan tes/observasi pemetaan kemampuan dasar keagamaan santri hingga pengumuman kelulusan resmi dari pondok.",
+      title: "Tes Lisan & Tertulis",
+      desc: "Mengikuti tahap tes lisan dan tertulis.",
     },
   ],
   faqs: [
