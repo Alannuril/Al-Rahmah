@@ -91,7 +91,7 @@ export function HeroSection() {
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-20 mx-auto flex min-h-[calc(100svh-3rem)] w-full max-w-[1300px] flex-col px-4 pb-4 pt-28 sm:px-6 sm:pb-6 md:pt-32 lg:px-7 lg:pt-28">
+      <div className="relative z-20 mx-auto flex min-h-dvh w-full max-w-[1300px] flex-col px-4 pb-4 pt-28 sm:px-6 sm:pb-6 md:pt-32 lg:px-7 lg:pt-28">
         <motion.div
           className="flex w-full flex-1 flex-col gap-3 md:grid md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:items-center md:gap-8 lg:grid-cols-2 lg:gap-12"
           style={{
