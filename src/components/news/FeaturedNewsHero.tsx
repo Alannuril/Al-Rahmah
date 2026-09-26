@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ArrowRight, Images } from "lucide-react";
+import { NewsCategoryBadge } from "./NewsCategoryBadge";
+import { ArrowRight } from "lucide-react";
 import type { Berita } from "@/lib/supabase/types";
 import { formatTimeAgo, calculateReadTime } from "@/lib/utils/formatNews";
-import { getBeritaImages } from "@/lib/utils/newsGallery";
 
 interface FeaturedNewsHeroProps {
   berita: Berita;
@@ -11,7 +11,6 @@ interface FeaturedNewsHeroProps {
 export function FeaturedNewsHero({ berita }: FeaturedNewsHeroProps) {
   const timeAgo = formatTimeAgo(berita.created_at);
   const readTime = calculateReadTime(berita.konten || berita.excerpt);
-  const images = getBeritaImages(berita);
 
   return (
     <article className="relative mb-5 sm:mb-8 md:mb-10">
@@ -33,23 +32,16 @@ export function FeaturedNewsHero({ berita }: FeaturedNewsHeroProps) {
             </div>
           )}
 
-          {/* Multi-image gallery badge */}
-          {images.length > 1 && (
-            <div className="absolute top-2.5 right-2.5 z-10 px-2 py-0.5 rounded-full bg-zinc-900/70 backdrop-blur-md text-white text-[10px] font-medium flex items-center gap-1 shadow-sm">
-              <Images size={11} className="text-white/80" />
-              <span>{images.length} Foto</span>
-            </div>
-          )}
+          <NewsCategoryBadge
+            category={berita.kategori}
+            className="absolute left-2.5 top-2.5 z-10 max-w-[calc(100%-1.25rem)]"
+          />
         </div>
 
         {/* Right: Clean Editorial Text (Top-aligned with photo) */}
         <div className="md:col-span-7 flex flex-col justify-start pt-0 sm:pt-0.5">
           {/* Category & Time Meta (No Author Clutter) */}
           <div className="flex items-center gap-2 text-xs mb-2">
-            <span className="font-semibold text-brand-secondary">
-              {berita.kategori || "Berita Utama"}
-            </span>
-            <span className="text-zinc-300">•</span>
             <span className="text-zinc-400">
               {timeAgo}
             </span>

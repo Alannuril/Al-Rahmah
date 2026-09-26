@@ -1,49 +1,52 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Plus, Search, Edit2, Trash2, Eye, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Berita } from "@/lib/supabase/types";
+import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
+import { NewsCategoryBadge } from "@/components/news/NewsCategoryBadge";
 import { AlRahmahLoader } from "@/components/ui/AlRahmahLoader";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
 
-const KATEGORI_COLORS: Record<string, string> = {
-  Kegiatan: "bg-brand-primary/5 text-brand-primary",
-  Prestasi: "bg-amber-50 text-amber-600",
-  PSB: "bg-brand-lime/10 text-brand-primary",
-  Informasi: "bg-indigo-50 text-indigo-600",
-};
-
 export default function KelolaBeritaPage() {
   const [beritaList, setBeritaList] = useState<Berita[]>([]);
-  const [filtered, setFiltered] = useState<Berita[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [kategori, setKategori] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const fetchBerita = useCallback(async () => {
+  useEffect(() => {
+    let active = true;
     const supabase = createClient();
-    const { data } = await supabase
+    supabase
       .from("berita")
       .select("*")
-      .order("created_at", { ascending: false });
-    setBeritaList(data ?? []);
-    setFiltered(data ?? []);
-    setLoading(false);
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (active) {
+          setBeritaList(data ?? []);
+          setLoading(false);
+        }
+      }, () => {
+        if (active) setLoading(false);
+      });
+
+    return () => { active = false; };
   }, []);
 
-  useEffect(() => { fetchBerita(); }, [fetchBerita]);
+  const filtered = useMemo(() => beritaList.filter((news) => (
+    news.judul.toLowerCase().includes(search.toLowerCase())
+    && (!kategori || getNewsCategory(news.kategori) === kategori)
+  )), [search, kategori, beritaList]);
 
-  useEffect(() => {
-    let result = beritaList;
-    if (search) result = result.filter((b) => b.judul.toLowerCase().includes(search.toLowerCase()));
-    if (kategori) result = result.filter((b) => b.kategori === kategori);
-    setFiltered(result);
-  }, [search, kategori, beritaList]);
+  const categories = useMemo(() => Array.from(new Set([
+    ...NEWS_CATEGORIES,
+    ...beritaList.map((news) => getNewsCategory(news.kategori)),
+  ])), [beritaList]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Hapus berita ini?")) return;
@@ -74,11 +77,10 @@ export default function KelolaBeritaPage() {
             onChange={(e) => setKategori(e.target.value)}
             className="px-3 py-2.5 rounded-xl bg-white border border-gray-100 text-sm text-gray-600 outline-none focus:border-brand-primary/30 transition-all"
           >
-            <option value="">Semua Kategori</option>
-            <option>Kegiatan</option>
-            <option>Prestasi</option>
-            <option>PSB</option>
-            <option>Informasi</option>
+            <option value="">Semua Jenis</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>{category}</option>
+            ))}
           </select>
         </div>
         <a
@@ -95,7 +97,7 @@ export default function KelolaBeritaPage() {
           <thead>
             <tr className="border-b border-gray-100">
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Berita</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Kategori</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Jenis Berita</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Tanggal</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Status</th>
               <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Aksi</th>
@@ -128,9 +130,7 @@ export default function KelolaBeritaPage() {
                     </div>
                   </td>
                   <td className="px-4 py-4">
-                    <span className={"inline-flex px-2.5 py-1 rounded-lg text-xs font-medium " + (KATEGORI_COLORS[news.kategori] ?? "bg-gray-100 text-gray-600")}>
-                      {news.kategori}
-                    </span>
+                    <NewsCategoryBadge category={news.kategori} />
                   </td>
                   <td className="px-4 py-4">
                     <span className="text-sm text-gray-500">{new Date(news.created_at).toLocaleDateString("id-ID")}</span>

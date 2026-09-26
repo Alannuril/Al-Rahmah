@@ -2,97 +2,10 @@ import Link from "next/link";
 import { ArrowRight, Calendar, User, Clock } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { NewsCard } from "@/components/news/NewsCard";
-import { createClient } from "@/lib/supabase/server";
-import type { Berita } from "@/lib/supabase/types";
+import { getBeritaFeed } from "@/lib/data/news";
+import { NewsCategoryBadge } from "@/components/news/NewsCategoryBadge";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 import { calculateReadTime } from "@/lib/utils/formatNews";
-
-const DUMMY_BERITA: Berita[] = [
-  {
-    id: "dummy-1",
-    judul: "Santri Al-Rahmah Raih Prestasi Gemilang pada Musabaqah Hifdzil Qur'an Tingkat Provinsi",
-    slug: "santri-al-rahmah-raih-juara-mhq-provinsi",
-    konten: null,
-    excerpt: "Kafilah santri Pondok Pesantren Al-Rahmah berhasil menorehkan prestasi membanggakan dengan meraih juara cabang tahfidz Al-Qur'an tingkat provinsi setelah melalui seleksi ketat antardaerah.",
-    kategori: "Prestasi",
-    thumbnail_url: "https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1200&auto=format&fit=crop",
-    author: "Humas Al-Rahmah",
-    status: "Terbit",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "dummy-2",
-    judul: "Pembekalan Santri Akhir: Membangun Kemandirian dan Karakter Kepemimpinan Ummat",
-    slug: "pembekalan-santri-akhir-kemandirian-kepemimpinan",
-    konten: null,
-    excerpt: "Menjelang kelulusan, santri akhir mengikuti program pembekalan intensif kepemimpinan dan pengabdian masyarakat guna persiapan masa depan.",
-    kategori: "Kegiatan",
-    thumbnail_url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop",
-    author: "Biro Pengasuhan",
-    status: "Terbit",
-    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: "dummy-3",
-    judul: "Pondok Pesantren Al-Rahmah Membuka Pendaftaran Santri Baru (PSB) Tahun Ajaran 2026/2027",
-    slug: "penerimaan-santri-baru-psb-2026-2027",
-    konten: null,
-    excerpt: "Pendaftaran santri baru untuk jenjang MTs dan MA resmi dibuka. Temukan informasi persyaratan, jadwal tes, dan alur pendaftaran terpadu.",
-    kategori: "Pengumuman",
-    thumbnail_url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
-    author: "Panitia PSB",
-    status: "Terbit",
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-  },
-  {
-    id: "dummy-4",
-    judul: "Pekan Bahasa Santri: Mengasah Kecakapan Berbahasa Arab & Inggris Berstandar Global",
-    slug: "pekan-bahasa-santri-arab-inggris",
-    konten: null,
-    excerpt: "Meningkatkan kemampuan komunikasi bilingual santri melalui pekan bahasa intensif, pidato bahasa Arab & Inggris, serta simulasi debat internasional.",
-    kategori: "Akademik",
-    thumbnail_url: "https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=1200&auto=format&fit=crop",
-    author: "Bagian Bahasa",
-    status: "Terbit",
-    created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 8).toISOString(),
-  },
-  {
-    id: "dummy-5",
-    judul: "Kunjungan Edukasi & Pengenalan Sains Santri di Observatorium Nasional",
-    slug: "kunjungan-edukasi-pengenalan-sains-santri",
-    konten: null,
-    excerpt: "Memperluas wawasan keilmuan astronomi dan sains modern, santri mengikuti kegiatan studi edukatif interaktif.",
-    kategori: "Kunjungan",
-    thumbnail_url: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=1200&auto=format&fit=crop",
-    author: "Biro Humas",
-    status: "Terbit",
-    created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 10).toISOString(),
-  },
-];
-
-async function getBerita(): Promise<Berita[]> {
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("berita")
-      .select("*")
-      .eq("status", "Terbit")
-      .order("created_at", { ascending: false })
-      .limit(5);
-
-    if (data && data.length > 0) {
-      return data;
-    }
-    return DUMMY_BERITA;
-  } catch {
-    return DUMMY_BERITA;
-  }
-}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("id-ID", {
@@ -103,7 +16,7 @@ function formatDate(dateStr: string) {
 }
 
 export async function NewsSection() {
-  const newsItems = await getBerita();
+  const newsItems = (await getBeritaFeed()).slice(0, 5);
 
   const featuredNews = newsItems[0];
   const remainingNews = newsItems.slice(1);
@@ -119,8 +32,8 @@ export async function NewsSection() {
         <ScrollReveal variant="fade-up" duration={0.6}>
           <div className="mb-4 sm:mb-7">
             <SectionHeading
-              title="Berita & Informasi Terbaru"
-              subtitle="Dapatkan kabar terkini seputar aktivitas, prestasi, dan pengumuman penting dari civitas akademika Al-Rahmah."
+              title="Berita Al-Rahmah"
+              subtitle="Kegiatan santri, kabar kejuaraan, dan informasi akademik Al-Rahmah."
             />
           </div>
         </ScrollReveal>
@@ -152,12 +65,7 @@ export async function NewsSection() {
 
                   {/* Kategori Badge & Tag Terbaru */}
                   <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20 flex items-center gap-1.5">
-                    <span className="px-2 py-0.5 bg-[#1E3F35] text-[#AED69F] text-[10px] sm:text-[11px] font-semibold rounded-md shadow-2xs">
-                      Terbaru
-                    </span>
-                    <span className="px-2 py-0.5 bg-white/95 text-[#2A5C4E] text-[10px] sm:text-[11px] font-semibold rounded-md border border-zinc-200/80 shadow-2xs">
-                      {featuredNews.kategori || "Berita"}
-                    </span>
+                    <NewsCategoryBadge category={featuredNews.kategori} />
                   </div>
                 </div>
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NewsCategoryBadge } from "./NewsCategoryBadge";
 import type { Berita } from "@/lib/supabase/types";
 import { formatTimeAgo, calculateReadTime } from "@/lib/utils/formatNews";
 
@@ -24,6 +25,8 @@ export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
             <img
               src={berita.thumbnail_url}
               alt={berita.judul}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
             />
           ) : (
@@ -31,15 +34,15 @@ export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
               Al-Rahmah
             </div>
           )}
+          <NewsCategoryBadge
+            category={berita.kategori}
+            className="absolute left-1.5 top-1.5 max-w-[calc(100%-0.75rem)] sm:left-2.5 sm:top-2.5"
+          />
         </div>
 
         {/* Content */}
         <div className="flex flex-col justify-center flex-1 min-w-0 py-0.5 sm:py-0">
           <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-zinc-400 sm:mt-2.5 mb-1 flex-wrap">
-            <span className="font-semibold text-brand-secondary">
-              {berita.kategori || "Berita"}
-            </span>
-            <span>•</span>
             <span>{timeAgo}</span>
             <span className="hidden sm:inline">•</span>
             <span className="hidden sm:inline">{readTime}</span>
@@ -71,6 +74,8 @@ export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
           <img
             src={berita.thumbnail_url}
             alt={berita.judul}
+              loading="lazy"
+              decoding="async"
             className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
@@ -85,6 +90,11 @@ export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
           aria-hidden="true"
         />
 
+        <NewsCategoryBadge
+          category={berita.kategori}
+          className="absolute left-2.5 top-2.5 z-10 max-w-[calc(100%-1.25rem)]"
+        />
+
         {/* Judul Berita pada Bagian Bawah Kiri Foto */}
         <div className="absolute bottom-0 inset-x-0 p-3 sm:p-3.5 z-10 flex flex-col justify-end">
           <h3 className="font-heading font-bold text-xs sm:text-sm lg:text-[15px] text-white group-hover:text-[#AED69F] transition-colors duration-200 line-clamp-2 leading-snug drop-shadow-xs">
@@ -97,10 +107,6 @@ export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
       <div className="flex flex-col flex-1 min-w-0 pt-2.5">
         {/* Meta: Kategori, Relatif Waktu, Waktu Baca */}
         <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-zinc-400 mb-1 flex-wrap">
-          <span className="font-semibold text-brand-primary">
-            {berita.kategori || "Berita"}
-          </span>
-          <span>•</span>
           <span>{timeAgo}</span>
           <span className="hidden sm:inline">•</span>
           <span className="hidden sm:inline">{readTime}</span>
