@@ -31,15 +31,7 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Beranda", href: "/" },
-    { 
-      name: "Tentang Al-Rahmah", 
-      href: "/tentang",
-      subLinks: [
-        { name: "Nakhoda Al-Rahmah", href: "/tentang/pimpinan" },
-        { name: "Visi Misi", href: "/tentang/visi-misi" },
-        { name: "Sejarah Alrahmah", href: "/tentang/sejarah" }
-      ]
-    },
+    { name: "Tentang Al-Rahmah", href: "/tentang" },
     { name: "Pendidikan", href: "/pendidikan" },
     { 
       name: "Media & Prestasi", 
@@ -67,6 +59,7 @@ export function Navbar() {
               src="/images/logoAl-rahmah.jpeg"
               alt="Logo Pondok Pesantren Al-Rahmah"
               fill
+              sizes="48px"
               className="object-contain"
             />
           </div>

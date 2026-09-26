@@ -51,6 +51,7 @@ export async function Footer() {
                 src="/images/logoAl-rahmah.jpeg"
                 alt="Logo Al-Rahmah"
                 fill
+                sizes="36px"
                 className="object-contain"
               />
             </div>
@@ -69,7 +70,7 @@ export async function Footer() {
             <Link href="/profil" className="hover:text-white transition-colors">
               Profil
             </Link>
-            <Link href="/tentang/visi-misi" className="hover:text-white transition-colors">
+            <Link href="/tentang#visi-misi" className="hover:text-white transition-colors">
               Visi &amp; Misi
             </Link>
             <Link href="/pendidikan" className="hover:text-white transition-colors">
@@ -175,6 +176,7 @@ export async function Footer() {
                     src="/images/logoAl-rahmah.jpeg"
                     alt="Logo Al-Rahmah"
                     fill
+                    sizes="36px"
                     className="object-contain"
                   />
                 </div>
@@ -242,7 +244,7 @@ export async function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/tentang/visi-misi" className="hover:text-white transition-colors">
+                  <Link href="/tentang#visi-misi" className="hover:text-white transition-colors">
                     Visi &amp; Misi
                   </Link>
                 </li>

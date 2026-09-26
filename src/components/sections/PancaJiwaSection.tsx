@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
 
 interface PancaJiwaItem {
@@ -116,8 +118,20 @@ export function PancaJiwaSection() {
             </StaggerItem>
           ))}
         </StaggerContainer>
+
+        {/* Action Button: Menghubungkan ke Halaman Pimpinan & Filosofi Pesantren */}
+        <ScrollReveal variant="fade-up" delay={0.2} duration={0.6}>
+          <div className="mt-10 sm:mt-12 text-center">
+            <Link
+              href="/tentang#panca-jiwa"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 hover:border-emerald-300 text-white text-xs sm:text-sm font-medium backdrop-blur-sm transition-all duration-300 group shadow-sm"
+            >
+              <span>Pelajari Profil &amp; Nakhoda Pesantren</span>
+              <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform text-emerald-300" />
+            </Link>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
 }
-

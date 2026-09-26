@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
-import { X, Quote, CheckCircle2 } from "lucide-react";
+import { X } from "lucide-react";
 
 export interface NakhodaData {
   id: string;
@@ -21,139 +21,119 @@ export interface NakhodaData {
 }
 
 interface NakhodaDetailModalProps {
-  nakhoda: NakhodaData | null;
+  nakhoda: NakhodaData;
   onClose: () => void;
 }
 
 export function NakhodaDetailModal({ nakhoda, onClose }: NakhodaDetailModalProps) {
-  // Handle ESC key & body scroll locking
-  useEffect(() => {
-    if (!nakhoda) return;
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
+  useLayoutEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
+    const previousFocus = document.activeElement;
     const originalOverflow = document.body.style.overflow;
+    const originalRootOverflow = document.documentElement.style.overflow;
+    dialog.showModal();
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
+    document.documentElement.style.overflow = "hidden";
 
     return () => {
+      dialog.close();
       document.body.style.overflow = originalOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
+      document.documentElement.style.overflow = originalRootOverflow;
+      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+        previousFocus.focus({ preventScroll: true });
+      }
     };
-  }, [nakhoda, onClose]);
-
-  if (!nakhoda) return null;
+  }, []);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-zinc-950/60 backdrop-blur-sm animate-in fade-in duration-200"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="nakhoda-modal-title"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-5xl overflow-y-auto overscroll-contain rounded-lg border-0 bg-white p-0 text-zinc-900 shadow-xl backdrop:bg-zinc-950/60"
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
     >
-      <div
-        className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 border border-zinc-200/80"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close Button Floating */}
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Tutup modal"
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-zinc-900/60 hover:bg-zinc-900 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-105"
-        >
-          <X size={18} />
-        </button>
+      <div>
+        <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-zinc-200 bg-white px-5 py-3 sm:px-8">
+          <p className="text-sm font-semibold text-brand-primary">Profil Nakhoda</p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Tutup profil"
+            title="Tutup profil"
+            autoFocus
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-md text-zinc-600 hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
+        </header>
 
-        {/* Scrollable Content Container */}
-        <div className="overflow-y-auto p-6 sm:p-8 space-y-6">
-          
-          {/* Header Tokoh: Foto & Info Utama */}
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 pt-2 sm:pt-0">
-            <div className="relative w-28 h-36 sm:w-32 sm:h-40 rounded-xl overflow-hidden shadow-xs border border-zinc-200/80 bg-zinc-100 shrink-0">
+        <div className="grid lg:grid-cols-[17rem_minmax(0,1fr)]">
+          <div className="grid grid-cols-[5rem_minmax(0,1fr)] content-start gap-x-4 gap-y-5 bg-[#edf3ee] px-5 py-6 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-x-6 sm:px-8 sm:py-8 lg:grid-cols-1">
+            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-sm bg-zinc-100">
               <Image
                 src={nakhoda.foto}
-                alt={`Foto profil ${nakhoda.nama}`}
+                alt={"Foto profil " + nakhoda.nama}
                 fill
-                sizes="160px"
-                className={`object-cover ${nakhoda.fotoPosition || "object-top"}`}
+                loading="eager"
+                sizes="(min-width: 1024px) 208px, (min-width: 640px) 112px, 80px"
+                className={"object-cover " + (nakhoda.fotoPosition || "object-top")}
               />
             </div>
-
-            <div className="space-y-2 text-center sm:text-left flex-1">
-              <span className="inline-block text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200/60">
-                {nakhoda.peranTag}
-              </span>
-              <h3 className="font-heading font-bold text-xl sm:text-2xl text-zinc-900 tracking-tight leading-tight">
+            <div className="min-w-0">
+              <h2 id="nakhoda-modal-title" className="font-heading text-xl font-semibold leading-snug sm:text-2xl">
                 {nakhoda.nama}
-              </h3>
-              <p className="text-xs sm:text-sm font-semibold text-brand-primary">
+              </h2>
+              <p className="mt-2 text-sm font-medium leading-6 text-brand-primary">
                 {nakhoda.jabatan}
               </p>
+            </div>
+            <p className="col-span-full text-sm leading-7 text-zinc-600">{nakhoda.ringkasan}</p>
+          </div>
 
-              {/* Kutipan Khas di Header */}
-              <div className="mt-3 p-3 rounded-xl bg-emerald-50/60 border border-emerald-100 text-left flex items-start gap-2">
-                <Quote size={14} className="text-brand-primary shrink-0 mt-0.5 opacity-90" />
-                <p className="font-heading italic text-xs text-zinc-700 leading-relaxed">
-                  &ldquo;{nakhoda.quote}&rdquo;
-                </p>
+          <div className="min-w-0 space-y-8 px-5 py-6 sm:px-8 sm:py-8 lg:px-10">
+            <section aria-labelledby="nakhoda-biografi-heading">
+              <h3 id="nakhoda-biografi-heading" className="font-heading text-lg font-semibold">Biografi</h3>
+              <div className="mt-4 space-y-5 text-sm leading-7 text-zinc-600 sm:text-base sm:leading-8">
+                {nakhoda.biografiLengkap.map((paragraf) => (
+                  <p key={paragraf}>{paragraf}</p>
+                ))}
               </div>
-            </div>
-          </div>
+            </section>
 
-          {/* Biografi Lengkap */}
-          <div className="space-y-3 pt-2 border-t border-zinc-100">
-            <span className="text-xs font-bold text-zinc-900 uppercase tracking-wider block">
-              Biografi &amp; Kiprah Dedikasi
-            </span>
-            <div className="space-y-2.5 text-xs sm:text-sm text-zinc-600 leading-relaxed">
-              {nakhoda.biografiLengkap.map((paragraf, idx) => (
-                <p key={idx}>{paragraf}</p>
-              ))}
-            </div>
-          </div>
-
-          {/* Fokus Peran & Kontribusi Utama */}
-          <div className="space-y-3 pt-2 border-t border-zinc-100">
-            <span className="text-xs font-bold text-zinc-900 uppercase tracking-wider block">
-              Fokus Peran &amp; Tanggung Jawab
-            </span>
-            <div className="space-y-2.5">
-              {nakhoda.fokusKontribusi.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/70 space-y-1 hover:border-emerald-200/80 transition-colors"
-                >
-                  <div className="flex items-center gap-2 text-zinc-900 font-semibold text-xs sm:text-sm">
-                    <CheckCircle2 size={14} className="text-brand-primary shrink-0" />
-                    <span>{item.judul}</span>
+            <section aria-labelledby="nakhoda-peran-heading">
+              <h3 id="nakhoda-peran-heading" className="font-heading text-lg font-semibold">Peran dan tanggung jawab</h3>
+              <dl className="mt-4 space-y-6">
+                {nakhoda.fokusKontribusi.map((item) => (
+                  <div key={item.judul}>
+                    <dt className="text-sm font-semibold leading-6 sm:text-base">{item.judul}</dt>
+                    <dd className="mt-1 text-sm leading-7 text-zinc-600 sm:text-base">{item.deskripsi}</dd>
                   </div>
-                  <p className="text-xs text-zinc-600 leading-relaxed pl-5">
-                    {item.deskripsi}
-                  </p>
-                </div>
-              ))}
+                ))}
+              </dl>
+            </section>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="min-h-11 cursor-pointer rounded-md border border-zinc-300 px-4 text-sm font-semibold text-brand-primary hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+              >
+                Tutup profil
+              </button>
             </div>
           </div>
-
-          {/* Tombol Tutup */}
-          <div className="pt-4 border-t border-zinc-100 flex justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-semibold text-xs transition-colors cursor-pointer"
-            >
-              Tutup Profil
-            </button>
-          </div>
-
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
-

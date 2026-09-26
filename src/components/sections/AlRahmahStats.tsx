@@ -1,94 +1,52 @@
-import { Calendar, GraduationCap, BookOpen, Map } from "lucide-react";
-import { StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
-
 const statsData = [
   {
     id: 1,
     value: "2005",
     label: "Tahun Berdiri",
-    icon: Calendar,
   },
   {
     id: 2,
     value: "A",
     label: "Akreditasi MA",
     sublabel: "Madrasah Aliyah",
-    icon: GraduationCap,
   },
   {
     id: 3,
     value: "B",
     label: "Akreditasi MTs",
     sublabel: "Madrasah Tsanawiyah",
-    icon: BookOpen,
   },
   {
     id: 4,
     value: "2",
     label: "Kombinasi Kurikulum",
     sublabel: "Gontor & Kemenag",
-    icon: Map,
   },
 ];
 
 export function AlRahmahStats() {
   return (
-    <section className="py-8 sm:py-10 md:py-12 bg-white relative z-10 overflow-hidden">
-      {/* Modern Soft Boundary Line (Atas) */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
-
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 md:grid-cols-4">
-          {statsData.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <StaggerItem
-                key={stat.id}
-                variant="fade-up"
-                className="relative flex flex-col items-center text-center py-3 sm:py-4 px-3 sm:px-6"
-              >
-                {/* Soft & Clean Icon Chip (Static, Tanpa Animasi Hover) */}
-                <div className="w-10 h-10 rounded-xl bg-[#396E5F]/8 text-[#396E5F] flex items-center justify-center mb-2.5">
-                  <Icon size={19} strokeWidth={1.75} />
-                </div>
-
-                {/* Value / Angka */}
-                <span className="text-2xl sm:text-3xl lg:text-4xl font-bold font-heading text-[#2A5C4E] tracking-tight">
-                  {stat.value}
-                </span>
-
-                {/* Label */}
-                <span className="text-xs sm:text-sm font-semibold text-zinc-700 mt-1 leading-tight">
-                  {stat.label}
-                </span>
-
-                {/* Sublabel */}
-                {stat.sublabel && (
-                  <span className="text-[11px] text-zinc-400 mt-0.5 leading-tight hidden sm:block">
-                    {stat.sublabel}
-                  </span>
-                )}
-
-                {/* Clean Vertical Separator (Desktop) */}
-                {index < 3 && (
-                  <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-12 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
-                )}
-
-                {/* Clean Separator (Mobile 2x2 Grid) */}
-                {index % 2 === 0 && (
-                  <div className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 h-10 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent pointer-events-none" />
-                )}
-                {index < 2 && (
-                  <div className="md:hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent pointer-events-none" />
-                )}
-              </StaggerItem>
-            );
-          })}
-        </StaggerContainer>
-      </div>
-
-      {/* Modern Soft Boundary Line (Bawah) */}
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent" />
+    <section aria-label="Profil singkat Al-Rahmah" className="text-white">
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-1 lg:grid-cols-4 lg:gap-x-8">
+        {statsData.map((stat) => (
+          <div
+            key={stat.id}
+            className="grid min-w-0 grid-cols-1 content-start gap-y-1 border-t border-white/30 py-3 max-[374px]:py-2 lg:min-h-24 lg:grid-cols-[5.5rem_minmax(0,1fr)] lg:content-center lg:items-center lg:gap-x-4 lg:gap-y-0 lg:py-4"
+          >
+            <dt className={"col-start-1 row-start-2 text-xs font-medium leading-5 text-white/90 lg:col-start-2 lg:row-start-1 lg:text-sm lg:leading-6" + (stat.sublabel ? "" : " lg:row-span-2")}>
+              {stat.label}
+            </dt>
+            <dd className="col-start-1 row-start-1 font-heading text-[26px] font-semibold leading-8 text-brand-lime tabular-nums sm:text-[28px] lg:row-span-2 lg:text-[32px]">
+              {stat.value}
+            </dd>
+            {stat.sublabel && (
+              <dd className="col-start-1 row-start-3 text-[11px] leading-5 text-white/75 sm:text-xs lg:col-start-2 lg:row-start-2 lg:leading-6">
+                {stat.sublabel}
+              </dd>
+            )}
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
