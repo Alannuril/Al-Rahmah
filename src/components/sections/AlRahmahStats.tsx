@@ -31,7 +31,7 @@ export function AlRahmahStats() {
         {statsData.map((stat) => (
           <div
             key={stat.id}
-            className="grid min-w-0 grid-cols-1 content-start gap-y-1 border-t border-white/30 py-3 max-[374px]:py-2 lg:min-h-24 lg:grid-cols-[5.5rem_minmax(0,1fr)] lg:content-center lg:items-center lg:gap-x-4 lg:gap-y-0 lg:py-4"
+            className="grid min-w-0 grid-cols-1 content-start gap-y-1 border-t border-white/30 py-3 max-[374px]:py-2 lg:min-h-24 lg:grid-cols-[max-content_minmax(0,1fr)] lg:content-center lg:items-center lg:gap-x-3 lg:gap-y-0 lg:py-4"
           >
             <dt className={"col-start-1 row-start-2 text-xs font-medium leading-5 text-white/90 lg:col-start-2 lg:row-start-1 lg:text-sm lg:leading-6" + (stat.sublabel ? "" : " lg:row-span-2")}>
               {stat.label}
