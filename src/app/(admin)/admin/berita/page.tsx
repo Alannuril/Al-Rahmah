@@ -1,55 +1,83 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Plus, Search, Edit2, Trash2, Eye, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Berita } from "@/lib/supabase/types";
+import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
+import { NewsCategoryBadge } from "@/components/news/NewsCategoryBadge";
 import { AlRahmahLoader } from "@/components/ui/AlRahmahLoader";
+import { getAllDummyNews } from "@/lib/data/dummyFeed";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
 
-const KATEGORI_COLORS: Record<string, string> = {
-  Kegiatan: "bg-brand-primary/5 text-brand-primary",
-  Prestasi: "bg-amber-50 text-amber-600",
-  PSB: "bg-brand-lime/10 text-brand-primary",
-  Informasi: "bg-indigo-50 text-indigo-600",
-};
-
 export default function KelolaBeritaPage() {
   const [beritaList, setBeritaList] = useState<Berita[]>([]);
-  const [filtered, setFiltered] = useState<Berita[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [kategori, setKategori] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const fetchBerita = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("berita")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setBeritaList(data ?? []);
-    setFiltered(data ?? []);
-    setLoading(false);
+  useEffect(() => {
+    let active = true;
+    const dummyList = getAllDummyNews();
+
+    async function loadData() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("berita")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (!active) return;
+
+        if (!error && data && data.length > 0) {
+          // Gabungkan data Supabase dengan data dummy untuk evaluasi lengkap
+          const map = new Map<string, Berita>();
+          dummyList.forEach((item) => map.set(item.id, item));
+          data.forEach((item) => map.set(item.id, item));
+
+          setBeritaList(
+            Array.from(map.values()).sort(
+              (a, b) => (Date.parse(b.created_at) || 0) - (Date.parse(a.created_at) || 0),
+            ),
+          );
+        } else {
+          setBeritaList(dummyList);
+        }
+      } catch {
+        if (active) setBeritaList(dummyList);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    loadData();
+    return () => { active = false; };
   }, []);
 
-  useEffect(() => { fetchBerita(); }, [fetchBerita]);
+  const filtered = useMemo(() => beritaList.filter((news) => (
+    news.judul.toLowerCase().includes(search.toLowerCase())
+    && (!kategori || getNewsCategory(news.kategori) === kategori)
+  )), [search, kategori, beritaList]);
 
-  useEffect(() => {
-    let result = beritaList;
-    if (search) result = result.filter((b) => b.judul.toLowerCase().includes(search.toLowerCase()));
-    if (kategori) result = result.filter((b) => b.kategori === kategori);
-    setFiltered(result);
-  }, [search, kategori, beritaList]);
+  const categories = useMemo(() => Array.from(new Set([
+    ...NEWS_CATEGORIES,
+    ...beritaList.map((news) => getNewsCategory(news.kategori)),
+  ])), [beritaList]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Hapus berita ini?")) return;
     setDeleting(id);
-    const supabase = createClient();
-    await supabase.from("berita").delete().eq("id", id);
+    try {
+      const supabase = createClient();
+      await supabase.from("berita").delete().eq("id", id);
+    } catch {
+      // Abaikan jika offline / dummy
+    }
     setBeritaList((prev) => prev.filter((b) => b.id !== id));
     setDeleting(null);
   };
@@ -74,11 +102,10 @@ export default function KelolaBeritaPage() {
             onChange={(e) => setKategori(e.target.value)}
             className="px-3 py-2.5 rounded-xl bg-white border border-gray-100 text-sm text-gray-600 outline-none focus:border-brand-primary/30 transition-all"
           >
-            <option value="">Semua Kategori</option>
-            <option>Kegiatan</option>
-            <option>Prestasi</option>
-            <option>PSB</option>
-            <option>Informasi</option>
+            <option value="">Semua Jenis</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>{category}</option>
+            ))}
           </select>
         </div>
         <a
@@ -89,13 +116,13 @@ export default function KelolaBeritaPage() {
         </a>
       </motion.div>
 
-      {/* Table */}
-      <motion.div variants={item} className="hidden md:block bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      {/* Desktop Table View */}
+      <motion.div variants={item} className="hidden md:block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-2xs">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-100">
+            <tr className="border-b border-gray-100 bg-zinc-50/50">
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Berita</th>
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Kategori</th>
+              <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Jenis Berita</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Tanggal</th>
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-4">Status</th>
               <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Aksi</th>
@@ -113,7 +140,7 @@ export default function KelolaBeritaPage() {
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={5} className="text-center py-12 text-sm text-gray-400">Belum ada berita. Klik &quot;Tambah Berita&quot; untuk mulai.</td></tr>
+              <tr><td colSpan={5} className="text-center py-12 text-sm text-gray-400">Tidak ada berita yang sesuai filter.</td></tr>
             ) : (
               filtered.map((news) => (
                 <tr key={news.id} className="hover:bg-gray-50/50 transition-colors group">
@@ -124,13 +151,16 @@ export default function KelolaBeritaPage() {
                       ) : (
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary shrink-0" />
                       )}
-                      <span className="text-sm font-medium text-gray-800 line-clamp-2 max-w-sm">{news.judul}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-gray-800 line-clamp-2 max-w-sm">{news.judul}</span>
+                        {news.author && (
+                          <span className="text-xs text-gray-400 mt-0.5">Oleh: {news.author}</span>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-4">
-                    <span className={"inline-flex px-2.5 py-1 rounded-lg text-xs font-medium " + (KATEGORI_COLORS[news.kategori] ?? "bg-gray-100 text-gray-600")}>
-                      {news.kategori}
-                    </span>
+                    <NewsCategoryBadge category={news.kategori} />
                   </td>
                   <td className="px-4 py-4">
                     <span className="text-sm text-gray-500">{new Date(news.created_at).toLocaleDateString("id-ID")}</span>
@@ -142,10 +172,10 @@ export default function KelolaBeritaPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <a href={news.slug ? "/media/berita/" + news.slug : "#"} target="_blank" className="p-2 rounded-lg hover:bg-brand-primary/5 text-gray-400 hover:text-brand-primary transition-colors" title="Lihat">
+                      <a href={news.slug ? "/media/berita/" + news.slug : "#"} target="_blank" rel="noreferrer" className="p-2 rounded-lg hover:bg-brand-primary/5 text-gray-400 hover:text-brand-primary transition-colors" title="Lihat Halaman Publik">
                         <Eye size={16} />
                       </a>
-                      <a href={"/admin/berita/" + news.id + "/edit"} className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors" title="Edit">
+                      <a href={"/admin/berita/" + news.id + "/edit"} className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors" title="Edit Berita">
                         <Edit2 size={16} />
                       </a>
                       <button
@@ -163,6 +193,56 @@ export default function KelolaBeritaPage() {
             )}
           </tbody>
         </table>
+      </motion.div>
+
+      {/* Mobile Cards View */}
+      <motion.div variants={item} className="block md:hidden space-y-3">
+        {loading ? (
+          <div className="bg-white rounded-2xl p-8 border border-gray-100 text-center">
+            <AlRahmahLoader size="md" label="Memuat Data Berita..." />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="bg-white rounded-2xl p-8 border border-gray-100 text-center text-sm text-gray-400">
+            Tidak ada berita yang sesuai filter.
+          </div>
+        ) : (
+          filtered.map((news) => (
+            <div key={news.id} className="bg-white rounded-2xl p-4 border border-gray-100 space-y-3 shadow-2xs">
+              <div className="flex items-start gap-3">
+                {news.thumbnail_url ? (
+                  <img src={news.thumbnail_url} alt={news.judul} className="w-14 h-14 rounded-xl object-cover shrink-0" />
+                ) : (
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary shrink-0" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <NewsCategoryBadge category={news.kategori} />
+                    <span className={"inline-flex px-2 py-0.5 rounded-md text-[11px] font-medium " + (news.status === "Terbit" ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>
+                      {news.status}
+                    </span>
+                  </div>
+                  <h4 className="text-sm font-semibold text-gray-800 line-clamp-2">{news.judul}</h4>
+                  <p className="text-xs text-gray-400 mt-1">{new Date(news.created_at).toLocaleDateString("id-ID")}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-50">
+                <a href={news.slug ? "/media/berita/" + news.slug : "#"} target="_blank" rel="noreferrer" className="px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:text-brand-primary text-xs flex items-center gap-1 font-medium">
+                  <Eye size={13} /> Lihat
+                </a>
+                <a href={"/admin/berita/" + news.id + "/edit"} className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs flex items-center gap-1 font-medium">
+                  <Edit2 size={13} /> Edit
+                </a>
+                <button
+                  onClick={() => handleDelete(news.id)}
+                  disabled={deleting === news.id}
+                  className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs flex items-center gap-1 font-medium disabled:opacity-50"
+                >
+                  <Trash2 size={13} /> Hapus
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </motion.div>
     </motion.div>
   );
