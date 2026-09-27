@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ChevronDown, LogOut, FileText } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut, FileText, ArrowRight } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -28,6 +28,21 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   const navLinks = [
     { name: "Beranda", href: "/" },
@@ -199,9 +214,9 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Nav Overlay */}
+      {/* Mobile Nav Overlay (Lively Islamic Emerald Glass, non-white) */}
       <div className={clsx(
-        "lg:hidden absolute top-full left-0 right-0 glass-card mx-4 rounded-2xl overflow-hidden transition-all duration-300 origin-top shadow-2xl",
+        "lg:hidden absolute top-full left-0 right-0 bg-gradient-to-b from-[#2d6153]/95 via-[#245246]/95 to-[#1d443a]/95 backdrop-blur-xl border border-white/20 mx-4 rounded-2xl overflow-hidden transition-all duration-300 origin-top shadow-2xl shadow-emerald-950/50 text-white",
         mobileMenuOpen ? "opacity-100 scale-y-100 mt-2" : "opacity-0 scale-y-0 pointer-events-none"
       )}>
         <div className="p-5 flex flex-col gap-2">
@@ -213,9 +228,12 @@ export function Navbar() {
               <div key={link.name} className="flex flex-col">
                 {link.subLinks ? (
                   <button
+                    type="button"
                     className={clsx(
                       "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center w-full text-left",
-                      isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
+                      isActive
+                        ? "bg-[#8AC77F]/25 text-[#ABD8B1] border border-[#8AC77F]/30 font-semibold"
+                        : "text-white/90 hover:text-white hover:bg-white/10"
                     )}
                     onClick={() => {
                       setOpenSubMenus(prev => ({ ...prev, [link.name]: !prev[link.name] }))
@@ -224,7 +242,7 @@ export function Navbar() {
                     {link.name}
                     <ChevronDown 
                       size={18} 
-                      className={clsx("transition-transform duration-300", isSubMenuOpen ? "rotate-180" : "")} 
+                      className={clsx("transition-transform duration-300 text-white/70", isSubMenuOpen ? "rotate-180 text-[#ABD8B1]" : "")} 
                     />
                   </button>
                 ) : (
@@ -232,7 +250,9 @@ export function Navbar() {
                     href={link.href}
                     className={clsx(
                       "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center",
-                      isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
+                      isActive
+                        ? "bg-[#8AC77F]/25 text-[#ABD8B1] border border-[#8AC77F]/30 font-semibold"
+                        : "text-white/90 hover:text-white hover:bg-white/10"
                     )}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -242,17 +262,17 @@ export function Navbar() {
                 {link.subLinks && (
                   <div className={clsx(
                     "grid transition-all duration-300 ease-in-out",
-                    isSubMenuOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    isSubMenuOpen ? "grid-rows-[1fr] opacity-100 mt-1" : "grid-rows-[0fr] opacity-0"
                   )}>
                     <div className="overflow-hidden">
-                      <div className="flex flex-col px-4 pb-2 pt-1 gap-1 ml-4 border-l-2 border-brand-primary/10">
+                      <div className="flex flex-col px-4 pb-2 pt-1 gap-1 ml-4 border-l-2 border-[#8AC77F]/40">
                         {link.subLinks.map(subLink => (
                           <Link 
                             key={subLink.name}
                             href={subLink.href}
                             className={clsx(
                               "py-2 px-3 text-sm rounded-lg transition-colors",
-                              pathname === subLink.href ? "text-brand-secondary bg-brand-primary/5 font-semibold" : "text-brand-primary/70 hover:text-brand-primary hover:bg-brand-primary/5 font-medium"
+                              pathname === subLink.href ? "text-[#ABD8B1] bg-white/10 font-semibold" : "text-white/80 hover:text-white hover:bg-white/10 font-medium"
                             )}
                             onClick={() => setMobileMenuOpen(false)}
                           >
@@ -267,20 +287,20 @@ export function Navbar() {
             );
           })}
           {user ? (
-            <div className="mt-4 p-4 rounded-2xl bg-brand-primary/5 border border-brand-primary/10 space-y-3">
+            <div className="mt-4 p-4 rounded-2xl bg-white/10 border border-white/15 space-y-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-full bg-brand-lime text-brand-primary flex items-center justify-center font-bold text-xs">
                   {user.email?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-[10px] uppercase font-bold text-zinc-400">Akun Aktif</p>
-                  <p className="text-xs font-bold text-brand-primary truncate">{user.email}</p>
+                  <p className="text-[10px] uppercase font-bold text-white/60">Akun Aktif</p>
+                  <p className="text-xs font-bold text-white truncate">{user.email}</p>
                 </div>
               </div>
               <Link
                 href="/psb"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-center bg-brand-primary text-white hover:bg-brand-secondary font-semibold px-4 py-3 rounded-xl text-sm transition-colors shadow-xs"
+                className="block text-center bg-brand-lime text-brand-primary hover:bg-brand-accent font-semibold px-4 py-3 rounded-xl text-sm transition-colors shadow-xs"
               >
                 Info & Pendaftaran PSB
               </Link>
@@ -289,29 +309,22 @@ export function Navbar() {
                   setMobileMenuOpen(false);
                   await signOut();
                 }}
-                className="w-full text-center text-xs font-semibold text-red-600 hover:underline py-1"
+                className="w-full text-center text-xs font-semibold text-red-300 hover:text-red-200 hover:underline py-1"
               >
                 Keluar (Logout)
               </button>
             </div>
           ) : (
-            <div className="mt-4 space-y-2">
+            <div className="mt-3">
               {!isPsbPage && (
                 <Link 
                   href="/psb" 
-                  className="block text-center bg-brand-primary text-white hover:bg-brand-secondary transition-colors font-semibold px-6 py-3.5 rounded-xl text-base shadow-md"
+                  className="block text-center bg-gradient-to-r from-[#ABD8B1] via-[#8AC77F] to-[#7CBF71] text-[#143026] hover:brightness-105 transition-all font-bold px-6 py-3.5 rounded-xl text-base shadow-lg shadow-black/25"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Daftar Sekarang
                 </Link>
               )}
-              <Link
-                href="/psb/login"
-                className="block text-center text-xs font-bold text-brand-primary hover:underline py-1.5"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Masuk Akun Calon Santri
-              </Link>
             </div>
           )}
         </div>
