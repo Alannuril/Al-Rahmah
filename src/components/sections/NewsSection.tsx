@@ -151,7 +151,7 @@ export async function NewsSection() {
                   variant="fade-up"
                   className="w-[260px] sm:w-auto shrink-0 snap-start h-full"
                 >
-                  <NewsCard berita={item} />
+                  <NewsCard berita={item} variant="overlay" />
                 </StaggerItem>
               ))}
             </StaggerContainer>

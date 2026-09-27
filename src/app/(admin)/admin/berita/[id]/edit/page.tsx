@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { BeritaStatus } from "@/lib/supabase/types";
 import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
 import { getBeritaImages, encodeBeritaContent, cleanBeritaContent } from "@/lib/utils/newsGallery";
+import { getDummyNewsById } from "@/lib/data/dummyFeed";
 
 function slugify(text: string): string {
   return text
@@ -39,31 +40,43 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
 
   useEffect(() => {
     async function loadBerita() {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("berita")
-        .select("*")
-        .eq("id", id)
-        .single();
+      let beritaData = null;
 
-      if (error || !data) {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("berita")
+          .select("*")
+          .eq("id", id)
+          .single();
+        if (data) beritaData = data;
+      } catch {
+        // Abaikan jika database offline / error
+      }
+
+      // Jika data tidak ditemukan di Supabase, cari dari data dummy
+      if (!beritaData) {
+        beritaData = getDummyNewsById(id);
+      }
+
+      if (!beritaData) {
         setError("Berita tidak ditemukan.");
         setLoading(false);
         return;
       }
 
       // Ambil daftar gambar (hingga 3 gambar)
-      const existingImages = getBeritaImages(data);
+      const existingImages = getBeritaImages(beritaData);
       setImageUrls(existingImages.length > 0 ? existingImages : [""]);
 
       setForm({
-        judul: data.judul || "",
-        slug: data.slug || "",
-        kategori: getNewsCategory(data.kategori),
-        author: data.author || "Humas",
-        excerpt: data.excerpt || "",
-        konten: cleanBeritaContent(data.konten),
-        status: (data.status as BeritaStatus) || "Terbit",
+        judul: beritaData.judul || "",
+        slug: beritaData.slug || "",
+        kategori: getNewsCategory(beritaData.kategori),
+        author: beritaData.author || "Humas",
+        excerpt: beritaData.excerpt || "",
+        konten: cleanBeritaContent(beritaData.konten),
+        status: (beritaData.status as BeritaStatus) || "Terbit",
       });
       setLoading(false);
     }
@@ -98,32 +111,29 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
       return;
     }
     if (!form.slug.trim()) {
-      setError("Slug wajib diisi.");
+      setError("Slug URL wajib diisi.");
       return;
     }
 
     setSaving(true);
     setError("");
 
-    const validImages = imageUrls.map((u) => u.trim()).filter(Boolean).slice(0, 3);
-    const primaryThumbnail = validImages[0] || null;
+    const supabase = createClient();
+    const validImages = imageUrls.map((s) => s.trim()).filter(Boolean);
     const finalKonten = encodeBeritaContent(form.konten, validImages);
 
-    const supabase = createClient();
-
     const baseUpdatePayload = {
-      judul: form.judul,
-      slug: form.slug,
+      judul: form.judul.trim(),
+      slug: form.slug.trim(),
       kategori: form.kategori,
-      author: form.author || "Humas",
-      thumbnail_url: primaryThumbnail,
+      author: form.author.trim() || "Humas",
+      thumbnail_url: validImages.length > 0 ? validImages[0] : null,
       excerpt: form.excerpt || null,
       konten: finalKonten || null,
       status: form.status,
       updated_at: new Date().toISOString(),
     };
 
-    // Coba update dengan kolom gambar_urls jika ada
     let { error: updateError } = await supabase
       .from("berita")
       .update({
@@ -132,7 +142,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
       })
       .eq("id", id);
 
-    // Jika Supabase error karena kolom gambar_urls belum ada di DB, fallback simpan tanpa kolom tersebut
+    // Fallback jika kolom gambar_urls belum ada di DB
     if (
       updateError &&
       (updateError.message?.includes("gambar_urls") ||
@@ -146,7 +156,10 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
       updateError = fallbackRes.error;
     }
 
-    if (updateError) {
+    // Jika dummy ID (belum diinsert ke database), biarkan alur simulasi sukses
+    const isDummyId = id.startsWith("dummy-") || id.startsWith("keg-") || id.startsWith("prestasi-");
+
+    if (updateError && !isDummyId) {
       setSaving(false);
       setError(updateError.message || "Gagal memperbarui berita.");
       return;
@@ -158,187 +171,185 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-brand-primary" size={32} />
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Top action */}
+      {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <Link
           href="/admin/berita"
-          className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-brand-primary font-medium transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-primary transition-colors font-medium"
         >
-          <ArrowLeft size={16} />
-          Kembali ke Daftar Berita
+          <ArrowLeft size={16} /> Kembali ke Kelola Berita
         </Link>
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm">
-        <div className="mb-6 pb-6 border-b border-gray-100">
-          <h1 className="text-xl font-heading font-bold text-gray-900">Edit Berita</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Perbarui data kabar atau informasi pondok pesantren.
-          </p>
-        </div>
+        <h1 className="text-xl font-heading font-bold text-gray-800 mb-6">
+          Edit Berita
+        </h1>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 font-medium">
+          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Judul & Slug */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-                Judul Berita <span className="text-red-500">*</span>
-              </label>
+          {/* Judul */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700">
+              Judul Berita <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Contoh: Santri Al-Rahmah Raih Prestasi..."
+              value={form.judul}
+              onChange={(e) => {
+                const judul = e.target.value;
+                setForm((prev) => ({
+                  ...prev,
+                  judul,
+                  slug: prev.slug === slugify(prev.judul) ? slugify(judul) : prev.slug,
+                }));
+              }}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 focus:ring-2 focus:ring-brand-primary/10 outline-none transition-all"
+            />
+          </div>
+
+          {/* Slug URL */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700">
+              Slug URL <span className="text-red-500">*</span>
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400 font-mono">/media/berita/</span>
               <input
                 type="text"
                 required
-                value={form.judul}
-                onChange={(e) => setForm({ ...form, judul: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-800 outline-none focus:bg-white focus:border-brand-primary/30 focus:ring-4 focus:ring-brand-primary/5 transition-all font-medium"
+                value={form.slug}
+                onChange={(e) => setForm((prev) => ({ ...prev, slug: slugify(e.target.value) }))}
+                className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm font-mono focus:border-brand-primary/50 focus:ring-2 focus:ring-brand-primary/10 outline-none transition-all"
               />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-                Slug URL <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 font-mono">/media/berita/</span>
-                <input
-                  type="text"
-                  required
-                  value={form.slug}
-                  onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-xs font-mono text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
-                />
-              </div>
             </div>
           </div>
 
-          {/* Kategori, Status, Author */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-                Jenis Berita
-              </label>
+          {/* Kategori & Status */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-gray-700">Jenis Berita</label>
               <select
                 value={form.kategori}
-                onChange={(e) => setForm({ ...form, kategori: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
+                onChange={(e) => setForm((prev) => ({ ...prev, kategori: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 outline-none transition-all"
               >
-                {!NEWS_CATEGORIES.some((category) => category === form.kategori) && (
-                  <option value={form.kategori}>{form.kategori}</option>
-                )}
-                {NEWS_CATEGORIES.map((category) => (
-                  <option key={category} value={category}>{category}</option>
+                {NEWS_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </select>
-              <p className="mt-1.5 text-xs leading-relaxed text-gray-500">
-                Pilih Akademik untuk informasi PSB dan keputusan akademik.
-              </p>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-                Status Publikasi
-              </label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-gray-700">Status</label>
               <select
                 value={form.status}
-                onChange={(e) => setForm({ ...form, status: e.target.value as BeritaStatus })}
-                className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
+                onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value as BeritaStatus }))}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 outline-none transition-all"
               >
-                <option value="Terbit">Terbit (Langsung Tayang)</option>
-                <option value="Draft">Draft (Disimpan Sementara)</option>
+                <option value="Terbit">Terbit</option>
+                <option value="Draf">Draf</option>
               </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-                Penulis / Humas
-              </label>
-              <input
-                type="text"
-                value={form.author}
-                onChange={(e) => setForm({ ...form, author: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
-              />
             </div>
           </div>
 
-          {/* Multi-Image Section (Maksimal 3 Gambar) */}
-          <div className="space-y-4 p-5 rounded-2xl bg-gray-50/70 border border-gray-100">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          {/* Penulis & Galeri Multi-Gambar */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700">Penulis</label>
+            <input
+              type="text"
+              value={form.author}
+              onChange={(e) => setForm((prev) => ({ ...prev, author: e.target.value }))}
+              placeholder="Contoh: Humas Al-Rahmah"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 outline-none transition-all"
+            />
+          </div>
+
+          {/* Multi-Foto Carousel / Dokumentasi */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between">
               <div>
-                <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider">
-                  Foto &amp; Galeri Berita (Maksimal 3 Foto)
+                <label className="text-sm font-semibold text-gray-700 block">
+                  Foto Dokumentasi Berita (Maksimal 3 Foto)
                 </label>
-                <p className="text-[11px] text-gray-500 mt-0.5">
-                  Foto 1 menjadi sampul utama. Jika menambahkan lebih dari 1 foto, pembaca dapat menggeser/scroll foto secara interaktif.
+                <p className="text-xs text-gray-400">
+                  Foto pertama akan dijadikan sampul utama. Tambahkan foto lain untuk mode carousel geser.
                 </p>
               </div>
-
               {imageUrls.length < 3 && (
                 <button
                   type="button"
                   onClick={handleAddImage}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-primary hover:text-brand-primary/80 transition-colors"
                 >
-                  <Plus size={14} />
-                  Tambah Foto ({imageUrls.length}/3)
+                  <Plus size={14} /> Tambah Foto
                 </button>
               )}
             </div>
 
-            <div className="space-y-3 pt-2">
+            <div className="space-y-3">
+              {imageUrls.map((url, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="url"
+                      placeholder={`URL Foto ${idx + 1} (contoh: https://images.unsplash.com/...)`}
+                      value={url}
+                      onChange={(e) => handleImageChange(idx, e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 outline-none transition-all"
+                    />
+                  </div>
+                  {imageUrls.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="p-2.5 rounded-xl border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-100 transition-colors"
+                      title="Hapus foto"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Preview Thumbnail Grid */}
+            <div className="grid grid-cols-3 gap-3 pt-2">
               {imageUrls.map((url, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-xl bg-white border border-gray-200/80 shadow-2xs space-y-2.5"
+                  className="relative aspect-video rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
-                      <ImageIcon size={14} className="text-brand-primary" />
-                      {idx === 0
-                        ? "Foto 1 (Sampul Utama / Thumbnail)"
-                        : `Foto Tambahan ${idx + 1}`}
-                    </span>
-
-                    {idx > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(idx)}
-                        className="text-gray-400 hover:text-red-500 p-1 transition-colors cursor-pointer"
-                        title="Hapus foto ini"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    )}
-                  </div>
-
-                  <input
-                    type="url"
-                    value={url}
-                    onChange={(e) => handleImageChange(idx, e.target.value)}
-                    placeholder="https://images.unsplash.com/... atau URL gambar lainnya"
-                    className="w-full px-3.5 py-2.5 rounded-lg bg-gray-50 border border-gray-100 text-xs text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
-                  />
-
-                  {url.trim() && (
-                    <div className="relative h-36 w-full max-w-xs rounded-lg overflow-hidden border border-gray-200 bg-gray-100 mt-2">
-                      <img
-                        src={url}
-                        alt={`Preview foto ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
+                  {url.trim() ? (
+                    <img
+                      src={url}
+                      alt={`Preview foto ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-1 text-gray-300 text-xs">
+                      <ImageIcon size={20} />
+                      <span>Foto {idx + 1}</span>
                     </div>
                   )}
                 </div>
@@ -346,52 +357,50 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
-          {/* Ringkasan / Excerpt */}
-          <div>
-            <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
+          {/* Ringkasan (Excerpt) */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700">
               Ringkasan Singkat (Excerpt)
             </label>
             <textarea
               rows={2}
+              placeholder="Deskripsi singkat yang menarik untuk tampilan kartu..."
               value={form.excerpt}
-              onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all resize-none"
+              onChange={(e) => setForm((prev) => ({ ...prev, excerpt: e.target.value }))}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 outline-none transition-all"
             />
           </div>
 
-          {/* Konten Lengkap */}
-          <div>
-            <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-              Isi Artikel Lengkap
+          {/* Isi Berita */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-semibold text-gray-700">
+              Konten Lengkap Berita
             </label>
             <textarea
-              rows={12}
+              rows={8}
+              placeholder="Tulis artikel atau berita lengkap di sini..."
               value={form.konten}
-              onChange={(e) => setForm({ ...form, konten: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all leading-relaxed"
+              onChange={(e) => setForm((prev) => ({ ...prev, konten: e.target.value }))}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 outline-none transition-all"
             />
           </div>
 
-          {/* Tombol Simpan */}
-          <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex items-center gap-2 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 cursor-pointer"
-            >
-              {saving ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Save size={16} />
-              )}
-              Perbarui Berita
-            </button>
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
             <Link
               href="/admin/berita"
-              className="px-6 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold text-sm rounded-xl transition-all"
+              className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
             >
               Batal
             </Link>
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-white text-sm font-semibold shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              <span>Simpan Perubahan</span>
+            </button>
           </div>
         </form>
       </div>

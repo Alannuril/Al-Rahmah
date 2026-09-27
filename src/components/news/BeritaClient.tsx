@@ -130,9 +130,9 @@ export function BeritaClient({
 
       <div id={resultsId}>
         {gridNews.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-4 lg:gap-8">
+          <div className="grid grid-cols-1 divide-y divide-zinc-200/60 sm:divide-y-0 sm:grid-cols-2 lg:grid-cols-4 sm:gap-7 lg:gap-8">
             {gridNews.map((item) => (
-              <NewsCard key={item.id} berita={item} />
+              <NewsCard key={item.id} berita={item} variant="standard" />
             ))}
           </div>
         )}
