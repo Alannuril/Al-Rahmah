@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { NewsCategoryBadge } from "./NewsCategoryBadge";
 import type { Berita } from "@/lib/supabase/types";
-import { formatTimeAgo, calculateReadTime } from "@/lib/utils/formatNews";
+import { formatTimeAgo } from "@/lib/utils/formatNews";
 
 interface NewsCardProps {
   berita: Berita;
@@ -11,7 +11,6 @@ interface NewsCardProps {
 
 export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
   const timeAgo = formatTimeAgo(berita.created_at);
-  const readTime = calculateReadTime(berita.konten || berita.excerpt);
 
   if (variant === "standard") {
     return (
@@ -44,8 +43,6 @@ export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
         <div className="flex flex-col justify-center flex-1 min-w-0 py-0.5 sm:py-0">
           <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-zinc-400 sm:mt-2.5 mb-1 flex-wrap">
             <span>{timeAgo}</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">{readTime}</span>
           </div>
 
           <h3 className="font-heading font-bold text-xs sm:text-sm lg:text-base text-zinc-900 group-hover:text-brand-primary transition-colors duration-200 line-clamp-2 leading-snug tracking-tight mb-0 sm:mb-1.5">
@@ -105,11 +102,9 @@ export function NewsCard({ berita, variant = "overlay" }: NewsCardProps) {
 
       {/* Meta & Excerpt di Bawah Foto */}
       <div className="flex flex-col flex-1 min-w-0 pt-2.5">
-        {/* Meta: Kategori, Relatif Waktu, Waktu Baca */}
+        {/* Waktu publikasi */}
         <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-zinc-400 mb-1 flex-wrap">
           <span>{timeAgo}</span>
-          <span className="hidden sm:inline">•</span>
-          <span className="hidden sm:inline">{readTime}</span>
         </div>
 
         {/* Penjelasan Singkat (Excerpt) */}

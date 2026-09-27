@@ -2,7 +2,7 @@ import Link from "next/link";
 import { NewsCategoryBadge } from "./NewsCategoryBadge";
 import { ArrowRight } from "lucide-react";
 import type { Berita } from "@/lib/supabase/types";
-import { formatTimeAgo, calculateReadTime } from "@/lib/utils/formatNews";
+import { formatTimeAgo } from "@/lib/utils/formatNews";
 
 interface FeaturedNewsHeroProps {
   berita: Berita;
@@ -10,16 +10,15 @@ interface FeaturedNewsHeroProps {
 
 export function FeaturedNewsHero({ berita }: FeaturedNewsHeroProps) {
   const timeAgo = formatTimeAgo(berita.created_at);
-  const readTime = calculateReadTime(berita.konten || berita.excerpt);
 
   return (
-    <article className="relative mb-5 sm:mb-8 md:mb-10">
+    <article className="relative mb-3 sm:mb-4">
       <Link
         href={`/media/berita/${berita.slug}`}
-        className="group grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 lg:gap-8 items-start cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-2xl sm:rounded-3xl"
+        className="group grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-6 lg:gap-8 items-start cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-xl sm:rounded-2xl"
       >
         {/* Left: Compact Visual Showcase */}
-        <div className="md:col-span-5 relative w-full h-44 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-2xl sm:rounded-3xl bg-zinc-100 shadow-xs">
+        <div className="md:col-span-5 relative w-full h-44 sm:h-56 md:h-64 lg:h-72 xl:h-80 overflow-hidden rounded-xl sm:rounded-2xl bg-zinc-100 shadow-xs">
           {berita.thumbnail_url ? (
             <img
               src={berita.thumbnail_url}
@@ -44,10 +43,6 @@ export function FeaturedNewsHero({ berita }: FeaturedNewsHeroProps) {
           <div className="flex items-center gap-2 text-xs mb-2">
             <span className="text-zinc-400">
               {timeAgo}
-            </span>
-            <span className="text-zinc-300">•</span>
-            <span className="text-zinc-400">
-              {readTime}
             </span>
           </div>
 

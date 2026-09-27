@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar } from "lucide-react";
 import { NewsImageCarousel } from "@/components/news/NewsImageCarousel";
 import { getBeritaImages, cleanBeritaContent } from "@/lib/utils/newsGallery";
-import { calculateReadTime } from "@/lib/utils/formatNews";
 import { getBeritaBySlug } from "@/lib/data/news";
 import { NewsCategoryBadge } from "@/components/news/NewsCategoryBadge";
 
@@ -39,7 +38,6 @@ export default async function DetailBeritaPage({ params }: PageProps) {
 
   const images = getBeritaImages(berita);
   const articleContent = cleanBeritaContent(berita.konten);
-  const readTime = calculateReadTime(berita.konten || berita.excerpt);
 
   return (
     <main className="min-h-screen bg-surface/40 pt-28 pb-20 sm:pt-32 sm:pb-24">
@@ -67,18 +65,13 @@ export default async function DetailBeritaPage({ params }: PageProps) {
 
         {/* 2. DETAIL BERITA DI BAWAH FOTO BESAR (Tanpa Card, Lebar Baca Nyaman) */}
         <article className="w-full max-w-4xl">
-          {/* Badge Kategori, Tanggal & Estimasi Waktu Baca */}
+          {/* Kategori dan tanggal publikasi */}
           <div className="flex flex-wrap items-center gap-2.5 text-xs text-zinc-500 mb-3 sm:mb-4">
             <NewsCategoryBadge category={berita.kategori} />
             <span className="text-zinc-300">•</span>
             <div className="flex items-center gap-1.5">
               <Calendar size={13} className="text-brand-primary/80" aria-hidden="true" />
               <span>{formattedDate}</span>
-            </div>
-            <span className="text-zinc-300">•</span>
-            <div className="flex items-center gap-1.5">
-              <Clock size={13} className="text-brand-primary/80" aria-hidden="true" />
-              <span>{readTime}</span>
             </div>
           </div>
 

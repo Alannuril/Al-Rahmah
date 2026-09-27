@@ -1,5 +1,5 @@
 /**
- * Utility functions for formatting news, publication dates, and read times
+ * Utility functions for formatting news and publication dates
  */
 
 export function formatTimeAgo(dateStr: string): string {
@@ -38,16 +38,6 @@ export function formatTimeAgo(dateStr: string): string {
   } catch {
     return dateStr;
   }
-}
-
-export function calculateReadTime(contentOrExcerpt?: string | null): string {
-  if (!contentOrExcerpt || contentOrExcerpt.trim() === "") {
-    return "3 menit baca";
-  }
-  const wordCount = contentOrExcerpt.trim().split(/\s+/).length;
-  // Average reading speed: 180 words/min
-  const minutes = Math.max(1, Math.ceil(wordCount / 100));
-  return `${minutes} menit baca`;
 }
 
 export function getAuthorInitials(author?: string | null): string {

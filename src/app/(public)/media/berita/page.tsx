@@ -13,11 +13,11 @@ export default function BeritaPage() {
           <h1 className="font-heading text-2xl font-bold tracking-tight text-brand-primary sm:text-3xl lg:text-[32px]">
             Berita Al-Rahmah
           </h1>
-          <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+          <p className="mt-2.5 text-sm leading-relaxed text-zinc-600 sm:text-base">
             Kabar terkini seputar kegiatan santri, prestasi kejuaraan, dan informasi akademik Al-Rahmah.
           </p>
         </header>
-        <BeritaSection limit={9} allLinkHref="/media/berita/semua" allLinkLabel="Lihat semua berita" />
+        <BeritaSection />
       </div>
     </div>
   );

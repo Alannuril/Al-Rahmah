@@ -32,7 +32,7 @@ export function Navbar() {
     { name: "Beranda", href: "/" },
     { name: "Tentang Al-Rahmah", href: "/tentang" },
     { name: "Pendidikan", href: "/pendidikan" },
-    { name: "Media", href: "/media" },
+    { name: "Berita", href: "/media" },
     { name: "PSB", href: "/psb" },
   ];
 

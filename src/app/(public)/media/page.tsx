@@ -1,13 +1,9 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BeritaSection } from "@/components/media/BeritaSection";
-import { DokumentasiSection } from "@/components/media/DokumentasiSection";
 
 export const metadata = {
-  title: "Media - Al-Rahmah",
-  description: "Berita kegiatan santri, kejuaraan, informasi akademik, dan dokumentasi Pondok Pesantren Al-Rahmah Walantaka.",
+  title: "Berita Al-Rahmah",
+  description: "Berita kegiatan santri, kejuaraan, dan informasi akademik Pondok Pesantren Al-Rahmah Walantaka.",
 };
 
 export default function MediaPage() {
@@ -31,32 +27,7 @@ export default function MediaPage() {
               </div>
             }
           >
-            <BeritaSection limit={9} />
-          </Suspense>
-        </section>
-
-        <section id="dokumentasi" aria-label="Galeri Dokumentasi" className="mt-12 scroll-mt-28 border-t border-zinc-300/70 pt-8 sm:mt-16 sm:pt-10">
-          <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-            <SectionHeading
-              title="Galeri Dokumentasi"
-              subtitle="Kumpulan foto kegiatan dan momen bersama di Al-Rahmah."
-            />
-            <Link
-              href="/media/dokumentasi"
-              className="inline-flex min-h-11 shrink-0 items-center gap-1.5 self-start rounded-lg text-sm font-semibold text-brand-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary sm:self-auto"
-            >
-              Buka halaman dokumentasi
-              <ArrowUpRight size={16} aria-hidden="true" />
-            </Link>
-          </div>
-          <Suspense
-            fallback={
-              <div role="status" className="flex min-h-48 items-center justify-center rounded-2xl bg-white/60 px-4 text-sm text-zinc-500">
-                Memuat dokumentasi…
-              </div>
-            }
-          >
-            <DokumentasiSection />
+            <BeritaSection />
           </Suspense>
         </section>
       </div>

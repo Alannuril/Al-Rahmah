@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Search, X, Newspaper, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Search, X, Newspaper, Calendar } from "lucide-react";
 import type { Berita } from "@/lib/supabase/types";
 import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
-import { formatTimeAgo, calculateReadTime } from "@/lib/utils/formatNews";
+import { formatTimeAgo } from "@/lib/utils/formatNews";
 import { NewsCategoryBadge } from "./NewsCategoryBadge";
 
 interface AllNewsArchiveClientProps {
@@ -160,7 +160,6 @@ export function AllNewsArchiveClient({ initialNews }: AllNewsArchiveClientProps)
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 lg:gap-7">
           {filteredNews.map((item) => {
             const timeAgo = formatTimeAgo(item.created_at);
-            const readTime = calculateReadTime(item.konten || item.excerpt);
 
             return (
               <article
@@ -194,16 +193,11 @@ export function AllNewsArchiveClient({ initialNews }: AllNewsArchiveClientProps)
 
                 {/* Content Details */}
                 <div className="flex flex-1 flex-col p-4 sm:p-5">
-                  {/* Meta: Date & Read Time */}
+                  {/* Tanggal publikasi */}
                   <div className="mb-2 flex items-center gap-2 text-[11px] text-zinc-400">
                     <span className="inline-flex items-center gap-1">
                       <Calendar size={12} className="text-zinc-400" aria-hidden="true" />
                       {timeAgo}
-                    </span>
-                    <span>•</span>
-                    <span className="inline-flex items-center gap-1">
-                      <Clock size={12} className="text-zinc-400" aria-hidden="true" />
-                      {readTime}
                     </span>
                   </div>
 

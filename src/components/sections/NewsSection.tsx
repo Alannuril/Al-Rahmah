@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, User, Clock } from "lucide-react";
+import { ArrowRight, Calendar, User } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { NewsCard } from "@/components/news/NewsCard";
 import { getBeritaFeed } from "@/lib/data/news";
 import { NewsCategoryBadge } from "@/components/news/NewsCategoryBadge";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ui/ScrollReveal";
-import { calculateReadTime } from "@/lib/utils/formatNews";
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("id-ID", {
@@ -72,26 +71,21 @@ export async function NewsSection() {
                 {/* Bagian Kanan: Judul Berita & Penjelasan Singkat */}
                 <div className="md:col-span-7 lg:col-span-7 flex flex-col justify-between py-0.5 sm:py-1">
                   <div className="space-y-1.5 sm:space-y-3">
-                    {/* Meta Info (Tanggal, Penulis, Read Time) */}
+                    {/* Meta Info (Tanggal, Penulis) */}
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-zinc-500">
                       <div className="flex items-center gap-1">
                         <Calendar size={12} className="text-[#396E5F]" />
                         <span>{formatDate(featuredNews.created_at)}</span>
                       </div>
-                      <span className="text-zinc-300">•</span>
                       {featuredNews.author && (
                         <>
+                          <span className="text-zinc-300">•</span>
                           <div className="flex items-center gap-1">
                             <User size={12} className="text-[#396E5F]" />
                             <span>{featuredNews.author}</span>
                           </div>
-                          <span className="text-zinc-300">•</span>
                         </>
                       )}
-                      <div className="flex items-center gap-1">
-                        <Clock size={12} className="text-zinc-400" />
-                        <span>{calculateReadTime(featuredNews.konten || featuredNews.excerpt)}</span>
-                      </div>
                     </div>
 
                     {/* Judul Berita */}
