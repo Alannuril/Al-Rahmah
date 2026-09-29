@@ -1,4 +1,5 @@
 import { BeritaSection } from "@/components/media/BeritaSection";
+import styles from "@/components/news/NewsEntrance.module.css";
 
 export const metadata = {
   title: "Berita Al-Rahmah",
@@ -9,7 +10,7 @@ export default function BeritaPage() {
   return (
     <div className="pt-28 sm:pt-32 pb-20 sm:pb-24 min-h-screen bg-surface/40">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-        <header className="mb-6 sm:mb-8">
+        <header className={`${styles.heading} mb-6 sm:mb-8`}>
           <h1 className="font-heading text-2xl font-bold tracking-tight text-brand-primary sm:text-3xl lg:text-[32px]">
             Berita Al-Rahmah
           </h1>
