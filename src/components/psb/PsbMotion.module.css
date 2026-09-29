@@ -1,0 +1,151 @@
+.reveal[data-variant="slide-left"] {
+  --psb-from: translate3d(-16px, 0, 0);
+}
+
+.reveal[data-variant="slide-right"] {
+  --psb-from: translate3d(16px, 0, 0);
+}
+
+.reveal[data-variant="scale"] {
+  --psb-from: translate3d(0, 8px, 0) scale(0.975);
+}
+
+.reveal[data-variant="fade"] {
+  --psb-from: none;
+}
+
+.faqPanel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.faqPanel[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+@keyframes psb-reveal {
+  from {
+    opacity: 0;
+    transform: var(--psb-from, translate3d(0, 14px, 0));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes psb-poster {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.975) rotate(-0.6deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes psb-confirm {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Content stays readable before hydration and without JavaScript. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  .heading > * {
+    animation: psb-reveal 600ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .heading > :nth-child(2) {
+    animation-delay: 70ms;
+  }
+
+  .poster {
+    animation: psb-poster 800ms cubic-bezier(0.22, 1, 0.36, 1) 80ms backwards;
+  }
+
+  .intro > * {
+    --psb-from: translate3d(16px, 0, 0);
+    animation: psb-reveal 650ms cubic-bezier(0.22, 1, 0.36, 1) 100ms backwards;
+  }
+
+  .intro > :nth-child(2) {
+    animation-delay: 160ms;
+  }
+
+  .intro > :nth-child(3) {
+    animation-delay: 220ms;
+  }
+
+  .intro > :nth-child(4) {
+    animation-delay: 280ms;
+  }
+
+  .reveal[data-visible="true"] {
+    animation: psb-reveal 650ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .action {
+    transition: transform 220ms ease, box-shadow 220ms ease,
+      background-color 200ms ease, border-color 200ms ease;
+  }
+
+  .action:active {
+    transform: scale(0.985);
+  }
+
+  .posterImage {
+    transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .copied {
+    animation: psb-confirm 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .faqPanel {
+    transition: grid-template-rows 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 220ms ease;
+  }
+
+  /* Keyboard users can interact immediately, even during a stagger delay. */
+  .reveal:focus-within,
+  .poster:focus-within,
+  .intro > :focus-within {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@media screen and (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .action:hover {
+    transform: translateY(-2px);
+  }
+
+  .action:hover:active {
+    transform: translateY(0) scale(0.985);
+  }
+
+  .poster button:hover .posterImage {
+    transform: scale(1.025);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page *,
+  .page *::before,
+  .page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

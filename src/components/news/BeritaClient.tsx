@@ -1,104 +1,168 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useId, useMemo, useRef, useState } from "react";
+import { ChevronDown, Newspaper, Search, X } from "lucide-react";
 import type { Berita } from "@/lib/supabase/types";
+import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
+import { filterNews } from "@/lib/utils/filterNews";
 import { FeaturedNewsHero } from "./FeaturedNewsHero";
 import { NewsCard } from "./NewsCard";
-import { Newspaper } from "lucide-react";
+import styles from "./NewsEntrance.module.css";
 
 interface BeritaClientProps {
   initialNews: Berita[];
+  initialCategory?: string;
 }
 
-export function BeritaClient({ initialNews }: BeritaClientProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
+export function BeritaClient({
+  initialNews,
+  initialCategory = "Semua",
+}: BeritaClientProps) {
+  const controlsId = useId();
+  const filterId = `${controlsId}-jenis`;
+  const searchId = `${controlsId}-pencarian`;
+  const resultsId = `${controlsId}-hasil`;
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Extract unique categories available in the news list
   const categories = useMemo(() => {
-    const defaultCats = ["Semua", "Prestasi", "Kegiatan", "Pengumuman", "Akademik"];
-    const fromData = Array.from(
-      new Set(initialNews.map((n) => n.kategori).filter(Boolean) as string[])
-    );
-    const combined = Array.from(new Set([...defaultCats, ...fromData]));
-    return combined;
+    const available = initialNews.map((item) => getNewsCategory(item.kategori));
+    return [
+      "Semua",
+      "Kejuaraan",
+      "Kegiatan",
+      "Akademik",
+      ...Array.from(new Set([...NEWS_CATEGORIES, ...available])).filter(
+        (category) =>
+          !["Kejuaraan", "Kegiatan", "Akademik"].includes(category) &&
+          available.includes(category),
+      ),
+    ];
   }, [initialNews]);
 
-  // Filter news based on category
-  const filteredNews = useMemo(() => {
-    if (selectedCategory === "Semua") {
-      return initialNews;
-    }
-    return initialNews.filter(
-      (n) => n.kategori?.toLowerCase() === selectedCategory.toLowerCase()
-    );
-  }, [initialNews, selectedCategory]);
+  const filteredNews = useMemo(
+    () => filterNews(initialNews, selectedCategory, searchQuery),
+    [initialNews, selectedCategory, searchQuery],
+  );
+  const featuredNews = filteredNews[0];
+  const gridNews = filteredNews.slice(1);
+  const isFiltered = selectedCategory !== "Semua" || searchQuery.trim().length > 0;
 
-  const featuredNews = filteredNews.length > 0 ? filteredNews[0] : null;
-  const gridNews = filteredNews.length > 1 ? filteredNews.slice(1) : [];
+  function clearSearch() {
+    setSearchQuery("");
+    searchRef.current?.focus();
+  }
+
+  function resetFilters() {
+    setSelectedCategory("Semua");
+    setSearchQuery("");
+    searchRef.current?.focus();
+  }
 
   return (
     <div className="w-full">
-      {/* 1. Top Featured Story */}
-      {featuredNews ? (
-        <FeaturedNewsHero berita={featuredNews} />
-      ) : (
-        <div className="text-center py-16 bg-white rounded-3xl border border-zinc-100 mb-12">
-          <Newspaper className="mx-auto text-zinc-300 mb-3" size={40} />
-          <h3 className="font-heading font-bold text-zinc-700 text-lg mb-1">
-            Belum Ada Berita
-          </h3>
-          <p className="text-sm text-zinc-500">
-            Belum ada publikasi berita untuk kategori &quot;{selectedCategory}&quot;.
-          </p>
-        </div>
-      )}
+      <div className={styles.featured}>
+        {featuredNews && <FeaturedNewsHero berita={featuredNews} />}
+      </div>
 
-      {/* 2. Section Header: "Berita Terkini" & Category Filter Pills */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-4 sm:mb-8 pb-2.5 sm:pb-3 border-b border-zinc-200/80">
-        <div>
-          <h2 className="font-heading text-lg sm:text-2xl font-bold text-zinc-900 tracking-tight">
-            Berita Terkini
-          </h2>
-          <p className="text-[11px] sm:text-xs text-zinc-500 mt-0.5">
-            Informasi pilihan dan kabar terhangat seputar Al-Rahmah
-          </p>
+      <div
+        role="search"
+        aria-label="Cari dan saring berita"
+        className={`${styles.controls} mt-0 mb-4 flex flex-col gap-3 border-t border-zinc-200/80 pt-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:pt-3`}
+      >
+        <div className="flex items-center gap-2">
+          <label htmlFor={filterId} className="text-sm text-zinc-500">
+            Jenis berita
+          </label>
+          <div className="relative">
+            <select
+              id={filterId}
+              aria-controls={resultsId}
+              value={selectedCategory}
+              onChange={(event) => setSelectedCategory(event.target.value)}
+              className="min-h-8 min-w-28 cursor-pointer appearance-none rounded-md border-0 bg-white/60 py-1.5 pl-2.5 pr-6 text-[13px] font-medium text-brand-primary transition-colors hover:bg-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+            >
+              {categories.map((category) => (
+                <option key={category} value={category} className="bg-white text-zinc-700">
+                  {category === "Semua" ? "Semua jenis" : category}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={13}
+              aria-hidden="true"
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-brand-primary/60"
+            />
+          </div>
         </div>
 
-        {/* Minimalist Category Filter Pills */}
-        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-          {categories.map((cat) => {
-            const isActive = selectedCategory.toLowerCase() === cat.toLowerCase();
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-medium transition-all duration-200 cursor-pointer shrink-0 ${
-                  isActive
-                    ? "bg-brand-primary text-white shadow-xs"
-                    : "bg-zinc-100 hover:bg-zinc-200/80 text-zinc-600 hover:text-zinc-900"
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
+        <div className="relative w-full sm:w-80 lg:w-96">
+          <label htmlFor={searchId} className="sr-only">Cari berita</label>
+          <Search
+            size={15}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+          />
+          <input
+            ref={searchRef}
+            id={searchId}
+            type="search"
+            aria-controls={resultsId}
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Cari berita..."
+            className="min-h-9 w-full rounded-lg border border-zinc-200/80 bg-white/60 py-2 pl-9 pr-9 text-sm text-zinc-700 placeholder:text-zinc-400 focus:border-brand-primary/40 focus:outline-none focus:ring-2 focus:ring-brand-primary/10 [&::-webkit-search-cancel-button]:appearance-none"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              aria-label="Hapus pencarian"
+              className="absolute right-0.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-zinc-400 hover:text-brand-primary focus-visible:outline-2 focus-visible:outline-brand-primary"
+            >
+              <X size={14} aria-hidden="true" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* 3. 4-Column Flat Editorial Grid (Desktop) / Compact Feed (Mobile) */}
-      {gridNews.length > 0 ? (
-        <div className="flex flex-col divide-y divide-zinc-100 sm:divide-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-7 lg:gap-8">
-          {gridNews.map((item) => (
-            <NewsCard key={item.id} berita={item} />
-          ))}
-        </div>
-      ) : filteredNews.length === 1 ? (
-        <div className="text-center py-8 text-zinc-400 text-xs sm:text-sm">
-          Menampilkan 1 berita utama untuk kategori ini.
-        </div>
-      ) : null}
+      <p role="status" aria-live="polite" aria-atomic="true" className={`${styles.count} mb-4 text-[11px] text-zinc-500 sm:mb-5 sm:text-xs`}>
+        {filteredNews.length} berita {isFiltered ? "ditemukan" : "tersedia"}
+      </p>
+
+      <div id={resultsId} className={styles.results}>
+        {gridNews.length > 0 && (
+          <div className="grid grid-cols-1 divide-y divide-zinc-200/60 sm:divide-y-0 sm:grid-cols-2 lg:grid-cols-4 sm:gap-7 lg:gap-8">
+            {gridNews.map((item) => (
+              <NewsCard key={item.id} berita={item} variant="standard" />
+            ))}
+          </div>
+        )}
+
+        {!featuredNews && (
+          <div className="py-12 text-center">
+            <Newspaper className="mx-auto mb-3 text-brand-primary/40" size={32} aria-hidden="true" />
+            <h2 className="font-heading text-lg font-semibold text-zinc-700">
+              {isFiltered ? "Berita tidak ditemukan" : "Belum ada berita"}
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              {isFiltered
+                ? "Coba kata kunci lain atau ubah jenis berita."
+                : "Berita Al-Rahmah akan ditampilkan di sini."}
+            </p>
+            {isFiltered && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-3 min-h-9 rounded-md px-2 text-xs font-medium text-brand-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+              >
+                Reset pencarian dan filter
+              </button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-

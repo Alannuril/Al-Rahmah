@@ -6,6 +6,7 @@ import { ArrowLeft, Save, Loader2, Plus, Trash2, Image as ImageIcon } from "luci
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { BeritaStatus } from "@/lib/supabase/types";
+import { NEWS_CATEGORIES } from "@/lib/constants/newsCategories";
 import { encodeBeritaContent } from "@/lib/utils/newsGallery";
 
 function slugify(text: string): string {
@@ -188,18 +189,23 @@ export default function TambahBeritaPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
-                Kategori
+                Jenis Berita
               </label>
               <select
                 value={form.kategori}
                 onChange={(e) => setForm({ ...form, kategori: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
               >
-                <option value="Informasi">Informasi</option>
-                <option value="Kegiatan">Kegiatan</option>
-                <option value="Prestasi">Prestasi</option>
-                <option value="PSB">PSB</option>
+                {!NEWS_CATEGORIES.some((category) => category === form.kategori) && (
+                  <option value={form.kategori}>{form.kategori}</option>
+                )}
+                {NEWS_CATEGORIES.map((category) => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
               </select>
+              <p className="mt-1.5 text-xs leading-relaxed text-gray-500">
+                Pilih Akademik untuk informasi PSB dan keputusan akademik.
+              </p>
             </div>
 
             <div>
