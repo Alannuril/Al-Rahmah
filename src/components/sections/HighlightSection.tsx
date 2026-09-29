@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -18,8 +18,6 @@ import {
 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-
-type CategoryFilter = "all" | "keunggulan" | "fasilitas";
 
 interface HighlightItem {
   id: string;
@@ -109,16 +107,148 @@ const MINIMAL_PILLARS = [
 ];
 
 export function HighlightSection() {
-  const [activeFilter, setActiveFilter] = useState<CategoryFilter>("all");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const filteredItems = HIGHLIGHT_ITEMS.filter((item) => {
-    if (activeFilter === "all") return true;
-    return item.category === activeFilter;
-  });
+  useEffect(() => {
+    const viewport = scrollRef.current;
+    if (!viewport) return;
+
+    const controller = new AbortController();
+    const { signal } = controller;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+    let previousTime = performance.now();
+    let resumeAt = 0;
+    let hovered = false;
+    let position = viewport.scrollLeft;
+    let lastWritten = position;
+    let loopWidth = 0;
+    let maxScroll = 0;
+    let suppressClickUntil = 0;
+    let pointer: {
+      id: number;
+      type: string;
+      startX: number;
+      startLeft: number;
+      dragged: boolean;
+    } | null = null;
+
+    const pause = () => {
+      resumeAt = performance.now() + 3000;
+      position = viewport.scrollLeft;
+      lastWritten = position;
+    };
+    const measure = () => {
+      const first = viewport.children[0] as HTMLElement | undefined;
+      const repeated = viewport.children[HIGHLIGHT_ITEMS.length] as HTMLElement | undefined;
+      loopWidth = first && repeated ? repeated.offsetLeft - first.offsetLeft : 0;
+      maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      position = viewport.scrollLeft;
+      lastWritten = position;
+    };
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(viewport);
+    if (viewport.firstElementChild) resizeObserver.observe(viewport.firstElementChild);
+    measure();
+
+    const animate = (time: number) => {
+      const elapsed = Math.min(time - previousTime, 64);
+      previousTime = time;
+      // Native touch, trackpad, scrollbar, and keyboard scrolling take priority.
+      if (viewport.scrollLeft !== lastWritten) pause();
+      const paused = hovered || pointer !== null || viewport.contains(document.activeElement)
+        || document.hidden || reducedMotion.matches || time < resumeAt;
+      if (paused) {
+        position = viewport.scrollLeft;
+        lastWritten = position;
+      } else if (maxScroll > 0 && loopWidth > 0) {
+        position += (loopWidth / 38000) * elapsed;
+        if (maxScroll >= loopWidth && position >= loopWidth) position %= loopWidth;
+        else if (position >= maxScroll) position = 0;
+        viewport.scrollLeft = position;
+        lastWritten = viewport.scrollLeft;
+      }
+      frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+
+    viewport.addEventListener("pointerenter", (event) => {
+      if (event.pointerType === "mouse") hovered = true;
+    }, { signal });
+    viewport.addEventListener("pointerleave", (event) => {
+      if (event.pointerType === "mouse") {
+        hovered = false;
+        pause();
+      }
+    }, { signal });
+    viewport.addEventListener("pointerdown", (event) => {
+      if (!event.isPrimary || event.button !== 0) return;
+      pause();
+      suppressClickUntil = 0;
+      pointer = {
+        id: event.pointerId,
+        type: event.pointerType,
+        startX: event.clientX,
+        startLeft: viewport.scrollLeft,
+        dragged: false,
+      };
+    }, { signal });
+    viewport.addEventListener("pointermove", (event) => {
+      if (!pointer || pointer.id !== event.pointerId || pointer.type !== "mouse") return;
+      const distance = event.clientX - pointer.startX;
+      if (!pointer.dragged && Math.abs(distance) < 5) return;
+      if (!pointer.dragged) {
+        pointer.dragged = true;
+        viewport.setPointerCapture(event.pointerId);
+        viewport.dataset.dragging = "true";
+      }
+      event.preventDefault();
+      viewport.scrollLeft = pointer.startLeft - distance;
+      pause();
+    }, { signal });
+    const endPointer = (event: PointerEvent) => {
+      if (!pointer || pointer.id !== event.pointerId) return;
+      if (pointer.dragged) suppressClickUntil = performance.now() + 400;
+      if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
+      pointer = null;
+      delete viewport.dataset.dragging;
+      pause();
+    };
+    window.addEventListener("pointerup", endPointer, { signal });
+    window.addEventListener("pointercancel", endPointer, { signal });
+    viewport.addEventListener("click", (event) => {
+      if (event.detail > 0 && performance.now() < suppressClickUntil) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, { capture: true, signal });
+    viewport.addEventListener("dragstart", (event) => event.preventDefault(), { signal });
+    viewport.addEventListener("wheel", pause, { passive: true, signal });
+    viewport.addEventListener("keydown", (event) => {
+      pause();
+      if (event.target !== viewport) return;
+      const step = Math.min(viewport.clientWidth * 0.8, 350);
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        viewport.scrollLeft += event.key === "ArrowRight" ? step : -step;
+      } else if (event.key === "Home" || event.key === "End") {
+        event.preventDefault();
+        viewport.scrollLeft = event.key === "Home" ? 0 : maxScroll;
+      }
+      pause();
+    }, { signal });
+
+    return () => {
+      controller.abort();
+      resizeObserver.disconnect();
+      cancelAnimationFrame(frame);
+      delete viewport.dataset.dragging;
+    };
+  }, []);
 
   // Ensure there are at least 8 items in the track for seamless infinite looping
-  const repeatCount = Math.max(2, Math.ceil(8 / filteredItems.length));
-  const loopedItems = Array.from({ length: repeatCount }, () => filteredItems).flat();
+  const repeatCount = Math.max(2, Math.ceil(8 / HIGHLIGHT_ITEMS.length));
+  const loopedItems = Array.from({ length: repeatCount }, () => HIGHLIGHT_ITEMS).flat();
 
   return (
     <section className="py-12 sm:py-16 md:py-20 bg-white relative overflow-hidden">
@@ -156,51 +286,15 @@ export function HighlightSection() {
               })}
             </div>
 
-            {/* Filter Tabs (Clean Minimalist Segmented Tabs) */}
-            <div className="mt-5 inline-flex items-center p-1 rounded-xl bg-zinc-50 border border-zinc-200/70 shadow-none">
-              <button
-                type="button"
-                onClick={() => setActiveFilter("all")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                  activeFilter === "all"
-                    ? "bg-[#396E5F] text-white shadow-2xs"
-                    : "text-zinc-600 hover:text-[#1E3F35]"
-                }`}
-              >
-                Semua
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveFilter("keunggulan")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                  activeFilter === "keunggulan"
-                    ? "bg-[#396E5F] text-white shadow-2xs"
-                    : "text-zinc-600 hover:text-[#1E3F35]"
-                }`}
-              >
-                Keunggulan
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveFilter("fasilitas")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                  activeFilter === "fasilitas"
-                    ? "bg-[#396E5F] text-white shadow-2xs"
-                    : "text-zinc-600 hover:text-[#1E3F35]"
-                }`}
-              >
-                Fasilitas
-              </button>
-            </div>
           </div>
         </ScrollReveal>
 
       </div>
 
       {/* ============================================================ */}
-      {/* 2. HORIZONTAL SCROLLING MARQUEE TRACK (PAUSE ON HOVER)       */}
+      {/* 2. HORIZONTAL SCROLLING TRACK       */}
       {/* ============================================================ */}
-      <div className="relative w-full overflow-hidden py-2 pause-marquee-hover">
+      <div className="relative isolate w-full overflow-hidden py-2">
         {/* Soft edge gradient masks (kiri & kanan) */}
         <div
           className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-white via-white/80 to-transparent z-10"
@@ -211,8 +305,14 @@ export function HighlightSection() {
           aria-hidden="true"
         />
 
-        {/* Marquee Track: bergerak mulus ke samping & tanpa animasi zoom/hover */}
-        <div className="animate-marquee gap-4 sm:gap-5 px-4">
+        {/* Native scrolling supports touch, trackpads, mouse dragging, and keyboard. */}
+        <div
+          ref={scrollRef}
+          role="region"
+          aria-label="Fasilitas dan keunggulan, geser untuk melihat kartu lainnya"
+          tabIndex={0}
+          className="relative z-0 flex cursor-grab select-none gap-4 overflow-x-auto overscroll-x-contain px-4 pb-3 [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-primary data-[dragging=true]:cursor-grabbing sm:gap-5"
+        >
           {loopedItems.map((item, index) => {
             const isKeunggulan = item.category === "keunggulan";
 
@@ -227,7 +327,7 @@ export function HighlightSection() {
                     src={item.image}
                     alt={item.title}
                     fill
-                    sizes="(max-width: 640px) 280px, 330px"
+                    sizes="(max-width: 639px) 280px, (max-width: 767px) 310px, 330px"
                     className="object-cover object-center"
                   />
                   {/* Subtle Gradient Shade */}

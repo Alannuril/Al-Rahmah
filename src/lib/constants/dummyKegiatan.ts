@@ -1,0 +1,43 @@
+import type { Berita } from "@/lib/supabase/types";
+
+export const DUMMY_KEGIATAN: Berita[] = [
+  {
+    id: "keg-1",
+    judul: "Khotmul Qur'an dan Imtihan Tahfidz: Pengukuhan Hafalan 30 Juz Santri",
+    slug: "khotmul-quran-dan-imtihan-tahfidz-30-juz",
+    konten: null,
+    excerpt: "Suasana khidmat menyelimuti wisuda tahfidz di mana puluhan santri memperdengarkan hafalan Al-Qur'an secara mutqin di hadapan asatidz dan orang tua.",
+    kategori: "Kegiatan",
+    thumbnail_url: "https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1200&auto=format&fit=crop",
+    author: "Biro Pengasuhan",
+    status: "Terbit",
+    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+  },
+  {
+    id: "keg-2",
+    judul: "Perkemahan Santri Akhir Pekan: Mengasah Kemandirian, Disiplin, dan Solidaritas",
+    slug: "perkemahan-santri-akhir-pekan-kemandirian",
+    konten: null,
+    excerpt: "Kegiatan luar ruangan kepramukaan dan kepanduan Islam yang melatih ketangkasan fisik, kepemimpinan regu, serta kecintaan terhadap alam.",
+    kategori: "Kegiatan",
+    thumbnail_url: "https://images.unsplash.com/photo-1511629091441-ee46146481b6?q=80&w=1200&auto=format&fit=crop",
+    author: "Kesiswaan",
+    status: "Terbit",
+    created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+  },
+  {
+    id: "keg-3",
+    judul: "Lomba Pidato 3 Bahasa: Panggung Ekspresi Intelektual Santri Al-Rahmah",
+    slug: "lomba-pidato-3-bahasa-santri",
+    konten: null,
+    excerpt: "Ajang tahunan adu ketangkasan retorika dalam bahasa Arab, Inggris, dan Indonesia untuk melatih mental public speaking santri.",
+    kategori: "Kegiatan",
+    thumbnail_url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop",
+    author: "Bagian Bahasa",
+    status: "Terbit",
+    created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+  },
+];

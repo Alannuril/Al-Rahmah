@@ -91,9 +91,9 @@ export function HeroSection() {
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-20 mx-auto flex min-h-dvh w-full max-w-[1300px] flex-col px-4 pb-4 pt-28 sm:px-6 sm:pb-6 md:pt-32 lg:px-7 lg:pt-28">
+      <div className="relative z-20 mx-auto flex min-h-dvh w-full max-w-[1300px] flex-col px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:pt-32 lg:px-7 lg:pt-28">
         <motion.div
-          className="flex w-full flex-1 flex-col gap-3 md:grid md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:items-center md:gap-8 lg:grid-cols-2 lg:gap-12"
+          className="flex w-full flex-1 flex-col justify-end gap-12 min-[390px]:gap-16 sm:gap-6 md:grid md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:justify-normal md:items-center md:gap-8 lg:grid-cols-2 lg:gap-12"
           style={{
             y: shouldReduceMotion ? 0 : introY,
             opacity: shouldReduceMotion ? 1 : introOpacity,
@@ -154,13 +154,13 @@ export function HeroSection() {
                 opacity: { duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] },
                 y: { duration: shouldReduceMotion ? 0 : 5, repeat: shouldReduceMotion ? 0 : Infinity, ease: "easeInOut", delay: 1.15 }
               }}
-              className="relative aspect-[1602/1362] w-full max-w-40 max-[374px]:max-w-28 sm:max-w-44 md:max-w-[260px] lg:max-w-[340px] xl:max-w-[380px]"
+              className="relative aspect-[1602/1362] w-[68vw] max-w-[280px] shrink-0 md:w-full md:max-w-[260px] lg:max-w-[340px] xl:max-w-[380px]"
             >
               <Image
                 src="/images/model-gradien.png"
                 alt="Santriwati Pondok Pesantren Al-Rahmah sedang membaca buku"
                 fill
-                sizes="(max-width: 374px) 112px, (max-width: 639px) 160px, (max-width: 767px) 176px, (max-width: 1023px) 260px, (max-width: 1279px) 340px, 380px"
+                sizes="(max-width: 411px) 68vw, (max-width: 767px) 280px, (max-width: 1023px) 260px, (max-width: 1279px) 340px, 380px"
                 className="object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.3)]"
                 priority
               />
@@ -168,7 +168,7 @@ export function HeroSection() {
           </div>
 
         </motion.div>
-        <div role="group" aria-label="Pilihan foto pesantren" className="mt-2 flex shrink-0 items-center justify-center">
+        <div role="group" aria-label="Pilihan foto pesantren" className="mt-6 min-[390px]:mt-8 sm:mt-3 flex shrink-0 items-center justify-center">
           {BACKGROUND_IMAGES.map((_, index) => (
             <button
               key={index}

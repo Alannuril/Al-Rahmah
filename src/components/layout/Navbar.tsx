@@ -11,10 +11,10 @@ import { useAuth } from "@/components/providers/AuthProvider";
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const pathname = usePathname();
+  const [menuPathname, setMenuPathname] = useState(pathname);
 
   const isHomePage = pathname === "/";
   const isPsbPage = pathname.startsWith("/psb");
@@ -29,20 +29,27 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
+  if (menuPathname !== pathname) {
+    setMenuPathname(pathname);
+    setMobileMenuOpen(false);
+  }
+
   const navLinks = [
     { name: "Beranda", href: "/" },
     { name: "Tentang Al-Rahmah", href: "/tentang" },
     { name: "Pendidikan", href: "/pendidikan" },
-    { 
-      name: "Media & Prestasi", 
-      href: "/media",
-      subLinks: [
-        { name: "Berita", href: "/media/berita" },
-        { name: "Kejuaraan", href: "/media/kejuaraan" },
-        { name: "Kegiatan", href: "/media/kegiatan" },
-        { name: "Dokumentasi", href: "/media/dokumentasi" }
-      ]
-    },
+    { name: "Berita", href: "/media" },
     { name: "PSB", href: "/psb" },
   ];
 
@@ -78,43 +85,25 @@ export function Navbar() {
         {/* Desktop Nav - Centered in remaining space */}
         <nav className="hidden lg:flex items-center justify-center gap-10 xl:gap-11 flex-1 transition-all duration-300">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href || (link.subLinks && link.href !== "/" && pathname.startsWith(link.href));
+            const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
             return (
-              <div key={link.name} className="relative group">
-                <Link 
-                  href={link.href}
-                  className={clsx(
-                    "font-medium text-sm tracking-wide transition-colors relative flex items-center gap-1.5",
-                    isNavSolid ? "text-brand-primary/80 hover:text-brand-secondary" : "text-white/90 hover:text-white",
-                    isActive && (isNavSolid ? "text-brand-secondary font-semibold" : "text-white font-semibold")
-                  )}
-                >
-                  {link.name}
-                  {link.subLinks && <ChevronDown size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />}
-                  <span className={clsx(
-                    "absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full",
-                    isActive ? "w-full" : "",
-                    isNavSolid ? "bg-brand-secondary" : "bg-white"
-                  )}></span>
-                </Link>
-                
-                {/* Dropdown */}
-                {link.subLinks && (
-                  <div className="absolute top-full left-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                    <div className="w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 flex flex-col transform origin-top-left scale-95 group-hover:scale-100 transition-transform duration-300">
-                      {link.subLinks.map((subLink) => (
-                        <Link 
-                          key={subLink.name} 
-                          href={subLink.href}
-                          className="px-5 py-2.5 text-sm font-medium text-brand-primary hover:bg-brand-primary/5 hover:text-brand-secondary transition-colors"
-                        >
-                          {subLink.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+              <Link
+                key={link.name}
+                href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
+                className={clsx(
+                  "group font-medium text-sm tracking-wide transition-colors relative flex items-center gap-1.5 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary",
+                  isNavSolid ? "text-brand-primary/80 hover:text-brand-secondary" : "text-white/90 hover:text-white",
+                  isActive && (isNavSolid ? "text-brand-secondary font-semibold" : "text-white font-semibold")
                 )}
-              </div>
+              >
+                {link.name}
+                <span className={clsx(
+                  "absolute -bottom-1 left-0 h-0.5 transition-all duration-300 group-hover:w-full",
+                  isActive ? "w-full" : "w-0",
+                  isNavSolid ? "bg-brand-secondary" : "bg-white"
+                )} />
+              </Link>
             );
           })}
         </nav>
@@ -177,8 +166,8 @@ export function Navbar() {
                 ? "w-48 opacity-100 translate-x-0 overflow-visible"
                 : "w-0 opacity-0 translate-x-4 overflow-hidden pointer-events-none"
             )}>
-              <Link 
-                href="/psb" 
+              <Link
+                href="/psb"
                 className="bg-brand-primary hover:bg-brand-secondary text-white font-bold text-sm tracking-wide px-7 py-3 rounded-full shadow-lg shadow-brand-primary/25 transition-all duration-300 hover:-translate-y-0.5 whitespace-nowrap inline-block"
               >
                 Daftar Sekarang
@@ -188,7 +177,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
+        <button
           className={clsx(
             "lg:hidden p-2 -mr-2 transition-colors",
             isNavSolid ? "text-brand-primary" : "text-white"
@@ -199,88 +188,46 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Nav Overlay */}
+      {/* Mobile Nav Overlay (Lively Islamic Emerald Glass, non-white) */}
       <div className={clsx(
-        "lg:hidden absolute top-full left-0 right-0 glass-card mx-4 rounded-2xl overflow-hidden transition-all duration-300 origin-top shadow-2xl",
+        "lg:hidden absolute top-full left-0 right-0 bg-gradient-to-b from-[#2d6153]/95 via-[#245246]/95 to-[#1d443a]/95 backdrop-blur-xl border border-white/20 mx-4 rounded-2xl overflow-hidden transition-all duration-300 origin-top shadow-2xl shadow-emerald-950/50 text-white",
         mobileMenuOpen ? "opacity-100 scale-y-100 mt-2" : "opacity-0 scale-y-0 pointer-events-none"
       )}>
         <div className="p-5 flex flex-col gap-2">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href || (link.subLinks && link.href !== "/" && pathname.startsWith(link.href));
-            const isSubMenuOpen = openSubMenus[link.name];
-            
+            const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
             return (
-              <div key={link.name} className="flex flex-col">
-                {link.subLinks ? (
-                  <button
-                    className={clsx(
-                      "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center w-full text-left",
-                      isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
-                    )}
-                    onClick={() => {
-                      setOpenSubMenus(prev => ({ ...prev, [link.name]: !prev[link.name] }))
-                    }}
-                  >
-                    {link.name}
-                    <ChevronDown 
-                      size={18} 
-                      className={clsx("transition-transform duration-300", isSubMenuOpen ? "rotate-180" : "")} 
-                    />
-                  </button>
-                ) : (
-                  <Link 
-                    href={link.href}
-                    className={clsx(
-                      "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center",
-                      isActive ? "bg-brand-primary/5 text-brand-secondary" : "text-brand-primary hover:bg-brand-primary/5"
-                    )}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
+              <Link
+                key={link.name}
+                href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
+                className={clsx(
+                  "px-4 py-3 font-medium rounded-xl transition-colors flex justify-between items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-lime",
+                  isActive
+                    ? "bg-[#8AC77F]/25 text-[#ABD8B1] border border-[#8AC77F]/30 font-semibold"
+                    : "text-white/90 hover:text-white hover:bg-white/10"
                 )}
-                {link.subLinks && (
-                  <div className={clsx(
-                    "grid transition-all duration-300 ease-in-out",
-                    isSubMenuOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-                  )}>
-                    <div className="overflow-hidden">
-                      <div className="flex flex-col px-4 pb-2 pt-1 gap-1 ml-4 border-l-2 border-brand-primary/10">
-                        {link.subLinks.map(subLink => (
-                          <Link 
-                            key={subLink.name}
-                            href={subLink.href}
-                            className={clsx(
-                              "py-2 px-3 text-sm rounded-lg transition-colors",
-                              pathname === subLink.href ? "text-brand-secondary bg-brand-primary/5 font-semibold" : "text-brand-primary/70 hover:text-brand-primary hover:bg-brand-primary/5 font-medium"
-                            )}
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            {subLink.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.name}
+              </Link>
             );
           })}
           {user ? (
-            <div className="mt-4 p-4 rounded-2xl bg-brand-primary/5 border border-brand-primary/10 space-y-3">
+            <div className="mt-4 p-4 rounded-2xl bg-white/10 border border-white/15 space-y-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-full bg-brand-lime text-brand-primary flex items-center justify-center font-bold text-xs">
                   {user.email?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <div className="overflow-hidden">
-                  <p className="text-[10px] uppercase font-bold text-zinc-400">Akun Aktif</p>
-                  <p className="text-xs font-bold text-brand-primary truncate">{user.email}</p>
+                  <p className="text-[10px] uppercase font-bold text-white/60">Akun Aktif</p>
+                  <p className="text-xs font-bold text-white truncate">{user.email}</p>
                 </div>
               </div>
               <Link
                 href="/psb"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-center bg-brand-primary text-white hover:bg-brand-secondary font-semibold px-4 py-3 rounded-xl text-sm transition-colors shadow-xs"
+                className="block text-center bg-brand-lime text-brand-primary hover:bg-brand-accent font-semibold px-4 py-3 rounded-xl text-sm transition-colors shadow-xs"
               >
                 Info & Pendaftaran PSB
               </Link>
@@ -289,29 +236,22 @@ export function Navbar() {
                   setMobileMenuOpen(false);
                   await signOut();
                 }}
-                className="w-full text-center text-xs font-semibold text-red-600 hover:underline py-1"
+                className="w-full text-center text-xs font-semibold text-red-300 hover:text-red-200 hover:underline py-1"
               >
                 Keluar (Logout)
               </button>
             </div>
           ) : (
-            <div className="mt-4 space-y-2">
+            <div className="mt-3">
               {!isPsbPage && (
-                <Link 
-                  href="/psb" 
-                  className="block text-center bg-brand-primary text-white hover:bg-brand-secondary transition-colors font-semibold px-6 py-3.5 rounded-xl text-base shadow-md"
+                <Link
+                  href="/psb"
+                  className="block text-center bg-gradient-to-r from-[#ABD8B1] via-[#8AC77F] to-[#7CBF71] text-[#143026] hover:brightness-105 transition-all font-bold px-6 py-3.5 rounded-xl text-base shadow-lg shadow-black/25"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Daftar Sekarang
                 </Link>
               )}
-              <Link
-                href="/psb/login"
-                className="block text-center text-xs font-bold text-brand-primary hover:underline py-1.5"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Masuk Akun Calon Santri
-              </Link>
             </div>
           )}
         </div>

@@ -12,7 +12,7 @@ Pimpinan Pondok Pesantren Al-Rahmah menyampaikan apresiasi dan rasa syukur yang 
 Melalui program halaqah Qur'aniyah yang terstruktur dan karantina tahfidz berkala, Pondok Pesantren Al-Rahmah senantiasa berkomitmen membina generasi Qur'ani yang kokoh dalam hafalan, mendalam dalam pemahaman, serta luhur dalam pengamalan akhlakul karimah sehari-hari. Semoga capaian ini menjadi pemantik semangat bagi seluruh santri untuk terus meningkatkan prestasi dan kecintaan kepada Al-Qur'an.`,
     excerpt:
       "Kafilah santri Pondok Pesantren Al-Rahmah berhasil menorehkan prestasi membanggakan dengan meraih juara cabang tahfidz Al-Qur'an tingkat provinsi setelah bersaing dengan ratusan peserta dari berbagai daerah. Pencapaian ini menjadi bukti komitmen pesantren dalam melahirkan generasi huffadz yang berakhlak mulia dan berwawasan luas.",
-    kategori: "Prestasi",
+    kategori: "Kejuaraan",
     thumbnail_url:
       "https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1200&auto=format&fit=crop",
     gambar_urls: [
@@ -51,7 +51,7 @@ Materi pembekalan meliputi manajemen organisasi, komunikasi publik yang efektif,
 Proses pendaftaran dilaksanakan secara terpadu melalui sistem online pesantren guna memudahkan calon wali santri dari berbagai daerah. Pesantren menyediakan beasiswa khusus bagi santri berprestasi di bidang tahfidz dan akademik.`,
     excerpt:
       "Pendaftaran santri baru untuk jenjang MTs dan MA resmi dibuka secara daring. Temukan informasi persyaratan berkas, jadwal observasi, dan alur pendaftaran terpadu melalui portal resmi PSB demi memudahkan calon wali santri dalam mendaftarkan putra-putrinya.",
-    kategori: "Pengumuman",
+    kategori: "Akademik",
     thumbnail_url:
       "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
     author: "Panitia PSB",

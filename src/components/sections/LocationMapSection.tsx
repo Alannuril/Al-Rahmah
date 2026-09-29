@@ -1,8 +1,7 @@
-import { MapPin, Navigation, Clock, ExternalLink, Compass } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { createClient } from "@/lib/supabase/server";
 import type { PengaturanWebsite } from "@/lib/supabase/types";
-import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/J1PeZhP9SzcFiC3M8";
 const GOOGLE_MAPS_EMBED_URL =
@@ -31,129 +30,77 @@ export async function LocationMapSection() {
   const cleanWaNumber = noWa.replace(/[^0-9]/g, "");
 
   return (
-    <section className="py-12 sm:py-16 bg-surface/40 relative">
-      <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <ScrollReveal variant="fade-up" duration={0.6}>
-          <SectionHeading
-            title="Lokasi Pondok Pesantren"
-            subtitle="Walantaka, Kota Serang – Akses mudah via Tol Walantaka / Serang Timur."
-            centered
-            className="mb-8 sm:mb-10"
-          />
-        </ScrollReveal>
+    <section aria-label="Lokasi Pondok Pesantren" className="bg-white py-10 sm:py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          title="Lokasi Pondok Pesantren"
+          subtitle="Walantaka, Kota Serang, Banten."
+          className="mb-6 sm:mb-8"
+        />
 
-        {/* Minimalist Grid: Map on Top, Info on Bottom (Desktop: Side by Side) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          {/* Interactive Map (Compact & Clean Borderless with Zoom-In) */}
-          <ScrollReveal variant="zoom-in" duration={0.7} className="lg:col-span-7 rounded-3xl overflow-hidden shadow-sm relative h-[280px] sm:h-[320px] lg:h-auto min-h-[280px] lg:min-h-[360px] bg-zinc-100">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-10">
+          <div className="h-60 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100 sm:h-72 lg:h-80">
             <iframe
               src={GOOGLE_MAPS_EMBED_URL}
               width="100%"
               height="100%"
               style={{ border: 0 }}
-              allowFullScreen={true}
+              allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="Peta Lokasi Pondok Pesantren Al-Rahmah Walantaka"
-              className="w-full h-full min-h-[280px]"
+              className="h-full w-full"
             />
+          </div>
 
-            {/* Floating Tag without borders */}
-            <div className="absolute top-3 left-3 z-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-sm shadow-sm text-[11px] font-semibold text-zinc-800">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Al-Rahmah Walantaka</span>
+          <div className="min-w-0 lg:py-1">
+            <h3 className="text-base font-semibold leading-6 text-zinc-900">
+              Pondok Pesantren Al-Rahmah
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-zinc-600 break-words">
+              {alamat}
+            </p>
+
+            <dl className="mt-5 space-y-4 border-t border-zinc-200 pt-5">
+              <div>
+                <dt className="text-xs font-medium text-zinc-500">Akses transportasi</dt>
+                <dd className="mt-1 text-sm leading-6 text-zinc-700">
+                  Via Exit Tol Walantaka. Dapat dilalui motor, mobil, dan bus.
+                </dd>
               </div>
-            </div>
-
-            {/* Floating Open Button without borders */}
-            <a
-              href={GOOGLE_MAPS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-sm hover:bg-white shadow-sm text-[11px] font-semibold text-brand-primary transition-all"
-            >
-              <span>Perbesar</span>
-              <ExternalLink size={11} />
-            </a>
-          </ScrollReveal>
-
-          {/* Info Card (Clean White Surface with Slide-Right) */}
-          <ScrollReveal variant="slide-right" duration={0.7} delay={0.15} className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col justify-between gap-6">
-            <div className="space-y-4">
-              {/* Alamat */}
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0 mt-0.5">
-                  <MapPin size={16} />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-sm text-zinc-900">
-                    Pondok Pesantren Al-Rahmah
-                  </h3>
-                  <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed">
-                    {alamat}
-                  </p>
-                </div>
+              <div>
+                <dt className="text-xs font-medium text-zinc-500">Jam kunjungan</dt>
+                <dd className="mt-1 text-sm leading-6 text-zinc-700">
+                  Senin – Ahad, 08.00 – 16.30 WIB
+                </dd>
               </div>
+            </dl>
 
-              {/* Akses */}
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-brand-secondary/10 text-brand-secondary flex items-center justify-center shrink-0 mt-0.5">
-                  <Navigation size={16} />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-zinc-900">
-                    Akses Transportasi
-                  </h4>
-                  <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed">
-                    Akses mudah via Exit Tol Walantaka. Jalur dapat dilalui kendaraan roda 2 maupun roda 4/bus.
-                  </p>
-                </div>
-              </div>
-
-              {/* Jam Layanan */}
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <Clock size={16} />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm text-zinc-900">
-                    Layanan Kunjungan
-                  </h4>
-                  <p className="text-xs text-zinc-600 mt-0.5 leading-relaxed">
-                    Senin – Ahad: 08.00 – 16.30 WIB
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons - No Border lines */}
-            <div className="flex items-center gap-2.5 pt-2">
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
               <a
                 href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-white font-medium text-xs shadow-xs transition-all"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2A5C4E] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
               >
-                <Compass size={15} />
-                <span>Buka di Google Maps</span>
-                <ExternalLink size={13} className="opacity-80" />
+                Petunjuk arah
+                <ArrowUpRight size={16} aria-hidden="true" />
               </a>
 
               {cleanWaNumber && (
                 <a
-                  href={`https://wa.me/${cleanWaNumber}?text=${encodeURIComponent(
+                  href={"https://wa.me/" + cleanWaNumber + "?text=" + encodeURIComponent(
                     "Halo Admin Al-Rahmah, saya ingin menanyakan rute menuju pondok pesantren."
-                  )}`}
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-2.5 rounded-xl bg-surface hover:bg-zinc-200/60 text-zinc-700 font-medium text-xs transition-all text-center"
+                  className="inline-flex min-h-11 items-center rounded-sm text-sm font-medium text-brand-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
                 >
-                  Tanya WA
+                  Tanya via WhatsApp
                 </a>
               )}
             </div>
-          </ScrollReveal>
+          </div>
         </div>
       </div>
     </section>
