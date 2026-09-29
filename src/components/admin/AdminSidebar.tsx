@@ -7,7 +7,6 @@ import clsx from "clsx";
 import {
   LayoutDashboard,
   Newspaper,
-  Images,
   GraduationCap,
   Settings,
   LogOut,
@@ -20,7 +19,6 @@ import { createClient } from "@/lib/supabase/client";
 const menuItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Kelola Berita", href: "/admin/berita", icon: Newspaper },
-  { name: "Kelola Galeri", href: "/admin/galeri", icon: Images },
   { name: "Informasi PSB", href: "/admin/psb", icon: GraduationCap },
   { name: "Pengaturan Website", href: "/admin/pengaturan", icon: Settings },
 ];
@@ -54,8 +52,10 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     <>
       {/* Mobile backdrop */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+        <button
+          type="button"
+          aria-label="Tutup menu admin"
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -63,17 +63,14 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       {/* Sidebar */}
       <aside
         className={clsx(
-          "fixed top-0 left-0 z-50 h-full w-[260px] flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed left-0 top-0 z-50 flex h-dvh w-60 flex-col bg-[#1c4035] transition-transform duration-200 ease-out lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
-        style={{
-          background: "linear-gradient(180deg, #1E3F35 0%, #2D5A4C 40%, #396E5F 100%)",
-        }}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between px-6 py-6 border-b border-white/10">
+        <div className="flex items-center justify-between border-b border-white/15 px-4 py-5">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-white/10 shadow-lg">
+            <div className="relative h-10 w-10 overflow-hidden rounded-sm bg-white/10">
               <Image
                 src="/images/logoAl-rahmah.jpeg"
                 alt="Logo Al-Rahmah"
@@ -92,14 +89,16 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           </div>
           <button
             onClick={onClose}
-            className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
+            type="button"
+            aria-label="Tutup menu admin"
+            className="rounded-md p-2 text-white/80 hover:bg-white/10 lg:hidden"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+        <nav aria-label="Navigasi admin" className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -109,17 +108,17 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 href={item.href}
                 onClick={onClose}
                 className={clsx(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group",
+                  "group flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
                   active
-                    ? "bg-white/15 text-white shadow-sm shadow-black/10"
-                    : "text-white/60 hover:bg-white/8 hover:text-white/90"
+                    ? "bg-white/15 text-white"
+                    : "text-white/75 hover:bg-white/10 hover:text-white"
                 )}
               >
                 <Icon
                   size={19}
                   className={clsx(
                     "shrink-0 transition-colors",
-                    active ? "text-brand-accent" : "text-white/50 group-hover:text-white/70"
+                    active ? "text-brand-accent" : "text-white/65 group-hover:text-white"
                   )}
                 />
                 <span className="flex-1">{item.name}</span>
@@ -132,10 +131,10 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="px-3 py-4 border-t border-white/10">
+        <div className="border-t border-white/15 px-3 py-4">
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:bg-red-500/15 hover:text-red-300 transition-all duration-200 w-full group"
+            className="group flex min-h-11 w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white"
           >
             <LogOut size={19} className="shrink-0 group-hover:text-red-300 transition-colors" />
             <span>Logout</span>
@@ -143,7 +142,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
           {/* Admin info */}
           <div className="mt-3 px-3 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/70 text-xs font-bold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-white/10 text-xs font-bold text-white/70">
               A
             </div>
             <div className="flex flex-col">

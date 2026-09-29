@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Loader2, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Plus, Trash2, Image as ImageIcon, Eye } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { BeritaStatus } from "@/lib/supabase/types";
 import { NEWS_CATEGORIES } from "@/lib/constants/newsCategories";
 import { encodeBeritaContent } from "@/lib/utils/newsGallery";
+import { NewsPreviewDialog } from "@/components/admin/NewsPreviewDialog";
 
 function slugify(text: string): string {
   return text
@@ -22,6 +23,7 @@ export default function TambahBeritaPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
 
   const [imageUrls, setImageUrls] = useState<string[]>([""]);
 
@@ -124,7 +126,7 @@ export default function TambahBeritaPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="mx-auto max-w-5xl space-y-5">
       {/* Top action */}
       <div className="flex items-center justify-between">
         <Link
@@ -136,7 +138,7 @@ export default function TambahBeritaPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm">
+      <div className="rounded-md border border-zinc-200 bg-white p-4 sm:p-6 lg:p-8">
         <div className="mb-6 pb-6 border-b border-gray-100">
           <h1 className="text-xl font-heading font-bold text-gray-900">Tulis Berita Baru</h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -171,7 +173,7 @@ export default function TambahBeritaPage() {
               <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">
                 Slug URL <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
                 <span className="text-xs text-gray-400 font-mono">/media/berita/</span>
                 <input
                   type="text"
@@ -179,7 +181,7 @@ export default function TambahBeritaPage() {
                   value={form.slug}
                   onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })}
                   placeholder="wisuda-tahfidz-angkatan-10"
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-xs font-mono text-gray-700 outline-none focus:bg-white focus:border-brand-primary/30 transition-all"
+                  className="min-w-0 w-full flex-1 rounded-md border border-zinc-200 bg-zinc-50 px-4 py-2.5 font-mono text-xs text-zinc-700 outline-none focus:border-brand-primary focus:bg-white"
                 />
               </div>
             </div>
@@ -237,7 +239,7 @@ export default function TambahBeritaPage() {
           </div>
 
           {/* Multi-Image Section (Maksimal 3 Gambar) */}
-          <div className="space-y-4 p-5 rounded-2xl bg-gray-50/70 border border-gray-100">
+          <div className="space-y-4 border-t border-zinc-200 pt-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider">
@@ -264,7 +266,7 @@ export default function TambahBeritaPage() {
               {imageUrls.map((url, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-xl bg-white border border-gray-200/80 shadow-2xs space-y-2.5"
+                  className="space-y-2.5 border-t border-zinc-200 pt-3.5"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-gray-700 flex items-center gap-1.5">
@@ -337,28 +339,51 @@ export default function TambahBeritaPage() {
           </div>
 
           {/* Tombol Simpan */}
-          <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-zinc-200 pt-4">
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              className="inline-flex min-h-10 items-center gap-2 rounded-md border border-zinc-200 px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+            >
+              <Eye size={16} aria-hidden="true" />
+              Pratinjau
+            </button>
+            <Link
+              href="/admin/berita"
+              className="inline-flex min-h-10 items-center rounded-md px-4 py-2.5 text-sm font-semibold text-zinc-600 hover:bg-zinc-100"
+            >
+              Batal
+            </Link>
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-3.5 bg-brand-primary hover:bg-brand-primary/90 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 cursor-pointer"
+              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary/90 disabled:opacity-70"
             >
               {saving ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
                 <Save size={16} />
               )}
-              Simpan &amp; Publikasikan
+              {form.status === "Draft" ? "Simpan Draft" : "Simpan & Publikasikan"}
             </button>
-            <Link
-              href="/admin/berita"
-              className="px-6 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold text-sm rounded-xl transition-all"
-            >
-              Batal
-            </Link>
           </div>
         </form>
       </div>
+      {showPreview && (
+        <NewsPreviewDialog
+          berita={{
+            judul: form.judul.trim() || "Judul Berita",
+            kategori: form.kategori,
+            created_at: new Date().toISOString(),
+            excerpt: form.excerpt.trim() || null,
+            konten: form.konten.trim() || null,
+            thumbnail_url: imageUrls.find((url) => url.trim())?.trim() || null,
+            gambar_urls: imageUrls.map((url) => url.trim()).filter(Boolean),
+          }}
+          status={form.status}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 }
