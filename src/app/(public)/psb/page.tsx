@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import {
   Calendar,
@@ -14,13 +15,6 @@ import {
   ChevronDown,
   CheckCircle2,
   AlertTriangle,
-  Layers,
-  Clock,
-  ClipboardList,
-  GraduationCap,
-  Sparkles,
-  Users,
-  Award,
   ArrowRight,
 } from "lucide-react";
 import { DUMMY_PSB_DATA, PsbAnnouncementData } from "@/lib/constants/psbData";
@@ -30,11 +24,14 @@ import {
   configToAnnouncementData,
   findActiveGelombang,
   formatDateRangeDisplay,
-  formatIndoDate,
 } from "@/lib/utils/psbHelper";
+import { PsbReveal } from "@/components/psb/PsbReveal";
+import styles from "@/components/psb/PsbMotion.module.css";
 
 export default function PsbInformationPage() {
   const [data, setData] = useState<PsbAnnouncementData>(DUMMY_PSB_DATA);
+  const prefersReducedMotion = useReducedMotion();
+  const faqId = useId();
 
   // Interaction states
   const [copiedLink, setCopiedLink] = useState(false);
@@ -109,12 +106,12 @@ export default function PsbInformationPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#F2F7F4] via-white to-[#F2F7F4] pt-28 sm:pt-32 pb-20 text-zinc-800">
+    <main className={`${styles.page} min-h-screen bg-gradient-to-b from-[#F2F7F4] via-white to-[#F2F7F4] pt-28 sm:pt-32 pb-20 text-zinc-800`}>
       
       {/* ============================================================ */}
       {/* 1. HEADER UTAMA (FONT STANDAR KONSISTEN)                     */}
       {/* ============================================================ */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center mb-8">
+      <section className={`${styles.heading} container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl text-center mb-8`}>
         <h1 className="font-heading text-2xl sm:text-3xl lg:text-[32px] font-bold text-zinc-900 tracking-tight">
           Penerimaan Santri Baru (PSB)
         </h1>
@@ -130,31 +127,33 @@ export default function PsbInformationPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Poster Flyer Interaktif (5 Kolom) */}
-          <div className="lg:col-span-5 flex flex-col items-center">
-            <div
+          <div className={`${styles.poster} lg:col-span-5 flex flex-col items-center`}>
+            <button
+              type="button"
+              aria-label="Perbesar poster pendaftaran santri baru"
               onClick={() => setIsLightboxOpen(true)}
-              className="group relative w-full max-w-[280px] sm:max-w-[320px] rounded-2xl overflow-hidden bg-white border border-zinc-200/90 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-[#396E5F]/50"
+              className="group relative block w-full max-w-[280px] sm:max-w-[320px] rounded-2xl overflow-hidden bg-white border border-zinc-200/90 shadow-sm cursor-pointer transition-all duration-300 hover:shadow-xl hover:border-[#396E5F]/50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#396E5F]"
             >
               {/* Overlay Zoom */}
-              <div className="absolute inset-0 z-10 bg-[#1E3F35]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-[1px]">
-                <div className="flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-3 py-1.5 rounded-full">
+              <span className="absolute inset-0 z-10 bg-[#1E3F35]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white backdrop-blur-[1px]">
+                <span className="flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-3 py-1.5 rounded-full">
                   <Maximize2 size={14} />
                   <span>Perbesar Poster</span>
-                </div>
-              </div>
+                </span>
+              </span>
 
               {/* Poster Gambar */}
-              <div className="relative w-full aspect-[326/456]">
+              <span className="relative block w-full aspect-[326/456]">
                 <Image
                   src={data.flyerUrl}
                   alt={`Poster Pengumuman Pendaftaran Santri Baru Al-Rahmah ${data.tahunAjaran}`}
                   fill
                   priority
                   sizes="(max-width: 640px) 280px, 320px"
-                  className="object-contain p-2"
+                  className={`${styles.posterImage} object-contain p-2`}
                 />
-              </div>
-            </div>
+              </span>
+            </button>
 
             <button
               type="button"
@@ -167,7 +166,7 @@ export default function PsbInformationPage() {
           </div>
 
           {/* Informasi & Tombol Pendaftaran (7 Kolom) */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-5">
+          <div className={`${styles.intro} lg:col-span-7 space-y-4 sm:space-y-5`}>
             
             {/* Status Badge Tunggal & Rapi */}
             <div className="flex items-center">
@@ -223,7 +222,7 @@ export default function PsbInformationPage() {
                       href={activeWaveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 min-w-0 py-3 px-3.5 sm:px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm shadow-[#396E5F]/20 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer text-center"
+                      className={`${styles.action} flex-1 min-w-0 py-3 px-3.5 sm:px-5 rounded-xl bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm shadow-[#396E5F]/20 cursor-pointer text-center`}
                     >
                       <span className="truncate">Isi Formulir (Google Form)</span>
                       <ExternalLink size={15} className="shrink-0" />
@@ -232,11 +231,11 @@ export default function PsbInformationPage() {
                     <button
                       type="button"
                       onClick={handleCopyLink}
-                      className="shrink-0 py-3 px-3 sm:px-4 rounded-xl bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 hover:border-zinc-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                      className={`${styles.action} shrink-0 py-3 px-3 sm:px-4 rounded-xl bg-white hover:bg-zinc-50 text-zinc-700 border border-zinc-200 hover:border-zinc-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs`}
                     >
                       {copiedLink ? (
                         <>
-                          <Check size={14} className="text-[#396E5F]" />
+                          <Check size={14} className={`${styles.copied} text-[#396E5F]`} />
                           <span className="font-bold text-[#396E5F]">Tersalin!</span>
                         </>
                       ) : (
@@ -273,7 +272,7 @@ export default function PsbInformationPage() {
 
                 return (
                   <div key={wave.id || idx} className="contents md:block">
-                    <div className="relative flex flex-col items-center text-center px-4">
+                    <PsbReveal variant="scale" delay={idx * 0.08} className="relative flex flex-col items-center text-center px-4">
                       {/* Node Indicator Row with Desktop Connecting Line */}
                       <div className="relative flex items-center justify-center w-full mb-3">
                         {/* Desktop connecting line to next wave */}
@@ -327,7 +326,7 @@ export default function PsbInformationPage() {
                             href={wave.linkFormulir || data.googleFormUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs transition-colors shadow-xs cursor-pointer"
+                            className={`${styles.action} inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#396E5F] hover:bg-[#2A5C4E] text-white font-semibold text-xs transition-colors shadow-xs cursor-pointer`}
                           >
                             <span>Daftar Sekarang</span>
                             <ArrowRight size={13} />
@@ -342,7 +341,7 @@ export default function PsbInformationPage() {
                           </span>
                         )}
                       </div>
-                    </div>
+                    </PsbReveal>
 
                     {/* Mobile connecting vertical line */}
                     {!isLast && (
@@ -375,9 +374,11 @@ export default function PsbInformationPage() {
 
           {/* Daftar Baris Minimalis Rata Kiri Sesuai Skala Sistem */}
           <div>
-            {data.tahapan.map((item) => (
-              <div
+            {data.tahapan.map((item, idx) => (
+              <PsbReveal
                 key={item.step}
+                variant="slide-left"
+                delay={idx * 0.08}
                 className="grid grid-cols-12 items-baseline py-4 sm:py-5 border-t border-zinc-200/80 first:border-t-0 transition-colors group hover:bg-zinc-50/40"
               >
                 {/* Angka Elegan Sesuai Skala Sistem */}
@@ -394,7 +395,7 @@ export default function PsbInformationPage() {
                     {item.desc}
                   </p>
                 </div>
-              </div>
+              </PsbReveal>
             ))}
           </div>
 
@@ -414,7 +415,7 @@ export default function PsbInformationPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             
             {/* Non Yatim */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#ABD8B1]/60 shadow-2xs space-y-3.5">
+            <PsbReveal variant="slide-left" className="p-5 sm:p-6 rounded-2xl bg-white border border-[#ABD8B1]/60 shadow-2xs space-y-3.5">
               <div className="flex items-center justify-between pb-2.5 border-b border-zinc-100">
                 <span className="font-heading font-bold text-xs sm:text-sm text-zinc-900 flex items-center gap-2">
                   <CreditCard size={17} className="text-[#396E5F]" />
@@ -450,11 +451,11 @@ export default function PsbInformationPage() {
               <button
                 type="button"
                 onClick={handleCopyAccount}
-                className="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-[#F2F7F4] text-[#396E5F] border border-[#ABD8B1] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className={`${styles.action} w-full py-2.5 px-3 rounded-xl bg-white hover:bg-[#F2F7F4] text-[#396E5F] border border-[#ABD8B1] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer`}
               >
                 {copiedAccount ? (
                   <>
-                    <Check size={13} className="text-[#396E5F]" />
+                    <Check size={13} className={`${styles.copied} text-[#396E5F]`} />
                     <span className="font-bold">Nomor Rekening Tersalin!</span>
                   </>
                 ) : (
@@ -464,10 +465,10 @@ export default function PsbInformationPage() {
                   </>
                 )}
               </button>
-            </div>
+            </PsbReveal>
 
             {/* Yatim */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#F0F8F3] to-white border border-[#ABD8B1]/60 shadow-2xs space-y-3.5 flex flex-col justify-between">
+            <PsbReveal variant="slide-right" delay={0.08} className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#F0F8F3] to-white border border-[#ABD8B1]/60 shadow-2xs space-y-3.5 flex flex-col justify-between">
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between pb-2.5 border-b border-[#ABD8B1]/40">
                   <span className="font-heading font-bold text-xs sm:text-sm text-zinc-900">
@@ -486,12 +487,12 @@ export default function PsbInformationPage() {
               <div className="p-3 rounded-xl bg-white border border-[#ABD8B1]/50 text-xs text-[#396E5F] font-medium">
                 Pondok Pesantren Al-Rahmah membebaskan biaya formulir &amp; pendaftaran 100% untuk santri yatim.
               </div>
-            </div>
+            </PsbReveal>
 
           </div>
 
           {/* Checklist Berkas yang Perlu Disiapkan */}
-          <div className="mt-5 p-5 sm:p-6 rounded-2xl bg-white border border-[#ABD8B1]/50 shadow-2xs">
+          <PsbReveal className="mt-5 p-5 sm:p-6 rounded-2xl bg-white border border-[#ABD8B1]/50 shadow-2xs">
             <h3 className="font-heading font-bold text-xs sm:text-sm text-zinc-900 mb-2.5">
               Berkas yang Perlu Disiapkan (Foto/Scan):
             </h3>
@@ -503,7 +504,7 @@ export default function PsbInformationPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </PsbReveal>
 
         </div>
       </section>
@@ -512,7 +513,7 @@ export default function PsbInformationPage() {
       {/* 5. NARAHUBUNG RESMI WHATSAPP                                 */}
       {/* ============================================================ */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
-        <div className="rounded-3xl bg-[#1E3F35] text-white p-5 sm:p-7 lg:p-8 shadow-xs border border-[#396E5F]">
+        <PsbReveal variant="scale" className="rounded-3xl bg-[#1E3F35] text-white p-5 sm:p-7 lg:p-8 shadow-xs border border-[#396E5F]">
           
           <div className="max-w-2xl mb-5">
             <h2 className="font-heading text-lg sm:text-xl font-bold text-white">
@@ -530,7 +531,7 @@ export default function PsbInformationPage() {
                 href={kontak.waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between p-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 hover:border-[#8AC77F] transition-all cursor-pointer"
+                className={`${styles.action} group flex items-center justify-between p-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 hover:border-[#8AC77F] transition-all cursor-pointer`}
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-lg bg-[#8AC77F]/20 text-[#AED69F] group-hover:bg-[#8AC77F] group-hover:text-[#1E3F35] flex items-center justify-center transition-colors shrink-0">
@@ -555,7 +556,7 @@ export default function PsbInformationPage() {
             ))}
           </div>
 
-        </div>
+        </PsbReveal>
       </section>
 
       {/* ============================================================ */}
@@ -570,13 +571,18 @@ export default function PsbInformationPage() {
           {data.faqs.map((faq, idx) => {
             const isOpen = openFaqIndex === idx;
             return (
-              <div
+              <PsbReveal
                 key={idx}
+                variant="fade"
+                delay={idx * 0.05}
                 className="rounded-xl bg-white border border-[#ABD8B1]/50 overflow-hidden"
               >
                 <button
                   type="button"
                   onClick={() => toggleFaq(idx)}
+                  id={`${faqId}-question-${idx}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`${faqId}-answer-${idx}`}
                   className="w-full text-left p-3.5 sm:p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-[#F2F7F4]/60 transition-colors"
                 >
                   <span className="font-semibold text-xs sm:text-sm text-zinc-900">
@@ -590,14 +596,24 @@ export default function PsbInformationPage() {
                   />
                 </button>
 
-                {isOpen && (
-                  <div className="px-3.5 pb-3.5 pt-1 text-xs text-zinc-600 leading-relaxed border-t border-zinc-100">
-                    {idx === 0 && activeWaveName
-                      ? `Pendaftaran santri baru dibuka dalam beberapa tahapan gelombang (Gelombang 1 - 3). Saat ini dibuka untuk ${activeWaveName} dengan periode ${heroPeriodLabel}. Kami menyarankan calon wali santri menyelesaikan pendaftaran sebelum kuota gelombang terpenuhi.`
-                      : faq.answer}
+                <div
+                  id={`${faqId}-answer-${idx}`}
+                  role="region"
+                  aria-labelledby={`${faqId}-question-${idx}`}
+                  aria-hidden={!isOpen}
+                  inert={!isOpen}
+                  data-open={isOpen}
+                  className={styles.faqPanel}
+                >
+                  <div className="min-h-0 overflow-hidden">
+                    <div className="px-3.5 pb-3.5 pt-1 text-xs text-zinc-600 leading-relaxed border-t border-zinc-100">
+                      {idx === 0 && activeWaveName
+                        ? `Pendaftaran santri baru dibuka dalam beberapa tahapan gelombang (Gelombang 1 - 3). Saat ini dibuka untuk ${activeWaveName} dengan periode ${heroPeriodLabel}. Kami menyarankan calon wali santri menyelesaikan pendaftaran sebelum kuota gelombang terpenuhi.`
+                        : faq.answer}
+                    </div>
                   </div>
-                )}
-              </div>
+                </div>
+              </PsbReveal>
             );
           })}
         </div>
@@ -618,62 +634,74 @@ export default function PsbInformationPage() {
       {/* ============================================================ */}
       {/* 8. MODAL LIGHTBOX FLYER                                      */}
       {/* ============================================================ */}
-      {isLightboxOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setIsLightboxOpen(false)}
-        >
-          <div
-            className="relative max-w-sm sm:max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-2xl p-3 flex flex-col items-center max-h-[90vh]"
-            onClick={(e) => e.stopPropagation()}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div
+            key="psb-poster-preview"
+            initial={{ opacity: prefersReducedMotion ? 1 : 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Preview poster pendaftaran santri baru"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setIsLightboxOpen(false)}
           >
-            {/* Header Modal */}
-            <div className="w-full flex items-center justify-between pb-2 px-1 border-b border-zinc-100 mb-2">
-              <h3 className="font-heading font-bold text-xs sm:text-sm text-[#1E3F35]">
-                Poster Resmi PSB {data.tahunAjaran}
-              </h3>
-              <button
-                type="button"
-                onClick={() => setIsLightboxOpen(false)}
-                className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
-                aria-label="Tutup preview"
-              >
-                <X size={18} />
-              </button>
-            </div>
+            <motion.div
+              initial={prefersReducedMotion ? false : { scale: 0.97, y: 12 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={prefersReducedMotion ? {} : { scale: 0.985, y: 6 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="relative max-w-sm sm:max-w-md w-full bg-white rounded-2xl overflow-hidden shadow-2xl p-3 flex flex-col items-center max-h-[90vh]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header Modal */}
+              <div className="w-full flex items-center justify-between pb-2 px-1 border-b border-zinc-100 mb-2">
+                <h3 className="font-heading font-bold text-xs sm:text-sm text-[#1E3F35]">
+                  Poster Resmi PSB {data.tahunAjaran}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsLightboxOpen(false)}
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors cursor-pointer"
+                  aria-label="Tutup preview"
+                >
+                  <X size={18} />
+                </button>
+              </div>
 
-            {/* Gambar Poster Full */}
-            <div className="relative w-full aspect-[326/456] max-h-[70vh]">
-              <Image
-                src={data.flyerUrl}
-                alt={`Poster Resmi PSB Al-Rahmah ${data.tahunAjaran}`}
-                fill
-                sizes="(max-width: 640px) 90vw, 420px"
-                className="object-contain"
-              />
-            </div>
+              {/* Gambar Poster Full */}
+              <div className="relative w-full aspect-[326/456] max-h-[70vh]">
+                <Image
+                  src={data.flyerUrl}
+                  alt={`Poster Resmi PSB Al-Rahmah ${data.tahunAjaran}`}
+                  fill
+                  sizes="(max-width: 640px) 90vw, 420px"
+                  className="object-contain"
+                />
+              </div>
 
-            {/* Footer Modal Action */}
-            <div className="w-full pt-3 px-1 border-t border-zinc-100 flex items-center justify-between gap-2">
-              <span className="text-[11px] text-zinc-500">
-                Pondok Pesantren Al-Rahmah Walantaka
-              </span>
-              <a
-                href={data.flyerUrl}
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#396E5F] hover:underline"
-              >
-                <span>Unduh Gambar</span>
-                <ExternalLink size={12} />
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
+              {/* Footer Modal Action */}
+              <div className="w-full pt-3 px-1 border-t border-zinc-100 flex items-center justify-between gap-2">
+                <span className="text-[11px] text-zinc-500">
+                  Pondok Pesantren Al-Rahmah Walantaka
+                </span>
+                <a
+                  href={data.flyerUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#396E5F] hover:underline"
+                >
+                  <span>Unduh Gambar</span>
+                  <ExternalLink size={12} />
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </main>
   );
