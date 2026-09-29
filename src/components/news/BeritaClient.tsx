@@ -7,6 +7,7 @@ import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories
 import { filterNews } from "@/lib/utils/filterNews";
 import { FeaturedNewsHero } from "./FeaturedNewsHero";
 import { NewsCard } from "./NewsCard";
+import styles from "./NewsEntrance.module.css";
 
 interface BeritaClientProps {
   initialNews: Berita[];
@@ -61,12 +62,14 @@ export function BeritaClient({
 
   return (
     <div className="w-full">
-      {featuredNews && <FeaturedNewsHero berita={featuredNews} />}
+      <div className={styles.featured}>
+        {featuredNews && <FeaturedNewsHero berita={featuredNews} />}
+      </div>
 
       <div
         role="search"
         aria-label="Cari dan saring berita"
-        className="mt-0 mb-4 flex flex-col gap-3 border-t border-zinc-200/80 pt-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:pt-3"
+        className={`${styles.controls} mt-0 mb-4 flex flex-col gap-3 border-t border-zinc-200/80 pt-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:pt-3`}
       >
         <div className="flex items-center gap-2">
           <label htmlFor={filterId} className="text-sm text-zinc-500">
@@ -124,11 +127,11 @@ export function BeritaClient({
         </div>
       </div>
 
-      <p role="status" aria-live="polite" aria-atomic="true" className="mb-4 text-[11px] text-zinc-500 sm:mb-5 sm:text-xs">
+      <p role="status" aria-live="polite" aria-atomic="true" className={`${styles.count} mb-4 text-[11px] text-zinc-500 sm:mb-5 sm:text-xs`}>
         {filteredNews.length} berita {isFiltered ? "ditemukan" : "tersedia"}
       </p>
 
-      <div id={resultsId}>
+      <div id={resultsId} className={styles.results}>
         {gridNews.length > 0 && (
           <div className="grid grid-cols-1 divide-y divide-zinc-200/60 sm:divide-y-0 sm:grid-cols-2 lg:grid-cols-4 sm:gap-7 lg:gap-8">
             {gridNews.map((item) => (
