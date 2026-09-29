@@ -7,7 +7,6 @@ import clsx from "clsx";
 import {
   LayoutDashboard,
   Newspaper,
-  Images,
   GraduationCap,
   Settings,
   LogOut,
@@ -20,7 +19,6 @@ import { createClient } from "@/lib/supabase/client";
 const menuItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Kelola Berita", href: "/admin/berita", icon: Newspaper },
-  { name: "Kelola Galeri", href: "/admin/galeri", icon: Images },
   { name: "Informasi PSB", href: "/admin/psb", icon: GraduationCap },
   { name: "Pengaturan Website", href: "/admin/pengaturan", icon: Settings },
 ];

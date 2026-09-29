@@ -10,5 +10,5 @@ export async function BeritaSection({
 }: BeritaSectionProps) {
   const beritaList = await getBeritaFeed();
 
-  return <BeritaClient initialNews={beritaList} initialCategory={initialCategory} />;
+  return <BeritaClient key={initialCategory} initialNews={beritaList} initialCategory={initialCategory} />;
 }

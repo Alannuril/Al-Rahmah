@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Phone, Mail, MapPin, Send, MessageCircle, ExternalLink, Compass } from "lucide-react";
+import { Phone, MapPin, Send, MessageCircle, ExternalLink, Compass } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { PengaturanWebsite } from "@/lib/supabase/types";
+import { resolveWebsiteInfo, GOOGLE_MAPS_URL, GOOGLE_MAPS_EMBED_URL } from "@/lib/utils/websiteInfo";
+import { parsePsbSettings } from "@/lib/utils/psbHelper";
 
 export default function KontakPage() {
-  const [setting, setSetting] = useState<Partial<PengaturanWebsite>>({
-    alamat: "Jl. Raya Walantaka No. 1, Kecamatan Walantaka, Kota Serang, Provinsi Banten 42183",
-    no_whatsapp: "+62 812-3456-7890",
-  });
+  const [setting, setSetting] = useState(() => resolveWebsiteInfo());
 
   const [form, setForm] = useState({
     nama: "",
@@ -19,16 +18,23 @@ export default function KontakPage() {
   });
 
   useEffect(() => {
+    let active = true;
     async function loadSetting() {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("pengaturan_website")
-        .select("*")
-        .limit(1)
-        .maybeSingle();
-      if (data) setSetting(data);
+      try {
+        const supabase = createClient();
+        const [website, psb] = await Promise.all([
+          supabase.from("pengaturan_website").select("*").limit(1).maybeSingle(),
+          supabase.from("psb_settings").select("*").limit(1).maybeSingle(),
+        ]);
+        if (active) {
+          setSetting(resolveWebsiteInfo(website.data, parsePsbSettings(psb.data).kontak_panitia));
+        }
+      } catch {
+        // Retain the same fallback contacts used by the PSB page.
+      }
     }
     loadSetting();
+    return () => { active = false; };
   }, []);
 
   const handleSendWa = (e: React.FormEvent) => {
@@ -38,7 +44,7 @@ export default function KontakPage() {
       return;
     }
 
-    const cleanWa = (setting.no_whatsapp || "6281234567890").replace(/[^0-9]/g, "");
+    if (!setting.whatsapp_url) return;
     const text = `Assalamu'alaikum Warahmatullahi Wabarakatuh,
 
 Perkenalkan saya: *${form.nama}*
@@ -48,11 +54,10 @@ Pesan/Pertanyaan:
 ${form.pesan}
 
 Terima kasih.`;
-    const waUrl = `https://wa.me/${cleanWa}?text=${encodeURIComponent(text)}`;
+    const waUrl = `${setting.whatsapp_url}?text=${encodeURIComponent(text)}`;
     window.open(waUrl, "_blank");
   };
 
-  const cleanWaNumber = (setting.no_whatsapp || "").replace(/[^0-9]/g, "");
 
   return (
     <div className="pt-32 pb-24 min-h-screen bg-brand-paper">
@@ -120,6 +125,7 @@ Terima kasih.`;
 
               <button
                 type="submit"
+                disabled={!setting.whatsapp_url}
                 className="px-8 py-4 rounded-xl bg-brand-primary text-white hover:bg-brand-secondary font-bold text-sm tracking-wide hover:shadow-lg hover:-translate-y-0.5 transition-all w-full md:w-fit mt-2 flex items-center justify-center gap-2"
               >
                 <Send size={16} />
@@ -155,11 +161,11 @@ Terima kasih.`;
                   </div>
                   <div>
                     <h4 className="font-bold text-brand-lime text-xs mb-1.5 uppercase tracking-widest">
-                      Hotline &amp; WhatsApp Resmi
+                      {setting.whatsapp_label}
                     </h4>
-                    {cleanWaNumber ? (
+                    {setting.whatsapp_url ? (
                       <a
-                        href={`https://wa.me/${cleanWaNumber}`}
+                        href={setting.whatsapp_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-white/90 hover:text-brand-lime font-medium text-lg transition-colors"
@@ -174,13 +180,15 @@ Terima kasih.`;
 
                 <li className="flex items-start gap-4 group">
                   <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex shrink-0 items-center justify-center text-brand-secondary group-hover:bg-brand-secondary group-hover:text-white transition-colors duration-300 shadow-lg">
-                    <Mail size={20} />
+                    <MessageCircle size={20} />
                   </div>
                   <div>
                     <h4 className="font-bold text-brand-lime text-xs mb-1.5 uppercase tracking-widest">
-                      Email Resmi
+                      Panitia Penerimaan Santri Baru
                     </h4>
-                    <p className="text-white/90 font-medium text-sm">info@alrahmah.sch.id</p>
+                    <Link href="/psb#kontak-panitia" className="text-white/90 hover:text-brand-lime font-medium text-sm underline underline-offset-4">
+                      Lihat seluruh kontak panitia PSB
+                    </Link>
                   </div>
                 </li>
               </ul>
@@ -189,7 +197,7 @@ Terima kasih.`;
             <div className="relative z-10 w-full rounded-[1.5rem] overflow-hidden shadow-2xl border border-white/10 flex flex-col">
               <div className="relative w-full h-[220px]">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.6912405338826!2d106.2131152!3d-6.172079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e421e377265e6c5%3A0xdc894d9c993a8e4f!2sPondok%20Pesantren%20Al%20Rahmah%20Walantaka!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid"
+                  src={GOOGLE_MAPS_EMBED_URL}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
@@ -201,7 +209,7 @@ Terima kasih.`;
                 />
               </div>
               <a
-                href="https://maps.app.goo.gl/J1PeZhP9SzcFiC3M8"
+                href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-3 px-4 bg-brand-primary/95 hover:bg-brand-secondary text-white text-xs font-semibold tracking-wide uppercase transition-colors border-t border-white/10"

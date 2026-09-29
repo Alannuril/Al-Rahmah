@@ -1,13 +1,24 @@
 import { Suspense } from "react";
 import { BeritaSection } from "@/components/media/BeritaSection";
 import styles from "@/components/news/NewsEntrance.module.css";
+import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
 
 export const metadata = {
   title: "Berita Al-Rahmah",
   description: "Berita kegiatan santri, kejuaraan, dan informasi akademik Pondok Pesantren Al-Rahmah Walantaka.",
 };
 
-export default function MediaPage() {
+export default async function MediaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ kategori?: string | string[] }>;
+}) {
+  const { kategori } = await searchParams;
+  const category = typeof kategori === "string" && kategori.trim()
+    ? getNewsCategory(kategori)
+    : "Semua";
+  const initialCategory = NEWS_CATEGORIES.find((item) => item === category) ?? "Semua";
+
   return (
     <div className="min-h-screen bg-surface/40 pt-28 pb-20 sm:pt-32 sm:pb-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
@@ -28,7 +39,7 @@ export default function MediaPage() {
               </div>
             }
           >
-            <BeritaSection />
+            <BeritaSection key={initialCategory} initialCategory={initialCategory} />
           </Suspense>
         </section>
       </div>

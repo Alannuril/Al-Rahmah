@@ -3,14 +3,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Newspaper, Images, Users, TrendingUp,
-  ArrowUpRight, Clock, FileText, ImagePlus, Settings,
+  Newspaper, Users, TrendingUp,
+  ArrowUpRight, Clock, FileText, Settings,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface DashboardStats {
   totalBerita: number;
-  totalGaleri: number;
   statusPsb: string;
 }
 
@@ -36,7 +35,6 @@ const item = {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalBerita: 0,
-    totalGaleri: 0,
     statusPsb: "Dibuka",
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
@@ -46,17 +44,15 @@ export default function AdminDashboard() {
     async function fetchStats() {
       const supabase = createClient();
 
-      const [beritaRes, galeriRes, psbRes, activityRes] =
+      const [beritaRes, psbRes, activityRes] =
         await Promise.all([
           supabase.from("berita").select("id", { count: "exact", head: true }),
-          supabase.from("galeri_foto").select("id", { count: "exact", head: true }),
           supabase.from("psb_settings").select("status").limit(1).maybeSingle(),
           supabase.from("berita").select("judul, created_at").order("created_at", { ascending: false }).limit(3),
         ]);
 
       setStats({
         totalBerita: beritaRes.count ?? 0,
-        totalGaleri: galeriRes.count ?? 0,
         statusPsb: psbRes.data?.status ?? "Dibuka",
       });
 
@@ -81,14 +77,13 @@ export default function AdminDashboard() {
 
   const statCards = [
     { label: "Total Berita", value: stats.totalBerita.toString(), change: "artikel", icon: Newspaper, color: "from-brand-primary to-emerald-700", bgLight: "bg-brand-primary/5", textColor: "text-brand-primary" },
-    { label: "Total Foto Galeri", value: stats.totalGaleri.toString(), change: "foto", icon: Images, color: "from-brand-secondary to-emerald-500", bgLight: "bg-brand-secondary/10", textColor: "text-brand-secondary" },
     { label: "Status PSB", value: stats.statusPsb, change: "gelombang aktif", icon: Users, color: "from-brand-lime to-brand-accent", bgLight: "bg-brand-lime/10", textColor: "text-brand-primary" },
   ];
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
         {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -173,7 +168,6 @@ export default function AdminDashboard() {
           <div className="p-4 space-y-2">
             {[
               { label: "Tambah Berita", href: "/admin/berita/new", icon: FileText },
-              { label: "Upload Galeri", href: "/admin/galeri", icon: ImagePlus },
               { label: "Pengaturan PSB", href: "/admin/psb", icon: Users },
               { label: "Pengaturan Website", href: "/admin/pengaturan", icon: Settings },
             ].map((action) => {

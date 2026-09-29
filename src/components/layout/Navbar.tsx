@@ -3,16 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ChevronDown, LogOut, FileText } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { useAuth } from "@/components/providers/AuthProvider";
+import { PUBLIC_NAV_LINKS } from "@/lib/constants/navigation";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
   const pathname = usePathname();
   const [menuPathname, setMenuPathname] = useState(pathname);
 
@@ -45,13 +43,7 @@ export function Navbar() {
     setMobileMenuOpen(false);
   }
 
-  const navLinks = [
-    { name: "Beranda", href: "/" },
-    { name: "Tentang Al-Rahmah", href: "/tentang" },
-    { name: "Pendidikan", href: "/pendidikan" },
-    { name: "Berita", href: "/media" },
-    { name: "PSB", href: "/psb" },
-  ];
+  const navLinks = PUBLIC_NAV_LINKS;
 
   return (
     <header className={clsx(
@@ -108,58 +100,9 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* User Account / CTA Button */}
+        {/* Desktop CTA Button */}
         <div className="hidden lg:flex items-center justify-end shrink-0 py-1 relative">
-          {user ? (
-            <div className="relative">
-              <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className={clsx(
-                  "flex items-center gap-2 px-3.5 py-2 rounded-full border transition-all duration-300 text-xs font-semibold shadow-xs",
-                  isNavSolid
-                    ? "bg-white text-brand-primary border-zinc-200 hover:bg-zinc-50"
-                    : "bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-md"
-                )}
-              >
-                <div className="w-6 h-6 rounded-full bg-brand-primary text-white flex items-center justify-center font-bold text-[10px]">
-                  {user.email?.charAt(0).toUpperCase() || "U"}
-                </div>
-                <span className="max-w-[110px] truncate">{user.email?.split("@")[0]}</span>
-                <ChevronDown size={14} className={clsx("transition-transform duration-200", userMenuOpen ? "rotate-180" : "")} />
-              </button>
-
-              {userMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-zinc-100 p-2 z-50 text-xs">
-                  <div className="p-2.5 border-b border-zinc-100">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">Akun Calon Santri</p>
-                    <p className="font-bold text-zinc-800 truncate mt-0.5">{user.email}</p>
-                  </div>
-                  <div className="py-1">
-                    <Link
-                      href="/psb"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-zinc-700 hover:bg-brand-primary/5 hover:text-brand-primary font-medium transition-colors"
-                    >
-                      <FileText size={14} />
-                      <span>Info PSB</span>
-                    </Link>
-                  </div>
-                  <div className="pt-1 border-t border-zinc-100">
-                    <button
-                      onClick={async () => {
-                        setUserMenuOpen(false);
-                        await signOut();
-                      }}
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-red-600 hover:bg-red-50 font-medium transition-colors text-left"
-                    >
-                      <LogOut size={14} />
-                      <span>Keluar (Logout)</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : !isPsbPage ? (
+          {!isPsbPage && (
             <div className={clsx(
               "transition-all duration-300",
               showCta
@@ -173,7 +116,7 @@ export function Navbar() {
                 Daftar Sekarang
               </Link>
             </div>
-          ) : null}
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -183,12 +126,13 @@ export function Navbar() {
             isNavSolid ? "text-brand-primary" : "text-white"
           )}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
         >
           {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* Mobile Nav Overlay (Lively Islamic Emerald Glass, non-white) */}
+      {/* Mobile Nav Overlay */}
       <div className={clsx(
         "lg:hidden absolute top-full left-0 right-0 bg-gradient-to-b from-[#2d6153]/95 via-[#245246]/95 to-[#1d443a]/95 backdrop-blur-xl border border-white/20 mx-4 rounded-2xl overflow-hidden transition-all duration-300 origin-top shadow-2xl shadow-emerald-950/50 text-white",
         mobileMenuOpen ? "opacity-100 scale-y-100 mt-2" : "opacity-0 scale-y-0 pointer-events-none"
@@ -213,45 +157,15 @@ export function Navbar() {
               </Link>
             );
           })}
-          {user ? (
-            <div className="mt-4 p-4 rounded-2xl bg-white/10 border border-white/15 space-y-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-brand-lime text-brand-primary flex items-center justify-center font-bold text-xs">
-                  {user.email?.charAt(0).toUpperCase() || "U"}
-                </div>
-                <div className="overflow-hidden">
-                  <p className="text-[10px] uppercase font-bold text-white/60">Akun Aktif</p>
-                  <p className="text-xs font-bold text-white truncate">{user.email}</p>
-                </div>
-              </div>
+          {!isPsbPage && (
+            <div className="mt-3">
               <Link
                 href="/psb"
+                className="block text-center bg-gradient-to-r from-[#ABD8B1] via-[#8AC77F] to-[#7CBF71] text-[#143026] hover:brightness-105 transition-all font-bold px-6 py-3.5 rounded-xl text-base shadow-lg shadow-black/25"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-center bg-brand-lime text-brand-primary hover:bg-brand-accent font-semibold px-4 py-3 rounded-xl text-sm transition-colors shadow-xs"
               >
-                Info & Pendaftaran PSB
+                Daftar Sekarang
               </Link>
-              <button
-                onClick={async () => {
-                  setMobileMenuOpen(false);
-                  await signOut();
-                }}
-                className="w-full text-center text-xs font-semibold text-red-300 hover:text-red-200 hover:underline py-1"
-              >
-                Keluar (Logout)
-              </button>
-            </div>
-          ) : (
-            <div className="mt-3">
-              {!isPsbPage && (
-                <Link
-                  href="/psb"
-                  className="block text-center bg-gradient-to-r from-[#ABD8B1] via-[#8AC77F] to-[#7CBF71] text-[#143026] hover:brightness-105 transition-all font-bold px-6 py-3.5 rounded-xl text-base shadow-lg shadow-black/25"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Daftar Sekarang
-                </Link>
-              )}
             </div>
           )}
         </div>

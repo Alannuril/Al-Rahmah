@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Save, Globe, Phone, MapPin, Camera, Video, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -16,20 +16,31 @@ export default function PengaturanPage() {
     alamat: "",
     instagram_url: "",
     youtube_url: "",
+    facebook_url: "",
   });
   const [rowId, setRowId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase.from("pengaturan_website").select("*").limit(1).single();
-    if (data) { setForm(data); setRowId(data.id); }
-    setLoading(false);
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchData() {
+      const supabase = createClient();
+      const { data } = await supabase.from("pengaturan_website").select("*").limit(1).single();
+      if (isMounted) {
+        if (data) {
+          setForm(data);
+          setRowId(data.id);
+        }
+        setLoading(false);
+      }
+    }
+    fetchData();
+    return () => {
+      isMounted = false;
+    };
   }, []);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -79,6 +90,10 @@ export default function PengaturanPage() {
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5"><Video size={14} /> Link YouTube</label>
           <input type="url" value={form.youtube_url ?? ""} onChange={(e) => setForm({ ...form, youtube_url: e.target.value })} className={inputClass} />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5"><Globe size={14} /> Link Facebook</label>
+          <input type="url" value={form.facebook_url ?? ""} onChange={(e) => setForm({ ...form, facebook_url: e.target.value })} className={inputClass} placeholder="https://www.facebook.com/..." />
         </div>
       </motion.div>
       <motion.div variants={anim} className="pt-2">

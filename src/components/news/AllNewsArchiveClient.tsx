@@ -59,7 +59,7 @@ export function AllNewsArchiveClient({ initialNews }: AllNewsArchiveClientProps)
       {/* Navigation Breadcrumb & Back Link */}
       <div className="mb-6 flex items-center justify-between">
         <Link
-          href="/media/berita"
+          href="/media"
           className="group inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 transition-colors hover:text-brand-primary sm:text-sm"
         >
           <ArrowLeft size={15} className="transition-transform group-hover:-translate-x-1" aria-hidden="true" />

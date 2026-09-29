@@ -8,7 +8,6 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar";
 const pageTitles: Record<string, { title: string; subtitle: string }> = {
   "/admin": { title: "Dashboard", subtitle: "Ringkasan data dan statistik" },
   "/admin/berita": { title: "Kelola Berita", subtitle: "Manajemen artikel dan berita" },
-  "/admin/galeri": { title: "Kelola Galeri", subtitle: "Manajemen foto dan album" },
   "/admin/psb": { title: "Informasi PSB", subtitle: "Penerimaan Santri Baru" },
   "/admin/pengaturan": { title: "Pengaturan Website", subtitle: "Konfigurasi umum website" },
 };

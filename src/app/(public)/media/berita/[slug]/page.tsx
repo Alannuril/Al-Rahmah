@@ -45,7 +45,7 @@ export default async function DetailBeritaPage({ params }: PageProps) {
         {/* Navigation Breadcrumb / Back button */}
         <div className="mb-5 sm:mb-6">
           <Link
-            href="/media/berita"
+            href="/media"
             className="group inline-flex items-center gap-1.5 text-xs sm:text-sm text-zinc-500 hover:text-brand-primary font-medium transition-colors"
           >
             <ArrowLeft size={15} className="transition-transform group-hover:-translate-x-1" aria-hidden="true" />
@@ -106,7 +106,7 @@ export default async function DetailBeritaPage({ params }: PageProps) {
               <span>Dipublikasikan oleh Humas Pondok Pesantren Al-Rahmah</span>
             </div>
             <Link
-              href="/media/berita"
+              href="/media"
               className="group inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-brand-primary underline-offset-4 hover:underline"
             >
               <span>Lihat Berita Lainnya</span>

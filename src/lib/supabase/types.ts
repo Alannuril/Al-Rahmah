@@ -19,22 +19,6 @@ export interface Berita {
   updated_at: string;
 }
 
-export interface GaleriAlbum {
-  id: string;
-  judul: string;
-  tanggal: string | null;
-  created_at: string;
-  foto?: GaleriFoto[];
-}
-
-export interface GaleriFoto {
-  id: string;
-  album_id: string;
-  foto_url: string;
-  keterangan: string | null;
-  created_at: string;
-}
-
 export interface Pengumuman {
   id: string;
   judul: string;
@@ -107,5 +91,6 @@ export interface PengaturanWebsite {
   alamat: string | null;
   instagram_url: string | null;
   youtube_url: string | null;
+  facebook_url?: string | null;
   updated_at: string;
 }

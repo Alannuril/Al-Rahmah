@@ -49,6 +49,6 @@ export async function GET(request: Request) {
   }
 
   // If there was an error or no code, redirect back to login
-  return NextResponse.redirect(`${origin}/psb/login?error=oauth_failed`);
+  return NextResponse.redirect(`${origin}/?error=auth_failed`);
 }
 
