@@ -1,342 +1,178 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, MapPin, Camera, Video } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
-import type { PengaturanWebsite } from "@/lib/supabase/types";
+import { MapPin, Phone } from "lucide-react";
+import { getWebsiteInfo } from "@/lib/data/website";
+import { GOOGLE_MAPS_URL } from "@/lib/utils/websiteInfo";
+import { FOOTER_NAV_LINKS } from "@/lib/constants/navigation";
 
-const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/J1PeZhP9SzcFiC3M8";
+function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
 
-async function getPengaturan(): Promise<PengaturanWebsite | null> {
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("pengaturan_website")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-    return data;
-  } catch {
-    return null;
-  }
+function FacebookIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+  );
+}
+
+function YoutubeIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+  );
 }
 
 export async function Footer() {
-  const setting = await getPengaturan();
+  const info = await getWebsiteInfo();
 
-  const namaWebsite = setting?.nama_website || "Al-Rahmah";
-  const tagline =
-    setting?.tagline || "Membentuk Generasi Qurani, Berakhlak, dan Berprestasi.";
-  const noWa = setting?.no_whatsapp || "+62 812-3456-7890";
-  const alamat =
-    setting?.alamat ||
-    "Jl. Raya Walantaka No. 1, Walantaka, Kota Serang, Banten 42183";
-  const instagramUrl =
-    setting?.instagram_url || "https://instagram.com/alrahmah.walantaka";
-  const youtubeUrl =
-    setting?.youtube_url || "https://youtube.com/@alrahmahwalantaka";
-
-  const cleanWaNumber = noWa.replace(/[^0-9]/g, "");
+  const socialLinks = [
+    {
+      name: "Instagram",
+      href: info.instagram_url || "https://www.instagram.com/pondok.alrahmah/",
+      icon: InstagramIcon,
+    },
+    {
+      name: "Facebook",
+      href:
+        info.facebook_url ||
+        "https://www.facebook.com/p/Pondok-Pesantren-Al-Rahmah-Islamic-Boarding-School-100023081542264/?locale=id_ID",
+      icon: FacebookIcon,
+    },
+    {
+      name: "YouTube",
+      href: info.youtube_url || "https://www.youtube.com/@pondokalrahmah1577",
+      icon: YoutubeIcon,
+    },
+  ];
 
   return (
-    <footer className="bg-brand-primary text-white py-6 md:pt-14 md:pb-8 relative overflow-hidden">
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        {/* ========================================================= */}
-        {/* MOBILE VIEW (< md): Ultra-Clean & Minimalist Layout       */}
-        {/* ========================================================= */}
-        <div className="flex flex-col items-center text-center gap-4 md:hidden">
-          {/* 1. Brand Logo & Title */}
-          <Link href="/" className="inline-flex items-center gap-2.5">
-            <div className="relative w-9 h-9 rounded-full overflow-hidden bg-white shrink-0 shadow-xs border border-white/20">
+    <footer className="relative bg-gradient-to-b from-[#307562] via-[#266150] to-[#1D4F41] text-white pt-7 pb-6 sm:pt-9 sm:pb-7 overflow-hidden border-t border-emerald-400/20 shadow-lg">
+      {/* Ambient soft glow on top border */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-300/40 to-transparent" />
+      {/* Soft atmospheric radial light */}
+      <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[28rem] h-48 bg-emerald-400/10 rounded-full blur-3xl" />
+
+      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {/* Main Row: Clean, Soft & Modern Layout */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          {/* 1. Brand Identity with Soft Depth */}
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="group relative h-10 w-10 shrink-0 overflow-hidden rounded-full border border-white/40 bg-white shadow-md shadow-emerald-950/20 transition-transform duration-200 hover:scale-105"
+              aria-label="Kembali ke Beranda Al-Rahmah"
+            >
               <Image
                 src="/images/logoAl-rahmah.jpeg"
                 alt="Logo Al-Rahmah"
                 fill
-                sizes="36px"
+                sizes="40px"
                 className="object-contain"
               />
-            </div>
-            <div className="text-left">
-              <span className="font-heading font-bold text-base leading-tight text-white block">
-                Al-Rahmah
+            </Link>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="font-heading text-base font-bold tracking-tight text-white drop-shadow-xs">
+                  Al-Rahmah
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-white bg-white/20 border border-white/25 px-2 py-0.5 rounded-full backdrop-blur-xs shadow-2xs">
+                  Walantaka
+                </span>
+              </div>
+              <span className="text-xs text-white/85 font-medium mt-0.5">
+                Islamic Boarding School
               </span>
-              <span className="text-[9px] font-medium tracking-widest text-brand-lime uppercase block">
-                Walantaka – Serang
-              </span>
             </div>
-          </Link>
+          </div>
 
-          {/* 2. Clean Navigation Links (Borderless & Breathable) */}
-          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/85 font-medium py-1">
-            <Link href="/profil" className="hover:text-white transition-colors">
-              Profil
-            </Link>
-            <Link href="/tentang#visi-misi" className="hover:text-white transition-colors">
-              Visi &amp; Misi
-            </Link>
-            <Link href="/pendidikan" className="hover:text-white transition-colors">
-              Pendidikan
-            </Link>
-            <Link href="/psb" className="hover:text-white transition-colors">
-              PSB
-            </Link>
-            <Link href="/media/berita" className="hover:text-white transition-colors">
-              Berita
-            </Link>
-            <Link href="/media/kejuaraan" className="hover:text-white transition-colors">
-              Prestasi
-            </Link>
-            <Link href="/kontak" className="hover:text-white transition-colors">
-              Kontak
-            </Link>
+          {/* 2. Soft Modern Interactive Navigation Capsules */}
+          <nav aria-label="Navigasi Footer" className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5">
+            {FOOTER_NAV_LINKS.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="px-3 py-1.5 rounded-xl text-xs sm:text-[13px] font-medium text-white/90 hover:text-white hover:bg-white/20 active:bg-white/30 transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {link.name}
+              </Link>
+            ))}
           </nav>
 
-          {/* 3. Subtle Social Media Buttons */}
-          <div className="flex items-center gap-2.5">
-            {instagramUrl && (
+          {/* 3. Soft Glass Social Media Buttons & WhatsApp Pill */}
+          <div className="flex items-center gap-2 shrink-0">
+            {socialLinks.map(({ name, href, icon: Icon }) => (
               <a
-                href={instagramUrl}
+                key={name}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Instagram"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
+                aria-label={`Kunjungi ${name} resmi Pondok Pesantren Al-Rahmah`}
+                title={name}
+                className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 border border-white/25 text-white backdrop-blur-md shadow-xs transition-all duration-200 hover:bg-white/30 hover:text-white hover:border-white/40 hover:-translate-y-0.5 hover:shadow-md hover:shadow-emerald-950/30 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                <Camera size={14} />
+                <Icon className="w-4 h-4" />
               </a>
-            )}
-            {youtubeUrl && (
-              <a
-                href={youtubeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="YouTube"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
-              >
-                <Video size={14} />
-              </a>
-            )}
-            {cleanWaNumber && (
-              <a
-                href={`https://wa.me/${cleanWaNumber}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="WhatsApp"
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
-              >
-                <Phone size={14} />
-              </a>
-            )}
-          </div>
+            ))}
 
-          {/* 4. Quick Location & WhatsApp */}
-          <div className="flex items-center justify-center gap-3 text-[11px] text-white/65 flex-wrap">
-            <a
-              href={GOOGLE_MAPS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 hover:text-white transition-colors"
-            >
-              <MapPin size={11} className="text-brand-secondary shrink-0" />
-              <span>Walantaka, Kota Serang</span>
-            </a>
-            <span className="text-white/20">•</span>
-            {cleanWaNumber ? (
+            {info.whatsapp_url && (
               <a
-                href={`https://wa.me/${cleanWaNumber}`}
+                href={info.whatsapp_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 hover:text-white transition-colors"
+                aria-label={`Hubungi kami via WhatsApp: ${info.no_whatsapp}`}
+                title={info.whatsapp_label}
+                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-white/20 border border-white/30 text-white text-xs font-semibold backdrop-blur-md shadow-xs transition-all duration-200 hover:bg-white/35 hover:border-white/50 hover:-translate-y-0.5 hover:shadow-md hover:shadow-emerald-950/30 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ml-1"
               >
-                <Phone size={11} className="text-brand-secondary shrink-0" />
-                <span>{noWa}</span>
+                <Phone size={13} className="shrink-0 text-white" />
+                <span>WhatsApp</span>
               </a>
-            ) : (
-              <span className="inline-flex items-center gap-1">
-                <Phone size={11} className="text-brand-secondary shrink-0" />
-                <span>{noWa}</span>
-              </span>
             )}
-          </div>
-
-          {/* 5. Minimal Copyright (Centered, No Portal Admin) */}
-          <div className="pt-3 border-t border-white/10 w-full text-center text-[10px] text-white/40">
-            <p>&copy; {new Date().getFullYear()} Pondok Pesantren Al-Rahmah Walantaka. All rights reserved.</p>
           </div>
         </div>
 
-        {/* ========================================================= */}
-        {/* DESKTOP VIEW (≥ md): Full Rich Editorial 4-Column Layout */}
-        {/* ========================================================= */}
-        <div className="hidden md:block">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-            {/* Kolom 1: Brand & Sosial */}
-            <div className="flex flex-col gap-3">
-              <Link href="/" className="flex items-center gap-2.5">
-                <div className="relative w-9 h-9 rounded-full overflow-hidden bg-white shrink-0 border-2 border-white/20">
-                  <Image
-                    src="/images/logoAl-rahmah.jpeg"
-                    alt="Logo Al-Rahmah"
-                    fill
-                    sizes="36px"
-                    className="object-contain"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-heading font-bold text-lg leading-none text-white">
-                    {namaWebsite}
-                  </span>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-brand-lime mt-0.5">
-                    Walantaka – Serang
-                  </span>
-                </div>
-              </Link>
-
-              <p className="text-white/70 text-xs leading-relaxed max-w-sm">
-                {tagline}
-              </p>
-
-              {/* Social Media Icons */}
-              <div className="flex items-center gap-2 mt-1">
-                {instagramUrl && (
-                  <a
-                    href={instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Instagram"
-                    className="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
-                  >
-                    <Camera size={15} />
-                  </a>
-                )}
-                {youtubeUrl && (
-                  <a
-                    href={youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="YouTube"
-                    className="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
-                  >
-                    <Video size={15} />
-                  </a>
-                )}
-                {cleanWaNumber && (
-                  <a
-                    href={`https://wa.me/${cleanWaNumber}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="WhatsApp Resmi"
-                    className="w-8 h-8 rounded-lg bg-white/10 hover:bg-brand-secondary text-white/80 hover:text-white flex items-center justify-center transition-colors"
-                  >
-                    <Phone size={15} />
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {/* Kolom 2: Pintasan Navigasi */}
-            <div>
-              <h4 className="font-semibold text-xs uppercase tracking-wider text-brand-lime mb-3">
-                Pintasan
-              </h4>
-              <ul className="flex flex-col gap-2 text-xs text-white/75">
-                <li>
-                  <Link href="/profil" className="hover:text-white transition-colors">
-                    Profil Pondok
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/tentang#visi-misi" className="hover:text-white transition-colors">
-                    Visi &amp; Misi
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/pendidikan" className="hover:text-white transition-colors">
-                    Program Pendidikan
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/media/dokumentasi" className="hover:text-white transition-colors">
-                    Galeri Dokumentasi
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Kolom 3: Informasi PSB & Media */}
-            <div>
-              <h4 className="font-semibold text-xs uppercase tracking-wider text-brand-lime mb-3">
-                Informasi
-              </h4>
-              <ul className="flex flex-col gap-2 text-xs text-white/75">
-                <li>
-                  <Link href="/psb" className="hover:text-white transition-colors">
-                    Pendaftaran (PSB)
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/media/berita" className="hover:text-white transition-colors">
-                    Berita &amp; Kabar
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/media/kejuaraan" className="hover:text-white transition-colors">
-                    Prestasi Santri
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kontak" className="hover:text-white transition-colors">
-                    Hubungi Kami
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Kolom 4: Kontak & Lokasi Cepat */}
-            <div>
-              <h4 className="font-semibold text-xs uppercase tracking-wider text-brand-lime mb-3">
-                Kontak &amp; Lokasi
-              </h4>
-              <ul className="flex flex-col gap-2.5 text-xs text-white/75">
-                <li className="flex items-start gap-2">
-                  <MapPin size={14} className="text-brand-secondary shrink-0 mt-0.5" />
-                  <a
-                    href={GOOGLE_MAPS_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-white transition-colors leading-relaxed flex items-start gap-1 group"
-                    title="Buka di Google Maps"
-                  >
-                    <span>{alamat}</span>
-                  </a>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Phone size={14} className="text-brand-secondary shrink-0" />
-                  {cleanWaNumber ? (
-                    <a
-                      href={`https://wa.me/${cleanWaNumber}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-white transition-colors"
-                    >
-                      {noWa}
-                    </a>
-                  ) : (
-                    <span>{noWa}</span>
-                  )}
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail size={14} className="text-brand-secondary shrink-0" />
-                  <span>info@alrahmah.sch.id</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom Minimal Bar */}
-          <div className="pt-5 border-t border-white/10 text-center text-[11px] text-white/50">
-            <p>
-              &copy; {new Date().getFullYear()} {namaWebsite}. All rights reserved.
-            </p>
-          </div>
+        {/* Bottom Bar: Clean & Minimalist Copyright + Location */}
+        <div className="mt-6 pt-4 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-white/80">
+          <p className="tracking-wide">
+            &copy; {new Date().getFullYear()} {info.nama_website}. Hak cipta dilindungi.
+          </p>
+          <a
+            href={GOOGLE_MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white/85 hover:text-white hover:bg-white/10 transition-all duration-200"
+            title="Buka lokasi pondok di Google Maps"
+          >
+            <MapPin size={12} className="text-white shrink-0" />
+            <span>Walantaka, Kota Serang, Banten</span>
+          </a>
         </div>
       </div>
     </footer>

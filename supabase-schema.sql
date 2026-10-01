@@ -28,24 +28,6 @@ create table if not exists berita (
 -- alter table berita add column if not exists gambar_urls text[];
 
 -- ============================================================
--- TABEL GALERI
--- ============================================================
-create table if not exists galeri_album (
-  id uuid primary key default gen_random_uuid(),
-  judul text not null,
-  tanggal date,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists galeri_foto (
-  id uuid primary key default gen_random_uuid(),
-  album_id uuid not null references galeri_album(id) on delete cascade,
-  foto_url text not null,
-  keterangan text,
-  created_at timestamptz not null default now()
-);
-
--- ============================================================
 -- TABEL PENGUMUMAN
 -- ============================================================
 create table if not exists pengumuman (
@@ -170,19 +152,21 @@ create table if not exists pengaturan_website (
   alamat text,
   instagram_url text,
   youtube_url text,
+  facebook_url text,
   updated_at timestamptz not null default now()
 );
 
 -- Insert default website settings
 insert into pengaturan_website (
-  nama_website, tagline, no_whatsapp, alamat, instagram_url, youtube_url
+  nama_website, tagline, no_whatsapp, alamat, instagram_url, youtube_url, facebook_url
 ) values (
   'Pondok Pesantren Al-Rahmah Walantaka',
   'Membentuk Generasi Qurani, Berakhlak, dan Berprestasi',
   '+62 812-3456-7890',
   'Jl. Raya Walantaka No. 1, Kecamatan Walantaka, Kota Serang, Provinsi Banten 42183',
-  'https://instagram.com/alrahmah.walantaka',
-  'https://youtube.com/@alrahmahwalantaka'
+  'https://www.instagram.com/pondok.alrahmah/',
+  'https://www.youtube.com/@pondokalrahmah1577',
+  'https://www.facebook.com/p/Pondok-Pesantren-Al-Rahmah-Islamic-Boarding-School-100023081542264/?locale=id_ID'
 ) on conflict do nothing;
 
 -- ============================================================
@@ -191,8 +175,6 @@ insert into pengaturan_website (
 
 -- Aktifkan RLS untuk semua tabel
 alter table berita enable row level security;
-alter table galeri_album enable row level security;
-alter table galeri_foto enable row level security;
 alter table pengumuman enable row level security;
 alter table prestasi enable row level security;
 alter table psb_settings enable row level security;
@@ -202,16 +184,6 @@ alter table pengaturan_website enable row level security;
 create policy "Public read berita terbit"
   on berita for select
   using (status = 'Terbit');
-
--- PUBLIC: boleh baca galeri album
-create policy "Public read galeri album"
-  on galeri_album for select
-  using (true);
-
--- PUBLIC: boleh baca galeri foto
-create policy "Public read galeri foto"
-  on galeri_foto for select
-  using (true);
 
 -- PUBLIC: boleh baca pengumuman aktif
 create policy "Public read pengumuman aktif"
@@ -239,16 +211,6 @@ create policy "Authenticated full access berita"
   using (auth.role() = 'authenticated')
   with check (auth.role() = 'authenticated');
 
-create policy "Authenticated full access galeri album"
-  on galeri_album for all
-  using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
-
-create policy "Authenticated full access galeri foto"
-  on galeri_foto for all
-  using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
-
 create policy "Authenticated full access pengumuman"
   on pengumuman for all
   using (auth.role() = 'authenticated')
@@ -272,7 +234,6 @@ create policy "Authenticated full access pengaturan"
 -- ============================================================
 -- STORAGE BUCKETS
 -- Buat manual di Supabase Dashboard > Storage:
--- 1. "galeri"            (Public)
 -- 2. "berita-thumbnails" (Public)
 -- 3. "prestasi"          (Public)
 -- 4. "psb-brosur"        (Public)

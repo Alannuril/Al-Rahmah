@@ -71,7 +71,7 @@ export function NewsArticle({
               <span>Dipublikasikan oleh Humas Pondok Pesantren Al-Rahmah</span>
             </div>
             <Link
-              href="/media/berita"
+              href="/media"
               className="group inline-flex items-center gap-1.5 text-xs font-semibold text-brand-primary underline-offset-4 hover:underline sm:text-sm"
             >
               <span>Lihat Berita Lainnya</span>

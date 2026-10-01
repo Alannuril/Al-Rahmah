@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   async redirects() {
     return [
+      // Keep old public URLs working after consolidating their pages.
+      { source: "/profil", destination: "/tentang", permanent: true },
+      { source: "/media/berita", destination: "/media", permanent: true },
+      { source: "/media/kegiatan", destination: "/media?kategori=Kegiatan", permanent: true },
+      { source: "/media/kejuaraan", destination: "/media?kategori=Kejuaraan", permanent: true },
       {
         source: "/tentang/visi-misi",
         destination: "/tentang#visi-misi",

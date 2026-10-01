@@ -512,7 +512,7 @@ export default function PsbInformationPage() {
       {/* ============================================================ */}
       {/* 5. NARAHUBUNG RESMI WHATSAPP                                 */}
       {/* ============================================================ */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+      <section id="kontak-panitia" className="container mx-auto scroll-mt-28 px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
         <PsbReveal variant="scale" className="rounded-3xl bg-[#1E3F35] text-white p-5 sm:p-7 lg:p-8 shadow-xs border border-[#396E5F]">
           
           <div className="max-w-2xl mb-5">

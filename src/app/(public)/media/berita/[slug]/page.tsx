@@ -31,8 +31,8 @@ export default async function DetailBeritaPage({ params }: PageProps) {
       <div className="container mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <div className="mb-5 sm:mb-6">
           <Link
-            href="/media/berita"
-            className="group inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 transition-colors hover:text-brand-primary sm:text-sm"
+            href="/media"
+            className="group inline-flex items-center gap-1.5 text-xs sm:text-sm text-zinc-500 hover:text-brand-primary font-medium transition-colors"
           >
             <ArrowLeft size={15} className="transition-transform group-hover:-translate-x-1" aria-hidden="true" />
             <span>Kembali ke Semua Berita</span>

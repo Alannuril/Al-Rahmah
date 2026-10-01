@@ -17,7 +17,7 @@ const quickActions = [
 
 const publicPages = [
   { label: "Beranda", href: "/" },
-  { label: "Berita", href: "/media/berita" },
+  { label: "Berita", href: "/media" },
   { label: "PSB", href: "/psb" },
 ];
 

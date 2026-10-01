@@ -62,7 +62,7 @@ const HIGHLIGHT_ITEMS: HighlightItem[] = [
       "Hunian santri yang bersih, tertib, dan asri dengan sistem pengasuhan 24 jam mendidik kedisiplinan dan kemandirian.",
     icon: Home,
     image: "/images/gedung1.jpeg",
-    link: "/profil",
+    link: "/tentang",
   },
   {
     id: "masjid",
@@ -73,7 +73,7 @@ const HIGHLIGHT_ITEMS: HighlightItem[] = [
       "Pusat aktivitas ibadah berjamaah, halaqah Al-Qur'an, muhadharah pidato, dan kajian kitab kuning salaf.",
     icon: Building2,
     image: "/images/gedung2.jpg",
-    link: "/profil",
+    link: "/tentang",
   },
   {
     id: "bilingual",
@@ -95,7 +95,7 @@ const HIGHLIGHT_ITEMS: HighlightItem[] = [
       "Fasilitas olahraga serbaguna, bela diri pencak silat, kepramukaan, dan beragam ekstrakurikuler minat santri.",
     icon: Trophy,
     image: "/images/sejarah-titik-awal.jpg",
-    link: "/media/kegiatan",
+    link: "/media?kategori=Kegiatan",
   },
 ];
 

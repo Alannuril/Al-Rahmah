@@ -16,6 +16,7 @@ export default function PengaturanPage() {
     alamat: "",
     instagram_url: "",
     youtube_url: "",
+    facebook_url: "",
   });
   const [rowId, setRowId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,10 @@ export default function PengaturanPage() {
       try {
         const supabase = createClient();
         const { data } = await supabase.from("pengaturan_website").select("*").limit(1).maybeSingle();
-        if (active && data) { setForm(data); setRowId(data.id); }
+        if (active && data) {
+          setForm(data);
+          setRowId(data.id);
+        }
       } catch {
         // Keep the form available if the database cannot be reached.
       } finally {
@@ -97,6 +101,10 @@ export default function PengaturanPage() {
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5"><Video size={14} /> Link YouTube</label>
           <input type="url" value={form.youtube_url ?? ""} onChange={(e) => setForm({ ...form, youtube_url: e.target.value })} className={inputClass} />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5"><Globe size={14} /> Link Facebook</label>
+          <input type="url" value={form.facebook_url ?? ""} onChange={(e) => setForm({ ...form, facebook_url: e.target.value })} className={inputClass} placeholder="https://www.facebook.com/..." />
         </div>
       </motion.div>
       <motion.div variants={anim} className="flex flex-wrap items-center justify-end gap-3 lg:col-span-2">

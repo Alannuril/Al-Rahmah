@@ -1,36 +1,13 @@
 import { ArrowUpRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { createClient } from "@/lib/supabase/server";
-import type { PengaturanWebsite } from "@/lib/supabase/types";
-
-const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/J1PeZhP9SzcFiC3M8";
-const GOOGLE_MAPS_EMBED_URL =
-  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.6912405338826!2d106.2131152!3d-6.172079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e421e377265e6c5%3A0xdc894d9c993a8e4f!2sPondok%20Pesantren%20Al%20Rahmah%20Walantaka!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid";
-
-async function getPengaturan(): Promise<PengaturanWebsite | null> {
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("pengaturan_website")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-    return data;
-  } catch {
-    return null;
-  }
-}
+import { getWebsiteInfo } from "@/lib/data/website";
+import { GOOGLE_MAPS_URL, GOOGLE_MAPS_EMBED_URL } from "@/lib/utils/websiteInfo";
 
 export async function LocationMapSection() {
-  const setting = await getPengaturan();
-  const alamat =
-    setting?.alamat ||
-    "Jl. Raya Walantaka No. 1, Kec. Walantaka, Kota Serang, Banten 42183";
-  const noWa = setting?.no_whatsapp || "+62 812-3456-7890";
-  const cleanWaNumber = noWa.replace(/[^0-9]/g, "");
+  const setting = await getWebsiteInfo();
 
   return (
-    <section aria-label="Lokasi Pondok Pesantren" className="bg-white py-10 sm:py-12">
+    <section id="lokasi" aria-label="Lokasi Pondok Pesantren" className="scroll-mt-24 bg-white py-10 sm:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title="Lokasi Pondok Pesantren"
@@ -58,7 +35,7 @@ export async function LocationMapSection() {
               Pondok Pesantren Al-Rahmah
             </h3>
             <p className="mt-2 text-sm leading-6 text-zinc-600 break-words">
-              {alamat}
+              {setting.alamat}
             </p>
 
             <dl className="mt-5 space-y-4 border-t border-zinc-200 pt-5">
@@ -87,16 +64,16 @@ export async function LocationMapSection() {
                 <ArrowUpRight size={16} aria-hidden="true" />
               </a>
 
-              {cleanWaNumber && (
+              {setting.whatsapp_url && (
                 <a
-                  href={"https://wa.me/" + cleanWaNumber + "?text=" + encodeURIComponent(
+                  href={setting.whatsapp_url + "?text=" + encodeURIComponent(
                     "Halo Admin Al-Rahmah, saya ingin menanyakan rute menuju pondok pesantren."
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex min-h-11 items-center rounded-sm text-sm font-medium text-brand-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
                 >
-                  Tanya via WhatsApp
+                  {setting.whatsapp_label}
                 </a>
               )}
             </div>

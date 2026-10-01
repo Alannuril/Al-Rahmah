@@ -132,7 +132,7 @@ export async function NewsSection() {
                 </span>
               </div>
               <Link
-                href="/media/berita"
+                href="/media"
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-[#396E5F]/10 text-[#396E5F] hover:bg-[#396E5F] hover:text-white font-semibold text-xs rounded-lg transition-all duration-300 w-fit shrink-0 shadow-2xs group"
               >
                 <span>Lihat Semua Berita</span>

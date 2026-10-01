@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import { LoadingProvider } from "@/components/providers/LoadingProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,9 +18,6 @@ export const metadata: Metadata = {
   description: "Membentuk Generasi Qurani, Berakhlak, dan Berprestasi. Islamic Boarding School modern dengan pendidikan berkualitas tinggi dan fasilitas premium di Walantaka.",
 };
 
-import { LoadingProvider } from "@/components/providers/LoadingProvider";
-import { AuthProvider } from "@/components/providers/AuthProvider";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,9 +26,7 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${inter.variable} ${outfit.variable} h-full antialiased scroll-smooth`}>
       <body className="min-h-full flex flex-col font-sans bg-brand-paper text-brand-primary">
-        <AuthProvider>
-          <LoadingProvider>{children}</LoadingProvider>
-        </AuthProvider>
+        <LoadingProvider>{children}</LoadingProvider>
       </body>
     </html>
   );
