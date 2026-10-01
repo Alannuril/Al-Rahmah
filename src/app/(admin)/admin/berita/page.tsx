@@ -2,13 +2,15 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Plus, Search, Edit2, Trash2, Eye, Loader2 } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Eye, Loader2, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Berita } from "@/lib/supabase/types";
 import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
 import { NewsCategoryBadge } from "@/components/news/NewsCategoryBadge";
 import { AlRahmahLoader } from "@/components/ui/AlRahmahLoader";
-import { getAllDummyNews } from "@/lib/data/dummyFeed";
+import { NewsPreviewDialog } from "@/components/admin/NewsPreviewDialog";
+import { getAdminNews } from "@/lib/data/adminNews";
+import { getDummyNewsById } from "@/lib/data/dummyFeed";
 
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
@@ -19,40 +21,16 @@ export default function KelolaBeritaPage() {
   const [search, setSearch] = useState("");
   const [kategori, setKategori] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [preview, setPreview] = useState<Berita | null>(null);
 
   useEffect(() => {
     let active = true;
-    const dummyList = getAllDummyNews();
 
     async function loadData() {
-      try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from("berita")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (!active) return;
-
-        if (!error && data && data.length > 0) {
-          // Gabungkan data Supabase dengan data dummy untuk evaluasi lengkap
-          const map = new Map<string, Berita>();
-          dummyList.forEach((item) => map.set(item.id, item));
-          data.forEach((item) => map.set(item.id, item));
-
-          setBeritaList(
-            Array.from(map.values()).sort(
-              (a, b) => (Date.parse(b.created_at) || 0) - (Date.parse(a.created_at) || 0),
-            ),
-          );
-        } else {
-          setBeritaList(dummyList);
-        }
-      } catch {
-        if (active) setBeritaList(dummyList);
-      } finally {
-        if (active) setLoading(false);
-      }
+      const news = await getAdminNews();
+      if (!active) return;
+      setBeritaList(news);
+      setLoading(false);
     }
 
     loadData();
@@ -70,37 +48,43 @@ export default function KelolaBeritaPage() {
   ])), [beritaList]);
 
   const handleDelete = async (id: string) => {
+    if (getDummyNewsById(id)) {
+      alert("Berita contoh bawaan tidak dapat dihapus dari admin.");
+      return;
+    }
     if (!confirm("Hapus berita ini?")) return;
     setDeleting(id);
     try {
       const supabase = createClient();
-      await supabase.from("berita").delete().eq("id", id);
-    } catch {
-      // Abaikan jika offline / dummy
+      const { error } = await supabase.from("berita").delete().eq("id", id);
+      if (error) throw error;
+      setBeritaList((prev) => prev.filter((b) => b.id !== id));
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Gagal menghapus berita.");
+    } finally {
+      setDeleting(null);
     }
-    setBeritaList((prev) => prev.filter((b) => b.id !== id));
-    setDeleting(null);
   };
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-5">
       {/* Header Bar */}
-      <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3 flex-1">
-          <div className="relative flex-1 max-w-md">
+      <motion.div variants={item} className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative min-w-0 flex-1 lg:w-80 lg:flex-none">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Cari berita..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-gray-100 text-sm text-gray-600 placeholder-gray-400 outline-none focus:border-brand-primary/30 focus:ring-2 focus:ring-brand-primary/10 transition-all"
+              className="min-h-10 w-full rounded-md border border-zinc-200 bg-white py-2.5 pl-10 pr-4 text-sm text-zinc-700 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10"
             />
           </div>
           <select
             value={kategori}
             onChange={(e) => setKategori(e.target.value)}
-            className="px-3 py-2.5 rounded-xl bg-white border border-gray-100 text-sm text-gray-600 outline-none focus:border-brand-primary/30 transition-all"
+            className="min-h-10 rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-sm text-zinc-700 outline-none focus:border-brand-primary sm:w-48"
           >
             <option value="">Semua Jenis</option>
             {categories.map((category) => (
@@ -110,15 +94,15 @@ export default function KelolaBeritaPage() {
         </div>
         <a
           href="/admin/berita/new"
-          className="flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary/90 text-white text-sm font-semibold rounded-xl shadow-sm shadow-brand-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md shrink-0"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary sm:self-start lg:self-auto"
         >
           <Plus size={16} /> Tambah Berita
         </a>
       </motion.div>
 
       {/* Desktop Table View */}
-      <motion.div variants={item} className="hidden md:block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-2xs">
-        <table className="w-full">
+      <motion.div variants={item} className="hidden overflow-x-auto rounded-md border border-zinc-200 bg-white md:block">
+        <table className="w-full min-w-[760px]">
           <thead>
             <tr className="border-b border-gray-100 bg-zinc-50/50">
               <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-4">Berita</th>
@@ -171,18 +155,24 @@ export default function KelolaBeritaPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <a href={news.slug ? "/media/berita/" + news.slug : "#"} target="_blank" rel="noreferrer" className="p-2 rounded-lg hover:bg-brand-primary/5 text-gray-400 hover:text-brand-primary transition-colors" title="Lihat Halaman Publik">
+                    <div className="flex items-center justify-end gap-1">
+                      <button type="button" onClick={() => setPreview(news)} className="rounded-md p-2 text-zinc-600 hover:bg-zinc-100 hover:text-brand-primary" title="Pratinjau berita" aria-label={`Pratinjau ${news.judul}`}>
                         <Eye size={16} />
-                      </a>
-                      <a href={"/admin/berita/" + news.id + "/edit"} className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors" title="Edit Berita">
+                      </button>
+                      {news.status === "Terbit" && news.slug && (
+                        <a href={"/media/berita/" + news.slug} target="_blank" rel="noreferrer" className="rounded-md p-2 text-zinc-600 hover:bg-zinc-100 hover:text-brand-primary" title="Lihat halaman publik" aria-label={`Lihat ${news.judul} di situs`}>
+                          <ExternalLink size={16} />
+                        </a>
+                      )}
+                      <a href={"/admin/berita/" + news.id + "/edit"} className="rounded-md p-2 text-zinc-600 hover:bg-zinc-100 hover:text-brand-primary" title="Edit Berita" aria-label={`Edit ${news.judul}`}>
                         <Edit2 size={16} />
                       </a>
                       <button
                         onClick={() => handleDelete(news.id)}
                         disabled={deleting === news.id}
-                        className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                        className="rounded-md p-2 text-zinc-600 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
                         title="Hapus"
+                        aria-label={`Hapus ${news.judul}`}
                       >
                         {deleting === news.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                       </button>
@@ -196,7 +186,7 @@ export default function KelolaBeritaPage() {
       </motion.div>
 
       {/* Mobile Cards View */}
-      <motion.div variants={item} className="block md:hidden space-y-3">
+      <motion.div variants={item} className="space-y-3 md:hidden">
         {loading ? (
           <div className="bg-white rounded-2xl p-8 border border-gray-100 text-center">
             <AlRahmahLoader size="md" label="Memuat Data Berita..." />
@@ -207,7 +197,7 @@ export default function KelolaBeritaPage() {
           </div>
         ) : (
           filtered.map((news) => (
-            <div key={news.id} className="bg-white rounded-2xl p-4 border border-gray-100 space-y-3 shadow-2xs">
+            <div key={news.id} className="space-y-3 rounded-md border border-zinc-200 bg-white p-4">
               <div className="flex items-start gap-3">
                 {news.thumbnail_url ? (
                   <img src={news.thumbnail_url} alt={news.judul} className="w-14 h-14 rounded-xl object-cover shrink-0" />
@@ -225,25 +215,35 @@ export default function KelolaBeritaPage() {
                   <p className="text-xs text-gray-400 mt-1">{new Date(news.created_at).toLocaleDateString("id-ID")}</p>
                 </div>
               </div>
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-50">
-                <a href={news.slug ? "/media/berita/" + news.slug : "#"} target="_blank" rel="noreferrer" className="px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 hover:text-brand-primary text-xs flex items-center gap-1 font-medium">
-                  <Eye size={13} /> Lihat
-                </a>
-                <a href={"/admin/berita/" + news.id + "/edit"} className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-xs flex items-center gap-1 font-medium">
-                  <Edit2 size={13} /> Edit
+              <div className="flex items-center justify-end gap-1 border-t border-zinc-100 pt-2">
+                <button type="button" onClick={() => setPreview(news)} className="flex h-10 w-10 items-center justify-center rounded-md text-zinc-600 hover:bg-zinc-100" title="Pratinjau berita" aria-label={`Pratinjau ${news.judul}`}>
+                  <Eye size={17} />
+                </button>
+                {news.status === "Terbit" && news.slug && (
+                  <a href={"/media/berita/" + news.slug} target="_blank" rel="noreferrer" className="flex h-10 w-10 items-center justify-center rounded-md text-zinc-600 hover:bg-zinc-100" title="Lihat halaman publik" aria-label={`Lihat ${news.judul} di situs`}>
+                    <ExternalLink size={17} />
+                  </a>
+                )}
+                <a href={"/admin/berita/" + news.id + "/edit"} className="flex h-10 w-10 items-center justify-center rounded-md text-zinc-600 hover:bg-zinc-100" title="Edit berita" aria-label={`Edit ${news.judul}`}>
+                  <Edit2 size={17} />
                 </a>
                 <button
                   onClick={() => handleDelete(news.id)}
                   disabled={deleting === news.id}
-                  className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs flex items-center gap-1 font-medium disabled:opacity-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-md text-red-600 hover:bg-red-50 disabled:opacity-50"
+                  title="Hapus berita"
+                  aria-label={`Hapus ${news.judul}`}
                 >
-                  <Trash2 size={13} /> Hapus
+                  <Trash2 size={17} />
                 </button>
               </div>
             </div>
           ))
         )}
       </motion.div>
+      {preview && (
+        <NewsPreviewDialog berita={preview} status={preview.status} onClose={() => setPreview(null)} />
+      )}
     </motion.div>
   );
 }

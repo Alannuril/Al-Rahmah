@@ -2,6 +2,7 @@ import { VisiMisiSection } from "@/components/tentang/VisiMisiSection";
 import { SejarahSection } from "@/components/tentang/SejarahSection";
 import { TentangHashScroll } from "@/components/tentang/TentangHashScroll";
 import { NakhodaClient } from "@/components/pimpinan/NakhodaClient";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 export const metadata = {
   title: "Tentang Al-Rahmah",
@@ -15,9 +16,11 @@ export default function TentangPage() {
       <TentangHashScroll />
       <header className="bg-[#f4f6f3] pb-6 pt-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h1 className="font-heading text-2xl font-semibold leading-tight text-brand-primary sm:text-[28px]">
-            Tentang Al-Rahmah
-          </h1>
+          <ScrollReveal variant="soft-up" duration={0.8}>
+            <h1 className="font-heading text-2xl font-semibold leading-tight text-brand-primary sm:text-[28px]">
+              Tentang Al-Rahmah
+            </h1>
+          </ScrollReveal>
         </div>
       </header>
 

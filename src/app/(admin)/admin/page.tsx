@@ -1,196 +1,207 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Newspaper, Users, TrendingUp,
-  ArrowUpRight, Clock, FileText, Settings,
-} from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, Eye, FileText, GraduationCap, Newspaper, Plus, Settings } from "lucide-react";
+import { NewsPreviewDialog } from "@/components/admin/NewsPreviewDialog";
+import { getAdminNews } from "@/lib/data/adminNews";
 import { createClient } from "@/lib/supabase/client";
+import type { Berita, PsbSettings } from "@/lib/supabase/types";
+import { parsePsbSettings } from "@/lib/utils/psbHelper";
 
-interface DashboardStats {
-  totalBerita: number;
-  statusPsb: string;
+const quickActions = [
+  { label: "Tambah Berita", href: "/admin/berita/new", icon: Plus },
+  { label: "Informasi PSB", href: "/admin/psb", icon: GraduationCap },
+  { label: "Pengaturan Website", href: "/admin/pengaturan", icon: Settings },
+];
+
+const publicPages = [
+  { label: "Beranda", href: "/" },
+  { label: "Berita", href: "/media" },
+  { label: "PSB", href: "/psb" },
+];
+
+function formatDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "-" : date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
-
-interface RecentActivity {
-  action: string;
-  detail: string;
-  time: string;
-  icon: React.FC<{ size?: number; className?: string }>;
-  color: string;
-  bg: string;
-}
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-};
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalBerita: 0,
-    statusPsb: "Dibuka",
+  const [news, setNews] = useState<Berita[]>([]);
+  const [psb, setPsb] = useState(() => parsePsbSettings());
+  const [website, setWebsite] = useState<{ name: string; updatedAt: string | null }>({
+    name: "Al-Rahmah",
+    updatedAt: null,
   });
-  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
+  const [preview, setPreview] = useState<Berita | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchStats() {
-      const supabase = createClient();
+    let active = true;
 
-      const [beritaRes, psbRes, activityRes] =
-        await Promise.all([
-          supabase.from("berita").select("id", { count: "exact", head: true }),
-          supabase.from("psb_settings").select("status").limit(1).maybeSingle(),
-          supabase.from("berita").select("judul, created_at").order("created_at", { ascending: false }).limit(3),
-        ]);
+    async function loadOverview() {
+      const [newsItems, settings] = await Promise.all([
+        getAdminNews(),
+        (async () => {
+          try {
+            const supabase = createClient();
+            const [psbResult, websiteResult] = await Promise.all([
+              supabase.from("psb_settings").select("*").limit(1).maybeSingle(),
+              supabase.from("pengaturan_website").select("nama_website, updated_at").limit(1).maybeSingle(),
+            ]);
+            return {
+              psb: parsePsbSettings(psbResult.data as PsbSettings | null),
+              website: {
+                name: websiteResult.data?.nama_website || "Al-Rahmah",
+                updatedAt: websiteResult.data?.updated_at || null,
+              },
+            };
+          } catch {
+            return {
+              psb: parsePsbSettings(),
+              website: { name: "Al-Rahmah", updatedAt: null },
+            };
+          }
+        })(),
+      ]);
 
-      setStats({
-        totalBerita: beritaRes.count ?? 0,
-        statusPsb: psbRes.data?.status ?? "Dibuka",
-      });
-
-      if (activityRes.data) {
-        setRecentActivity(
-          activityRes.data.map((b) => ({
-            action: "Artikel berita",
-            detail: b.judul,
-            time: new Date(b.created_at).toLocaleDateString("id-ID"),
-            icon: FileText,
-            color: "text-brand-primary",
-            bg: "bg-brand-primary/5",
-          }))
-        );
-      }
-
+      if (!active) return;
+      setNews(newsItems);
+      setPsb(settings.psb);
+      setWebsite(settings.website);
       setLoading(false);
     }
 
-    fetchStats();
+    void loadOverview();
+    return () => { active = false; };
   }, []);
 
-  const statCards = [
-    { label: "Total Berita", value: stats.totalBerita.toString(), change: "artikel", icon: Newspaper, color: "from-brand-primary to-emerald-700", bgLight: "bg-brand-primary/5", textColor: "text-brand-primary" },
-    { label: "Status PSB", value: stats.statusPsb, change: "gelombang aktif", icon: Users, color: "from-brand-lime to-brand-accent", bgLight: "bg-brand-lime/10", textColor: "text-brand-primary" },
+  const latestNews = [...news]
+    .sort((a, b) => (Date.parse(b.updated_at || b.created_at) || 0) - (Date.parse(a.updated_at || a.created_at) || 0))
+    .slice(0, 5);
+  const stats = [
+    { label: "Total Berita", value: news.length, icon: Newspaper },
+    { label: "Terbit", value: news.filter((item) => item.status === "Terbit").length, icon: FileText },
+    { label: "Draft", value: news.filter((item) => item.status === "Draft").length, icon: FileText },
+    { label: "Status PSB", value: psb.status, icon: GraduationCap },
   ];
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-        {statCards.map((stat) => {
+    <div className="space-y-8">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <motion.div
-              key={stat.label}
-              variants={item}
-              className="group bg-white rounded-2xl p-5 lg:p-6 border border-gray-100 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100/50 transition-all duration-300 hover:-translate-y-0.5 cursor-default"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className={`${stat.bgLight} p-2.5 rounded-xl`}>
-                  <Icon size={20} className={stat.textColor} />
-                </div>
-                <span className="flex items-center gap-1 text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-1 rounded-lg">
-                  <TrendingUp size={12} />
-                  {stat.change}
-                </span>
+            <div key={stat.label} className="min-w-0 rounded-md border border-zinc-200 bg-white p-4 sm:p-5">
+              <div className="flex items-center justify-between gap-2 text-zinc-500">
+                <p className="text-xs font-medium sm:text-sm">{stat.label}</p>
+                <Icon size={17} aria-hidden="true" className="shrink-0 text-brand-primary" />
               </div>
-              <div className="space-y-1">
-                {loading ? (
-                  <div className="h-9 w-16 bg-gray-100 animate-pulse rounded-lg" />
-                ) : (
-                  <p className="text-3xl font-heading font-bold text-gray-900 tracking-tight">
-                    {stat.value}
-                  </p>
-                )}
-                <p className="text-sm text-gray-500">{stat.label}</p>
-              </div>
-            </motion.div>
+              {loading ? (
+                <div className="mt-4 h-8 w-16 animate-pulse rounded-sm bg-zinc-100" />
+              ) : (
+                <p className="mt-3 min-h-8 font-heading text-2xl font-semibold leading-8 text-zinc-900 sm:text-[28px]">
+                  {stat.value}
+                </p>
+              )}
+              {stat.label === "Status PSB" && (
+                <p className="mt-1 truncate text-xs text-zinc-500">Tahun ajaran {psb.tahun_ajaran}</p>
+              )}
+            </div>
           );
         })}
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <motion.div variants={item} className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
-            <div className="flex items-center gap-2">
-              <Clock size={16} className="text-gray-400" />
-              <h2 className="font-heading font-semibold text-gray-800 text-sm">Berita Terbaru</h2>
-            </div>
-            <a href="/admin/berita" className="text-xs text-brand-primary font-medium hover:underline">Lihat Semua</a>
+      <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,1.7fr)_minmax(18rem,0.8fr)] xl:gap-10">
+        <section aria-labelledby="latest-news-heading" className="min-w-0">
+          <div className="flex items-center justify-between gap-3 border-b border-zinc-200 pb-3">
+            <h2 id="latest-news-heading" className="font-heading text-base font-semibold text-zinc-900">Pembaruan Berita</h2>
+            <Link href="/admin/berita" className="inline-flex min-h-10 shrink-0 items-center gap-1 text-sm font-medium text-brand-primary hover:underline">
+              Lihat Semua <ArrowUpRight size={15} aria-hidden="true" />
+            </Link>
           </div>
-          <div className="divide-y divide-gray-50">
-            {loading ? (
-              [1,2,3].map((i) => (
-                <div key={i} className="flex items-center gap-4 px-6 py-4">
-                  <div className="w-8 h-8 rounded-xl bg-gray-100 animate-pulse shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 bg-gray-100 animate-pulse rounded w-3/4" />
-                    <div className="h-3 bg-gray-100 animate-pulse rounded w-1/2" />
-                  </div>
-                </div>
-              ))
-            ) : recentActivity.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-8">Belum ada aktivitas</p>
-            ) : (
-              recentActivity.map((activity, i) => {
-                const Icon = activity.icon;
-                return (
-                  <div key={i} className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/50 transition-colors">
-                    <div className={`${activity.bg} p-2 rounded-xl shrink-0`}>
-                      <Icon size={16} className={activity.color} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-700 truncate">{activity.action}</p>
-                      <p className="text-xs text-gray-400 truncate mt-0.5">{activity.detail}</p>
-                    </div>
-                    <span className="text-[11px] text-gray-400 whitespace-nowrap shrink-0">{activity.time}</span>
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </motion.div>
 
-        {/* Quick Actions */}
-        <motion.div variants={item} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-50">
-            <h2 className="font-heading font-semibold text-gray-800 text-sm">Aksi Cepat</h2>
-          </div>
-          <div className="p-4 space-y-2">
-            {[
-              { label: "Tambah Berita", href: "/admin/berita/new", icon: FileText },
-              { label: "Pengaturan PSB", href: "/admin/psb", icon: Users },
-              { label: "Pengaturan Website", href: "/admin/pengaturan", icon: Settings },
-            ].map((action) => {
-              const Icon = action.icon;
-              return (
-                <a
-                  key={action.label}
-                  href={action.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-brand-primary/5 group transition-all duration-200"
-                >
-                  <div className="p-2 rounded-lg bg-brand-primary/5 group-hover:bg-brand-primary/10 transition-colors">
-                    <Icon size={16} className="text-brand-primary" />
+          {loading ? (
+            <div className="divide-y divide-zinc-200">
+              {[1, 2, 3].map((item) => <div key={item} className="h-18 animate-pulse border-b border-zinc-200 py-4" />)}
+            </div>
+          ) : latestNews.length === 0 ? (
+            <p className="py-10 text-sm text-zinc-500">Belum ada berita.</p>
+          ) : (
+            <div className="divide-y divide-zinc-200">
+              {latestNews.map((item) => (
+                <div key={item.id} className="flex min-w-0 items-center gap-3 py-3.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-zinc-900">{item.judul}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-500">
+                      <span className={item.status === "Terbit" ? "font-medium text-emerald-700" : "font-medium text-amber-700"}>{item.status}</span>
+                      <span aria-hidden="true">&bull;</span>
+                      <span>{item.kategori}</span>
+                      <span aria-hidden="true">&bull;</span>
+                      <span>{formatDate(item.updated_at || item.created_at)}</span>
+                    </div>
                   </div>
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-brand-primary transition-colors flex-1">
-                    {action.label}
-                  </span>
-                  <ArrowUpRight size={14} className="text-gray-300 group-hover:text-brand-primary transition-colors" />
+                  <button
+                    type="button"
+                    onClick={() => setPreview(item)}
+                    aria-label={`Pratinjau ${item.judul}`}
+                    title="Pratinjau berita"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-zinc-600 hover:bg-zinc-100 hover:text-brand-primary"
+                  >
+                    <Eye size={17} aria-hidden="true" />
+                  </button>
+                  <Link
+                    href={`/admin/berita/${item.id}/edit`}
+                    className="hidden min-h-10 shrink-0 items-center text-xs font-medium text-brand-primary hover:underline sm:inline-flex"
+                  >
+                    Edit
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <div className="space-y-7">
+          <section aria-labelledby="quick-actions-heading">
+            <h2 id="quick-actions-heading" className="border-b border-zinc-200 pb-3 font-heading text-base font-semibold text-zinc-900">Aksi Cepat</h2>
+            <div className="divide-y divide-zinc-200">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Link key={action.href} href={action.href} className="flex min-h-12 items-center gap-3 py-2 text-sm font-medium text-zinc-700 hover:text-brand-primary">
+                    <Icon size={17} aria-hidden="true" className="shrink-0 text-brand-primary" />
+                    <span className="min-w-0 flex-1">{action.label}</span>
+                    <ArrowUpRight size={15} aria-hidden="true" className="shrink-0 text-zinc-400" />
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          <section aria-labelledby="public-preview-heading">
+            <div className="border-b border-zinc-200 pb-3">
+              <h2 id="public-preview-heading" className="font-heading text-base font-semibold text-zinc-900">Pratinjau Publik</h2>
+              <p className="mt-1 truncate text-xs text-zinc-500">{website.name}</p>
+            </div>
+            <div className="divide-y divide-zinc-200">
+              {publicPages.map((page) => (
+                <a key={page.href} href={page.href} target="_blank" rel="noreferrer" className="flex min-h-11 items-center justify-between gap-3 py-2 text-sm text-zinc-700 hover:text-brand-primary">
+                  <span>{page.label}</span>
+                  <ArrowUpRight size={15} aria-hidden="true" className="text-zinc-400" />
                 </a>
-              );
-            })}
-          </div>
-        </motion.div>
+              ))}
+            </div>
+            {website.updatedAt && <p className="mt-2 text-xs text-zinc-500">Pengaturan diperbarui {formatDate(website.updatedAt)}</p>}
+          </section>
+        </div>
       </div>
-    </motion.div>
+
+      {preview && <NewsPreviewDialog berita={preview} status={preview.status} onClose={() => setPreview(null)} />}
+    </div>
   );
 }

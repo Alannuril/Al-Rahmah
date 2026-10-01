@@ -2,13 +2,14 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Loader2, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Plus, Trash2, Image as ImageIcon, Eye } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { BeritaStatus } from "@/lib/supabase/types";
 import { NEWS_CATEGORIES, getNewsCategory } from "@/lib/constants/newsCategories";
 import { getBeritaImages, encodeBeritaContent, cleanBeritaContent } from "@/lib/utils/newsGallery";
 import { getDummyNewsById } from "@/lib/data/dummyFeed";
+import { NewsPreviewDialog } from "@/components/admin/NewsPreviewDialog";
 
 function slugify(text: string): string {
   return text
@@ -25,6 +26,8 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
+  const [createdAt, setCreatedAt] = useState(() => new Date().toISOString());
 
   const [imageUrls, setImageUrls] = useState<string[]>([""]);
 
@@ -68,6 +71,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
       // Ambil daftar gambar (hingga 3 gambar)
       const existingImages = getBeritaImages(beritaData);
       setImageUrls(existingImages.length > 0 ? existingImages : [""]);
+      setCreatedAt(beritaData.created_at || new Date().toISOString());
 
       setForm({
         judul: beritaData.judul || "",
@@ -134,13 +138,17 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
       updated_at: new Date().toISOString(),
     };
 
-    let { error: updateError } = await supabase
-      .from("berita")
-      .update({
-        ...baseUpdatePayload,
-        gambar_urls: validImages.length > 0 ? validImages : null,
-      })
-      .eq("id", id);
+    const isDummyId = id.startsWith("dummy-") || id.startsWith("keg-") || id.startsWith("prestasi-");
+    const persist = async (includeImages: boolean) => {
+      const payload = includeImages
+        ? { ...baseUpdatePayload, gambar_urls: validImages.length > 0 ? validImages : null }
+        : baseUpdatePayload;
+      return isDummyId
+        ? supabase.from("berita").upsert(payload, { onConflict: "slug" })
+        : supabase.from("berita").update(payload).eq("id", id);
+    };
+
+    let { error: updateError } = await persist(true);
 
     // Fallback jika kolom gambar_urls belum ada di DB
     if (
@@ -149,17 +157,11 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
         updateError.code === "PGRST204" ||
         updateError.code === "42703")
     ) {
-      const fallbackRes = await supabase
-        .from("berita")
-        .update(baseUpdatePayload)
-        .eq("id", id);
+      const fallbackRes = await persist(false);
       updateError = fallbackRes.error;
     }
 
-    // Jika dummy ID (belum diinsert ke database), biarkan alur simulasi sukses
-    const isDummyId = id.startsWith("dummy-") || id.startsWith("keg-") || id.startsWith("prestasi-");
-
-    if (updateError && !isDummyId) {
+    if (updateError) {
       setSaving(false);
       setError(updateError.message || "Gagal memperbarui berita.");
       return;
@@ -178,7 +180,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="mx-auto max-w-5xl space-y-5">
       {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <Link
@@ -189,7 +191,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
         </Link>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm">
+      <div className="rounded-md border border-zinc-200 bg-white p-4 sm:p-6 lg:p-8">
         <h1 className="text-xl font-heading font-bold text-gray-800 mb-6">
           Edit Berita
         </h1>
@@ -228,14 +230,14 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
             <label className="text-sm font-semibold text-gray-700">
               Slug URL <span className="text-red-500">*</span>
             </label>
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
               <span className="text-xs text-gray-400 font-mono">/media/berita/</span>
               <input
                 type="text"
                 required
                 value={form.slug}
                 onChange={(e) => setForm((prev) => ({ ...prev, slug: slugify(e.target.value) }))}
-                className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm font-mono focus:border-brand-primary/50 focus:ring-2 focus:ring-brand-primary/10 outline-none transition-all"
+                className="min-w-0 w-full flex-1 rounded-md border border-zinc-200 px-4 py-2.5 font-mono text-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10"
               />
             </div>
           </div>
@@ -265,7 +267,7 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:border-brand-primary/50 outline-none transition-all"
               >
                 <option value="Terbit">Terbit</option>
-                <option value="Draf">Draf</option>
+                <option value="Draft">Draf</option>
               </select>
             </div>
           </div>
@@ -386,17 +388,25 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-zinc-200 pt-4">
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              className="inline-flex min-h-10 items-center gap-2 rounded-md border border-zinc-200 px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"
+            >
+              <Eye size={16} aria-hidden="true" />
+              Pratinjau
+            </button>
             <Link
               href="/admin/berita"
-              className="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+              className="inline-flex min-h-10 items-center rounded-md px-4 py-2.5 text-sm font-semibold text-zinc-600 hover:bg-zinc-100"
             >
               Batal
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-primary hover:bg-brand-primary/90 text-white text-sm font-semibold shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary/90 disabled:opacity-50"
             >
               {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               <span>Simpan Perubahan</span>
@@ -404,6 +414,21 @@ export default function EditBeritaPage({ params }: { params: Promise<{ id: strin
           </div>
         </form>
       </div>
+      {showPreview && (
+        <NewsPreviewDialog
+          berita={{
+            judul: form.judul.trim() || "Judul Berita",
+            kategori: form.kategori,
+            created_at: createdAt,
+            excerpt: form.excerpt.trim() || null,
+            konten: form.konten.trim() || null,
+            thumbnail_url: imageUrls.find((url) => url.trim())?.trim() || null,
+            gambar_urls: imageUrls.map((url) => url.trim()).filter(Boolean),
+          }}
+          status={form.status}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 }

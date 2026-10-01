@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 export type AnimationVariant =
   | "fade-up"
@@ -9,7 +9,11 @@ export type AnimationVariant =
   | "slide-left"
   | "slide-right"
   | "zoom-in"
-  | "fade";
+  | "fade"
+  | "soft-up"
+  | "soft-left"
+  | "soft-right"
+  | "soft-zoom";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -46,6 +50,22 @@ const VARIANTS: Record<AnimationVariant, Variants> = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
   },
+  "soft-up": {
+    hidden: { opacity: 0, y: 18 },
+    visible: { opacity: 1, y: 0 },
+  },
+  "soft-left": {
+    hidden: { opacity: 0, x: -14 },
+    visible: { opacity: 1, x: 0 },
+  },
+  "soft-right": {
+    hidden: { opacity: 0, x: 14 },
+    visible: { opacity: 1, x: 0 },
+  },
+  "soft-zoom": {
+    hidden: { opacity: 0, scale: 1.035 },
+    visible: { opacity: 1, scale: 1 },
+  },
 };
 
 export function ScrollReveal({
@@ -58,17 +78,20 @@ export function ScrollReveal({
   viewportMargin = "-60px",
 }: ScrollRevealProps) {
   const currentVariant = VARIANTS[variant] || VARIANTS["fade-up"];
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <motion.div
       variants={currentVariant}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : "hidden"}
       whileInView="visible"
       viewport={{ once: viewportOnce, margin: viewportMargin }}
       transition={{
-        duration,
-        delay,
-        ease: [0.22, 1, 0.36, 1], // Smooth cubic-bezier easeOut
+        duration: shouldReduceMotion ? 0 : duration,
+        delay: shouldReduceMotion ? 0 : delay,
+        ease: variant === "fade" || variant.startsWith("soft-")
+          ? [0.25, 0.1, 0.25, 1]
+          : [0.22, 1, 0.36, 1],
       }}
       className={className}
     >
@@ -145,4 +168,3 @@ export function StaggerItem({
     </motion.div>
   );
 }
-

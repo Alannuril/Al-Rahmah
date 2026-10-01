@@ -387,16 +387,21 @@ export default function InformasiPSBPage() {
       initial="hidden"
       animate="show"
       transition={{ staggerChildren: 0.05 }}
-      className="max-w-5xl space-y-6 pb-16"
+      className="mx-auto max-w-7xl space-y-6 pb-12"
     >
       {/* Header Halaman (Clean & Minimalist) */}
-      <div className="border-b border-zinc-200/80 pb-4 sm:pb-5">
-        <h1 className="text-xl sm:text-2xl font-heading font-bold text-zinc-900 tracking-tight">
-          Penerimaan Santri Baru (PSB)
-        </h1>
-        <p className="text-xs sm:text-sm text-zinc-500 mt-1 leading-relaxed">
-          Kelola status pendaftaran, jadwal gelombang, brosur, formulir, dan kontak panitia.
-        </p>
+      <div className="flex flex-col gap-3 border-b border-zinc-200 pb-4 sm:flex-row sm:items-center sm:justify-between sm:pb-5">
+        <div>
+          <h1 className="font-heading text-xl font-bold text-zinc-900 sm:text-2xl">
+            Penerimaan Santri Baru (PSB)
+          </h1>
+          <p className="mt-1 text-xs leading-relaxed text-zinc-500 sm:text-sm">
+            Kelola status pendaftaran, jadwal gelombang, brosur, formulir, dan kontak panitia.
+          </p>
+        </div>
+        <a href="/psb" target="_blank" rel="noreferrer" className="inline-flex min-h-10 shrink-0 items-center gap-2 self-start rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 hover:border-[#396E5F] hover:text-[#396E5F]">
+          Lihat Halaman PSB <ExternalLink size={15} aria-hidden="true" />
+        </a>
       </div>
 
       {/* Alert Error / Sukses */}
@@ -424,7 +429,7 @@ export default function InformasiPSBPage() {
       {/* ============================================================ */}
       <motion.div
         variants={anim}
-        className="bg-white rounded-2xl p-5 sm:p-6 border border-zinc-200/80 shadow-2xs transition-all"
+        className="rounded-md border border-zinc-200 bg-white p-5 sm:p-6"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
@@ -497,16 +502,16 @@ export default function InformasiPSBPage() {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
         {/* ============================================================ */}
         {/* KOLOM KIRI (7 Kolom): FORM SETTINGS UTAMA                    */}
         {/* ============================================================ */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="space-y-5 lg:col-span-8">
           
           {/* KARTU 1: INFORMASI DASAR & JADWAL UTAMA */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+            className="space-y-4 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
@@ -610,7 +615,7 @@ export default function InformasiPSBPage() {
           {/* KARTU 2: SKEMA & JADWAL GELOMBANG PENDAFTARAN (DINAMIS) */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+            className="space-y-4 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
@@ -638,10 +643,10 @@ export default function InformasiPSBPage() {
                 return (
                   <div
                     key={wave.id || idx}
-                    className={`rounded-2xl border transition-all duration-200 p-4 sm:p-5 space-y-3 ${
+                    className={`space-y-3 border-t border-zinc-200 pt-4 ${
                       isActive
-                        ? "border-[#396E5F] bg-gradient-to-br from-[#F2F7F4] via-white to-white shadow-xs ring-1 ring-[#396E5F]/30"
-                        : "border-zinc-200/90 bg-white hover:border-zinc-300"
+                        ? "border-l-2 border-l-[#396E5F] pl-3"
+                        : ""
                     }`}
                   >
                     {/* Header Adaptif Mobile & Desktop */}
@@ -821,7 +826,7 @@ export default function InformasiPSBPage() {
           {/* KARTU 3: LINK GOOGLE FORM (SATU PINTU) */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+            className="space-y-4 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base border-b border-zinc-100 pb-3">
               <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
@@ -863,7 +868,7 @@ export default function InformasiPSBPage() {
           {/* KARTU 3: BIAYA FORMULIR & REKENING PEMBAYARAN */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+            className="space-y-4 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base border-b border-zinc-100 pb-3">
               <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
@@ -948,7 +953,7 @@ export default function InformasiPSBPage() {
           {/* KARTU 5: KONTAK PANITIA PSB (WHATSAPP) */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+            className="space-y-4 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
@@ -1037,7 +1042,7 @@ export default function InformasiPSBPage() {
           {/* KARTU 6: CATATAN TAMBAHAN (OPSIONAL) */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-2.5"
+            className="space-y-2.5 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <label className="block text-xs font-semibold text-zinc-700">
               6. Catatan Tambahan (Opsional)
@@ -1055,10 +1060,10 @@ export default function InformasiPSBPage() {
         {/* ============================================================ */}
         {/* KOLOM KANAN (5 Kolom): POSTER & BROSUR RESMI (PREVIEW)       */}
         {/* ============================================================ */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="space-y-5 lg:col-span-4">
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+            className="space-y-4 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base border-b border-zinc-100 pb-3">
               <div className="w-7 h-7 rounded-lg bg-[#396E5F]/10 text-[#396E5F] flex items-center justify-center">
@@ -1153,7 +1158,7 @@ export default function InformasiPSBPage() {
           {/* PRATINJAU SKEMA GELOMBANG PUBLIK */}
           <motion.div
             variants={anim}
-            className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-6 shadow-2xs space-y-4"
+            className="space-y-4 rounded-md border border-zinc-200 bg-white p-4 sm:p-6"
           >
             <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
               <div className="flex items-center gap-2 text-zinc-900 font-heading font-bold text-sm sm:text-base">
@@ -1245,7 +1250,7 @@ export default function InformasiPSBPage() {
       {/* ============================================================ */}
       <motion.div
         variants={anim}
-        className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 bg-white rounded-2xl border border-zinc-200/80 shadow-2xs"
+        className="flex flex-col items-center justify-between gap-4 rounded-md border border-zinc-200 bg-white p-4 sm:flex-row sm:p-5"
       >
         <div className="text-xs text-zinc-500 text-center sm:text-left">
           {saveSuccess ? (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Save, Globe, Phone, MapPin, Camera, Video, Loader2 } from "lucide-react";
+import { Save, Globe, Phone, MapPin, Camera, Video, Loader2, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { PengaturanWebsite } from "@/lib/supabase/types";
 
@@ -22,38 +22,49 @@ export default function PengaturanPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
-    let isMounted = true;
-    async function fetchData() {
-      const supabase = createClient();
-      const { data } = await supabase.from("pengaturan_website").select("*").limit(1).single();
-      if (isMounted) {
-        if (data) {
+    let active = true;
+    async function loadData() {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase.from("pengaturan_website").select("*").limit(1).maybeSingle();
+        if (active && data) {
           setForm(data);
           setRowId(data.id);
         }
-        setLoading(false);
+      } catch {
+        // Keep the form available if the database cannot be reached.
+      } finally {
+        if (active) setLoading(false);
       }
     }
-    fetchData();
-    return () => {
-      isMounted = false;
-    };
+    void loadData();
+    return () => { active = false; };
   }, []);
 
   const handleSave = async () => {
     setSaving(true);
-    const supabase = createClient();
-    if (rowId) {
-      await supabase.from("pengaturan_website").update({ ...form, updated_at: new Date().toISOString() }).eq("id", rowId);
-    } else {
-      const { data } = await supabase.from("pengaturan_website").insert({ ...form }).select().single();
-      if (data) setRowId(data.id);
+    setSaveError("");
+    setSaved(false);
+    try {
+      const supabase = createClient();
+      if (rowId) {
+        const { error } = await supabase.from("pengaturan_website").update({ ...form, updated_at: new Date().toISOString() }).eq("id", rowId);
+        if (error) throw error;
+      } else {
+        const { data, error } = await supabase.from("pengaturan_website").insert({ ...form }).select().single();
+        if (error) throw error;
+        if (data) setRowId(data.id);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Gagal menyimpan pengaturan.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
   };
 
   if (loading) return <div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin" /></div>;
@@ -61,8 +72,8 @@ export default function PengaturanPage() {
   const inputClass = "w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-700 outline-none focus:border-brand-primary/30 focus:ring-2 focus:ring-brand-primary/10 transition-all";
 
   return (
-    <motion.div initial="hidden" animate="show" transition={{ staggerChildren: 0.08 }} className="max-w-3xl space-y-6">
-      <motion.div variants={anim} className="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8 space-y-6">
+    <motion.div initial="hidden" animate="show" transition={{ staggerChildren: 0.08 }} className="mx-auto grid max-w-6xl items-start gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,1fr)]">
+      <motion.div variants={anim} className="space-y-5 rounded-md border border-zinc-200 bg-white p-4 sm:p-6">
         <h2 className="font-heading font-bold text-gray-800 flex items-center gap-2"><Globe size={18} className="text-brand-primary" /> Informasi Umum</h2>
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Website</label>
@@ -81,7 +92,7 @@ export default function PengaturanPage() {
           <textarea rows={3} value={form.alamat ?? ""} onChange={(e) => setForm({ ...form, alamat: e.target.value })} className={inputClass + " resize-none"} />
         </div>
       </motion.div>
-      <motion.div variants={anim} className="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8 space-y-6">
+      <motion.div variants={anim} className="space-y-5 rounded-md border border-zinc-200 bg-white p-4 sm:p-6">
         <h2 className="font-heading font-bold text-gray-800">Media Sosial</h2>
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5"><Camera size={14} /> Link Instagram</label>
@@ -96,8 +107,12 @@ export default function PengaturanPage() {
           <input type="url" value={form.facebook_url ?? ""} onChange={(e) => setForm({ ...form, facebook_url: e.target.value })} className={inputClass} placeholder="https://www.facebook.com/..." />
         </div>
       </motion.div>
-      <motion.div variants={anim} className="pt-2">
-        <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-6 py-3 bg-brand-primary hover:bg-brand-primary/90 text-white text-sm font-semibold rounded-xl shadow-sm shadow-brand-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-70">
+      <motion.div variants={anim} className="flex flex-wrap items-center justify-end gap-3 lg:col-span-2">
+        {saveError && <p role="alert" className="mr-auto text-sm text-red-600">{saveError}</p>}
+        <a href="/kontak" target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 hover:border-brand-primary hover:text-brand-primary">
+          Lihat Halaman Kontak <ExternalLink size={15} aria-hidden="true" />
+        </a>
+        <button onClick={handleSave} disabled={saving} className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary/90 disabled:opacity-70">
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saved ? "Tersimpan!" : "Simpan Pengaturan"}
         </button>

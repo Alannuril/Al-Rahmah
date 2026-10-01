@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { PancaJiwaSection } from "@/components/sections/PancaJiwaSection";
 import {
   NakhodaDetailModal,
@@ -122,50 +124,62 @@ export function NakhodaClient() {
       <section id="nakhoda" aria-labelledby="nakhoda-heading" className="scroll-mt-24 bg-[#edf4ed] py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <header className="mb-7 max-w-2xl sm:mb-8">
-            <h2 id="nakhoda-heading" className="font-heading text-2xl font-bold leading-tight text-brand-primary sm:text-3xl lg:text-[32px]">
-              Nakhoda Al-Rahmah
-            </h2>
-            <p className="mt-2.5 text-sm leading-7 text-zinc-600 sm:text-base">
-              Pimpinan dan pengasuh yang mendampingi pendidikan serta kehidupan santri.
-            </p>
+            <ScrollReveal variant="soft-up" duration={0.8}>
+              <h2 id="nakhoda-heading" className="font-heading text-2xl font-bold leading-tight text-brand-primary sm:text-3xl lg:text-[32px]">
+                Nakhoda Al-Rahmah
+              </h2>
+            </ScrollReveal>
+            <ScrollReveal variant="fade" delay={0.2} duration={0.85} className="mt-2.5">
+              <p className="text-sm leading-7 text-zinc-600 sm:text-base">
+                Pimpinan dan pengasuh yang mendampingi pendidikan serta kehidupan santri.
+              </p>
+            </ScrollReveal>
           </header>
 
           <div className="grid gap-8 md:grid-cols-3 md:gap-6 lg:gap-8">
-            {NAKHODA_LIST.map((nakhoda) => (
-              <article key={nakhoda.id} className="flex min-w-0 flex-col">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-brand-primary/10 md:aspect-[4/5]">
-                  <Image
-                    src={nakhoda.foto}
-                    alt={"Foto profil " + nakhoda.nama}
-                    fill
-                    sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1280px) 30vw, 384px"
-                    className={"object-cover " + (nakhoda.fotoPosition || "object-top")}
-                  />
-                </div>
-                <div className="flex flex-1 flex-col pt-4">
-                  <h3 className="font-heading text-xl font-semibold leading-snug text-zinc-900">
-                    {nakhoda.nama}
-                  </h3>
-                  <p className="mt-2 text-sm font-medium leading-6 text-brand-primary">
-                    {nakhoda.jabatan}
-                  </p>
-                  <p className="mt-3 text-sm leading-6 text-zinc-600">
-                    {nakhoda.ringkasan}
-                  </p>
-                  <div className="mt-auto pt-5">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedNakhoda(nakhoda)}
-                      aria-label={"Baca profil " + nakhoda.nama}
-                      aria-haspopup="dialog"
-                      className="group inline-flex min-h-11 cursor-pointer items-center gap-3 rounded-sm py-2 text-sm font-semibold text-brand-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
+            {NAKHODA_LIST.map((nakhoda, index) => (
+              <ScrollReveal key={nakhoda.id} variant="soft-up" delay={0.34 + index * 0.22} duration={0.9} className="h-full">
+                <article className="flex h-full min-w-0 flex-col overflow-hidden rounded-lg border border-white/70 bg-white/40">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-brand-primary/10 md:aspect-[4/5]">
+                    <motion.div
+                      variants={{ hidden: { scale: 1.045 }, visible: { scale: 1 } }}
+                      transition={{ duration: 1.05, delay: 0.44 + index * 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="absolute inset-0"
                     >
-                      Baca profil
-                      <ArrowRight size={16} aria-hidden="true" className="shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none" />
-                    </button>
+                      <Image
+                        src={nakhoda.foto}
+                        alt={"Foto profil " + nakhoda.nama}
+                        fill
+                        sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1280px) 30vw, 384px"
+                        className={"object-cover " + (nakhoda.fotoPosition || "object-top")}
+                      />
+                    </motion.div>
                   </div>
-                </div>
-              </article>
+                  <div className="flex flex-1 flex-col px-4 pb-3 pt-4">
+                    <h3 className="font-heading text-xl font-semibold leading-snug text-zinc-900">
+                      {nakhoda.nama}
+                    </h3>
+                    <p className="mt-2 text-sm font-medium leading-6 text-brand-primary">
+                      {nakhoda.jabatan}
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-zinc-600">
+                      {nakhoda.ringkasan}
+                    </p>
+                    <div className="mt-auto pt-4">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedNakhoda(nakhoda)}
+                        aria-label={"Baca profil " + nakhoda.nama}
+                        aria-haspopup="dialog"
+                        className="group inline-flex min-h-11 cursor-pointer items-center gap-3 rounded-sm py-2 text-sm font-semibold text-brand-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
+                      >
+                        Baca profil
+                        <ArrowRight size={16} aria-hidden="true" className="shrink-0 transition-transform group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none" />
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              </ScrollReveal>
             ))}
           </div>
         </div>
