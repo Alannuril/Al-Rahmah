@@ -8,7 +8,6 @@ import {
   ExternalLink,
   Copy,
   Check,
-  Phone,
   Maximize2,
   X,
   CreditCard,
@@ -403,9 +402,9 @@ export default function PsbInformationPage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 4. BIAYA PENDAFTARAN & REKENING RESMI (UNIFIED SOFT GREEN)   */}
+      {/* 4. BIAYA PENDAFTARAN & REKENING RESMI                       */}
       {/* ============================================================ */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl mb-6 sm:mb-8">
         <div className="border-t border-[#ABD8B1]/40 pt-8 sm:pt-10">
           
           <h2 className="font-heading text-lg sm:text-xl font-bold text-center text-zinc-900 mb-6 sm:mb-8">
@@ -512,50 +511,56 @@ export default function PsbInformationPage() {
       {/* ============================================================ */}
       {/* 5. NARAHUBUNG RESMI WHATSAPP                                 */}
       {/* ============================================================ */}
-      <section id="kontak-panitia" className="container mx-auto scroll-mt-28 px-4 sm:px-6 lg:px-8 max-w-6xl mb-12 sm:mb-14">
-        <PsbReveal variant="scale" className="rounded-3xl bg-[#1E3F35] text-white p-5 sm:p-7 lg:p-8 shadow-xs border border-[#396E5F]">
-          
-          <div className="max-w-2xl mb-5">
-            <h2 className="font-heading text-lg sm:text-xl font-bold text-white">
+      <section id="kontak-panitia" aria-labelledby="kontak-panitia-heading" className="container mx-auto scroll-mt-28 px-4 sm:px-6 lg:px-8 max-w-6xl mb-6 sm:mb-8">
+        <PsbReveal variant="scale" className="rounded-2xl bg-[#1E3F35] text-white px-5 py-4 sm:px-6 sm:py-5 border border-[#396E5F]">
+          <div className="max-w-2xl mb-4">
+            <h2 id="kontak-panitia-heading" className="font-heading text-lg sm:text-xl font-bold text-white">
               Narahubung Panitia PSB
             </h2>
-            <p className="text-xs text-[#AED69F] mt-1">
-              Hubungi panitia via WhatsApp jika ada pertanyaan atau kendala seputar pendaftaran:
+            <p className="text-xs leading-relaxed text-white/75 mt-1">
+              Hubungi panitia melalui WhatsApp untuk bantuan seputar pendaftaran.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {data.kontakPanitia.map((kontak, idx) => (
-              <a
-                key={idx}
-                href={kontak.waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${styles.action} group flex items-center justify-between p-3.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 hover:border-[#8AC77F] transition-all cursor-pointer`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-lg bg-[#8AC77F]/20 text-[#AED69F] group-hover:bg-[#8AC77F] group-hover:text-[#1E3F35] flex items-center justify-center transition-colors shrink-0">
-                    <Phone size={15} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white text-xs sm:text-sm">
-                      {kontak.nama}
-                    </h3>
-                    <p className="text-[11px] text-[#AED69F]/80">
-                      {kontak.peran}
-                    </p>
-                    <p className="font-mono text-[11px] text-[#AED69F] mt-0.5">
-                      {kontak.nomor}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs text-[#AED69F] group-hover:text-white group-hover:translate-x-0.5 transition-all">
-                  Chat &rarr;
-                </span>
-              </a>
-            ))}
-          </div>
-
+          {data.kontakPanitia.length > 0 ? (
+            <ul role="list" className="flex flex-wrap gap-3">
+              {data.kontakPanitia.map((kontak, idx) => (
+                <li key={idx} className="min-w-0 flex-[1_1_18rem]">
+                  <a
+                    href={kontak.waUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Hubungi ${kontak.nama} melalui WhatsApp (buka tab baru)`}
+                    className="flex h-full min-w-0 flex-col gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-3 transition-colors hover:border-white/30 hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#AED69F]"
+                  >
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-semibold leading-snug text-white [overflow-wrap:anywhere]">
+                        {kontak.nama}
+                      </h3>
+                      {kontak.peran && (
+                        <p className="mt-1 text-xs leading-relaxed text-white/70 [overflow-wrap:anywhere]">
+                          {kontak.peran}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                      <span className="min-w-0 text-xs tabular-nums text-white/80 [overflow-wrap:anywhere]">
+                        {kontak.nomor}
+                      </span>
+                      <span className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-[#AED69F]">
+                        WhatsApp
+                        <ArrowRight size={14} aria-hidden="true" />
+                      </span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="border-t border-white/15 pt-4 text-sm text-white/75">
+              Kontak panitia belum tersedia.
+            </p>
+          )}
         </PsbReveal>
       </section>
 
