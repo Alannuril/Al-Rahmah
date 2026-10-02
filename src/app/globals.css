@@ -77,14 +77,34 @@
   scrollbar-width: none;
 }
 
+:root {
+  color-scheme: only light;
+  forced-color-adjust: none;
+  -webkit-print-color-adjust: exact;
+}
+
 html {
   scroll-behavior: smooth;
+  color-scheme: only light;
+  forced-color-adjust: none;
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--color-brand-paper);
   color: var(--color-brand-primary);
+  color-scheme: only light;
+  forced-color-adjust: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Cegah browser mobile menginversi warna foto, media, kartu, dan ikon secara paksa */
+img,
+svg,
+picture,
+video,
+canvas {
+  forced-color-adjust: none;
+}
+

@@ -56,6 +56,7 @@ export function HeroSection() {
   return (
     <section 
       ref={heroRef}
+      style={{ colorScheme: "only light" }}
       className="relative isolate overflow-hidden bg-[#1e3f35]"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -154,6 +155,7 @@ export function HeroSection() {
                 opacity: { duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] },
                 y: { duration: shouldReduceMotion ? 0 : 5, repeat: shouldReduceMotion ? 0 : Infinity, ease: "easeInOut", delay: 1.15 }
               }}
+              style={{ colorScheme: "only light" }}
               className="relative aspect-[1602/1362] w-[68vw] max-w-[280px] shrink-0 md:w-full md:max-w-[260px] lg:max-w-[340px] xl:max-w-[380px]"
             >
               <Image
